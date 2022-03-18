@@ -12,8 +12,6 @@ const palette = ['#f89b00', '#83dcb7', '#ffd400', '#003458']
 
 const Home =()=> {
   const [data, setData] = useState([]);
-  const [data3, setData3] = useState([]);
-  const [data4, setData4] = useState([]);
   const [color, setColor] = useState('#000000')
   const [selectedColumn, setSelectedColumn] = useState('kstest')
 
