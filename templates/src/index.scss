@@ -1,0 +1,59 @@
+.main {
+  display: flex;
+  width: 80%;
+  height: 1000px;
+}
+
+.left {
+  width: 30%;
+  height: 1000px;
+  border: 1px solid black;
+
+  .table {
+    width: 100%;
+    height: 400px;
+    border: 1px solid black;
+  }
+
+  .total {
+    width: 100%;
+    height: 400px;
+    border: 1px solid black;
+  }
+
+  .column {
+    width: 100%;
+    height: 200px;
+    border: 1px solid black;
+  }
+}
+
+.right {
+  width: 50%;
+  height: 1000px;
+  border: 1px solid black;
+
+  .action_log {
+    width: 100%;
+    height: 100px;
+    border: 1px solid black;
+  }
+
+  .action {
+    width: 100%;
+    height: 300px;
+    border: 1px solid black;
+  }
+  
+  .quality {
+    width: 100%;
+    height: 400px;
+    border: 1px solid black;
+  }
+  
+  .model {
+    width: 100%;
+    height: 200px;
+    border: 1px solid black;
+  }
+}
