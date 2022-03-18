@@ -42,37 +42,38 @@ const Home =()=> {
   }
 
   return (
-    <>
-      <div className="main">
-        <div className="left">
-          <div className="table">
-            <Tablechart data={data} onDataClick={handleDataClick} />
-          </div>
-          <div className="total">
-            <Correlationchart />
-          </div>
-          <div className="column">
-            <Charttable />
-          </div>
+    <div className="main">
+      <div className="divide-same-width">
+        <div className="box overflow-scroll">
+          <Tablechart data={data} onDataClick={handleDataClick} />
         </div>
-        <div className="right">
-          <div className="action_log"></div>
-          <div className="action"></div>
-          <div className="quality">
-            <Spiderchart data={data} />
-            <Spiderchart data={data} />
-            {/* attribute d: Expected number, "M0,NaNL0.3999999999…". */}
-            <Densitychart data={data} />
-            <Densitychart data={data} />
-            <Boxchart data={data} />
-            <Boxchart data={data} />
-            <Scatterchart />
-            <Scatterchart />
-          </div>
-          <div className="model">model</div>
+        <div className="box overflow-scroll">
+          <Charttable />
         </div>
       </div>
-    </>
+      <div className="box vertical-align-center">
+        어쩌구 > 저쩌구 > 어쩌구 > 저쩌구
+      </div>
+      <div className="divide-same-width">
+        <div className="divide-same-width box">
+          <div style={{ borderRight: '2px dashed black' }}>점선 기준 왼쪽</div>
+          <div>점선 기준 오른쪽</div>
+        </div>
+        <div className="box">
+          <Scatterchart />
+          <Scatterchart />
+        </div>
+      </div>
+      <div className="box">
+        <Spiderchart data={data} />
+        <Spiderchart data={data} />
+        {/* attribute d: Expected number, "M0,NaNL0.3999999999…". */}
+        <Densitychart data={data} />
+        <Densitychart data={data} />
+        <Boxchart data={data} />
+        <Boxchart data={data} />
+      </div>
+    </div>
   )
 }
 
