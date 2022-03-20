@@ -1,28 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import Tablechart from '../components/Tablechart';
-import Barchart1 from '../components/Barchart1';
-import Barchart2 from '../components/Barchart2';
-import Charttable from '../components/Charttable';
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import Tablechart from '../components/Tablechart'
+import Barchart1 from '../components/Barchart1'
+import Barchart2 from '../components/Barchart2'
+import Charttable from '../components/Charttable'
 
-import Treechart from '../components/Treechart';
+import Treechart from '../components/Treechart'
 
-import Histogramchart1 from '../components/Histogramchart1';
-import Histogramchart2 from '../components/Histogramchart2';
-import Correlationchart from '../components/Correlationchart';
-import Scatterchart from '../components/Scatterchart';
+import Histogramchart1 from '../components/Histogramchart1'
+import Histogramchart2 from '../components/Histogramchart2'
+import Correlationchart from '../components/Correlationchart'
+import Scatterchart from '../components/Scatterchart'
 
-import Spiderchart from '../components/Spiderchart';
-import Densitychart from '../components/Densitychart';
-import Boxchart from '../components/Boxchart';
+import Spiderchart from '../components/Spiderchart'
+import Densitychart from '../components/Densitychart'
+import Boxchart from '../components/Boxchart'
 
 const PORT = 5000
 
-const Home =()=> {
-  const [data, setData] = useState([]);
+const Home = () => {
+  const [data, setData] = useState([])
+  const [selectedCharttablePos, setSelectedCharttablePos] = useState({
+    row: 0,
+    col: 0,
+  })
 
   useEffect(() => {
-    axios.get(`http://${window.location.hostname}:${PORT}/static/unemployment.json?` + Math.random())
+    axios
+      .get(
+        `http://${window.location.hostname}:${PORT}/static/unemployment.json?` +
+          Math.random()
+      )
       .then(response => {
         console.log(response.data)
         setData(response.data)
@@ -43,7 +51,13 @@ const Home =()=> {
             <Barchart1 />
             <Barchart2 />
           </div>
-          <div><Charttable /></div>
+          <div>
+            <Charttable
+              onClick={(rowIdx, colIdx) =>
+                setSelectedCharttablePos({ row: rowIdx, col: colIdx })
+              }
+            />
+          </div>
         </div>
       </div>
       <div className="box vertical-align-center">
@@ -52,7 +66,7 @@ const Home =()=> {
       <div className="divide-same-width">
         <div className="divide-same-width box">
           <div style={{ borderRight: '2px dashed black' }}>
-            <Histogramchart1 />
+            <Histogramchart1 selectedCharttablePos={selectedCharttablePos} />
           </div>
           <div>
             <Histogramchart2 />
@@ -62,7 +76,7 @@ const Home =()=> {
             <Histogramchart2 />
           </div>
         </div>
-        <div className="box">
+        <div className="box divide-same-width">
           <Correlationchart />
           <Scatterchart />
         </div>
@@ -80,4 +94,4 @@ const Home =()=> {
   )
 }
 
-export default Home;
+export default Home

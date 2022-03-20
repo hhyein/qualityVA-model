@@ -1,5 +1,5 @@
-import React from 'react';
-import Barchart1 from './Barchart1';
+import React from 'react'
+import Barchart1 from './Barchart1'
 
 const exampleData = [
   {
@@ -25,10 +25,10 @@ const exampleData = [
     incons: <Barchart1 />,
     'quantile statistics': <Barchart1 />,
     'descriptive statistics': <Barchart1 />,
-  }
+  },
 ]
 export default function Charttable(props) {
-  const { data = exampleData } = props
+  const { data = exampleData, onClick } = props
 
   return data.length > 0 ? (
     <table border={1}>
@@ -40,11 +40,11 @@ export default function Charttable(props) {
         </tr>
       </thead>
       <tbody>
-        {data.map(({ key, ...others }) => (
+        {data.map(({ key, ...others }, rowIdx) => (
           <tr>
             <th>{key}</th>
-            {Object.values(others).map(chart => (
-              <td>{chart}</td>
+            {Object.values(others).map((chart, colIdx) => (
+              <td onClick={() => onClick(rowIdx, colIdx)}>{chart}</td>
             ))}
           </tr>
         ))}
