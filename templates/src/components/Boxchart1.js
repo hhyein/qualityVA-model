@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from 'react';
 
 function Boxchart1(props) {
   const {data} = props;
-  console.log(data);
-
   const svgRef = useRef();
   const d3 = window.d3v4;
 
