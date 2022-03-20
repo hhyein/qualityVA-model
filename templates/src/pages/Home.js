@@ -15,6 +15,7 @@ import Scatterchart from '../components/Scatterchart'
 import Spiderchart from '../components/Spiderchart'
 import Densitychart2 from '../components/Densitychart2';
 import Boxchart2 from '../components/Boxchart2';
+import Linechart from '../components/Linechart';
 
 const PORT = 5000
 
@@ -87,6 +88,7 @@ const Home = () => {
         {/* attribute d: Expected number, "M0,NaNL0.3999999999…". */}
         <Densitychart2 data={data} />
         <Boxchart2 data={data} />
+        <Linechart data={data} />
       </div>
     </div>
   )
