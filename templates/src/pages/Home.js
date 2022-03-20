@@ -83,7 +83,10 @@ const Home = () => {
           <Tablechart data={data} />
         </div>
         <div className="box" style={{ gridArea: 'horizontal-bar-chart' }}>
-          <div className="divide-same-width" style={{ gridGap: '10px' }}>
+          <div
+            className="divide-same-width"
+            style={{ gridGap: '10px', height: '150px' }}
+          >
             <Barchart1 data={data1} />
             <Barchart2 data={data2} />
           </div>

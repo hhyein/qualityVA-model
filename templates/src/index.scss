@@ -1,5 +1,7 @@
 :root {
   --grey-050: rgb(248, 249, 250);
+  --grey-070: #ececec;
+  --blue-500: rgb(41, 162, 130);
   --blue-700: rgb(18, 26, 82);
 }
 
@@ -51,6 +53,28 @@ table {
   border-spacing: 0;
   table-layout: fixed;
   margin: 2px;
+}
+
+table th,
+table td {
+  font-size: 12px;
+  padding: 6px;
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+}
+
+table th:last-child,
+table td:last-child {
+  border-right: none;
+}
+
+tbody tr:last-child > th,
+tr:last-child > td {
+  border-bottom: none;
+}
+
+table th {
+  background-color: var(--grey-070);
 }
 
 .node circle {

@@ -5,12 +5,15 @@ export default function Charttable(props) {
   const { data = [], onClick } = props
 
   return data.length > 0 ? (
-    <table border={1}>
+    <table>
       <thead>
         <tr>
-          {Object.keys(data[0]).map(key => (
-            <td key={key}>{key}</td>
-          ))}
+          <th />
+          {Object.keys(data[0])
+            .slice(1)
+            .map(key => (
+              <th key={key}>{key}</th>
+            ))}
         </tr>
       </thead>
       <tbody>

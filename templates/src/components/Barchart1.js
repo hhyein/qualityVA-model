@@ -47,7 +47,7 @@ function Barchart1(props) {
       })
       .attr('height', y.bandwidth())
       .attr('fill', '#69b3a2')
-  }, [props.data, svgRef, d3])
+  }, [data, svgRef, d3])
 
   return (
     <div className="svg-wrapper">

@@ -91,7 +91,7 @@ function Barchart2(props) {
   }, [data, d3, svgRef])
 
   return (
-    <div className="chart-wrapper">
+    <div className="svg-wrapper">
       <svg ref={svgRef}></svg>
     </div>
   )
