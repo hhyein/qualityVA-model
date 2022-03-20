@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import Tablechart from '../components/Tablechart'
-import Spiderchart from '../components/Spiderchart'
-import Densitychart from '../components/Densitychart'
-import Boxchart from '../components/Boxchart'
-import Scatterchart from '../components/Scatterchart'
-import Correlationchart from '../components/Correlationchart'
-import Charttable from '../components/Charttable'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import Tablechart from '../components/Tablechart';
+import Barchart1 from '../components/Barchart1';
+import Barchart2 from '../components/Barchart2';
+import Charttable from '../components/Charttable';
+
+import Treechart from '../components/Treechart';
+
+import Histogramchart from '../components/Histogramchart';
+import Correlationchart from '../components/Correlationchart';
+import Scatterchart from '../components/Scatterchart';
+
+import Spiderchart from '../components/Spiderchart';
+import Densitychart from '../components/Densitychart';
+import Boxchart from '../components/Boxchart';
 
 const PORT = 5000
-const palette = ['#f89b00', '#83dcb7', '#ffd400', '#003458']
 
 const Home =()=> {
   const [data, setData] = useState([]);
-  const [color, setColor] = useState('#000000')
-  const [selectedColumn, setSelectedColumn] = useState('kstest')
 
   useEffect(() => {
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/static/unemployment.json?` +
-          Math.random()
-      )
+    axios.get(`http://${window.location.hostname}:${PORT}/static/unemployment.json?` + Math.random())
       .then(response => {
         console.log(response.data)
         setData(response.data)
@@ -29,38 +29,34 @@ const Home =()=> {
       .catch(error => {
         alert(`ERROR - ${error.message}`)
       })
-
-      .catch(error => {
-        alert(`ERROR - ${error.message}`)
-      })
   }, [])
-
-  const handleDataClick = (column, columnIdx) => {
-    if (column === 'index') return
-    setSelectedColumn(column)
-    setColor(palette[columnIdx - 1])
-  }
 
   return (
     <div className="main">
       <div className="divide-same-width">
         <div className="box overflow-scroll">
-          <Tablechart data={data} onDataClick={handleDataClick} />
+          <Tablechart data={data} />
         </div>
         <div className="box overflow-scroll">
-          <Charttable />
+          <div className="top">
+            <Barchart1 />
+            <Barchart2 />
+          </div>
+          <div className="bottom"><Charttable /></div>
         </div>
       </div>
       <div className="box vertical-align-center">
-        어쩌구 > 저쩌구 > 어쩌구 > 저쩌구
+        <Treechart />
       </div>
       <div className="divide-same-width">
         <div className="divide-same-width box">
-          <div style={{ borderRight: '2px dashed black' }}>점선 기준 왼쪽</div>
+          <div style={{ borderRight: '2px dashed black' }}>
+            <Histogramchart />
+          </div>
           <div>점선 기준 오른쪽</div>
         </div>
         <div className="box">
-          <Scatterchart />
+          <Correlationchart />
           <Scatterchart />
         </div>
       </div>
