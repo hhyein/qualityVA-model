@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function Scatterchart(props) {
   const {data} = props;
@@ -7,14 +7,18 @@ function Scatterchart(props) {
   const svgRef = useRef();
   const d3 = window.d3v4;
 
+  const [clicked, setClicked] = useState(false);
+  const [X, setX] = useState([]);
+  const [Y, setY] = useState([]);
+
   useEffect(() => {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
     // set the dimensions and margins of the graph
     var margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 200 - margin.left - margin.right,
-        height = 200 - margin.top - margin.bottom;
+        width = 400 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     svg
@@ -58,14 +62,34 @@ function Scatterchart(props) {
           .attr("r", 3)
           .style("fill", function (d) { return color(d.Species) } )
 
-    })
+      d3.selectAll("svg")
+        .on("click", function(d, i) {
+          d3.event.preventDefault();
+          setClicked(false);
+        })
 
+        d3.selectAll("circle")    
+        .on("contextmenu", function(d, i) {
+          d3.event.preventDefault();
+          setClicked(true);
+          setX(d3.event.pageX);
+          setY(d3.event.pageY);
+        })        
+    })
     }, [props.data]);
-    
+
   return (
     <>
-      <svg ref={svgRef}>
-      </svg>
+      <svg ref={svgRef}> </svg>
+      {clicked && 
+        <div className="contextMenu" style = {{ position: 'absolute', left: X, top: Y}}>
+          <div className="contextMenu--option">Remove</div>
+          <div className="contextMenu--separator" />
+          <div className="contextMenu--option">Change</div>
+          <div className="contextMenu--separator" />
+          <div className="contextMenu--option">Create</div>
+      </div>
+      }
     </>
   );
 }
