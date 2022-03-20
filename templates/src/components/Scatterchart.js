@@ -82,7 +82,7 @@ function Scatterchart(props) {
   }, [props.data, d3])
 
   return (
-    <div className="svg-wrapper">
+    <>
       <svg ref={svgRef}> </svg>
       {clicked && (
         <div
@@ -96,7 +96,7 @@ function Scatterchart(props) {
           <div className="contextMenu--option">Create</div>
         </div>
       )}
-    </div>
+    </>
   )
 }
 export default Scatterchart
