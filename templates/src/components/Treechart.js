@@ -45,7 +45,7 @@ function Treechart() {
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-    console.log(svg)
+
     var root = treeData[0]
 
     update(root)
@@ -57,7 +57,7 @@ function Treechart() {
 
       // Normalize for fixed-depth.
       nodes.forEach(function (d) {
-        d.y = d.depth * 180
+        d.y = d.depth * 180 + 100
       })
 
       // Declare the nodesâ€¦
@@ -71,6 +71,7 @@ function Treechart() {
         .append('g')
         .attr('class', 'node')
         .attr('transform', function (d) {
+          console.log(d)
           return 'translate(' + d.y + ',' + d.x + ')'
         })
 
@@ -98,7 +99,7 @@ function Treechart() {
       // Enter the links.
       link.enter().insert('path', 'g').attr('class', 'link').attr('d', diagonal)
     }
-  }, [d3])
+  }, [d3, svgRef])
 
   return (
     <div className="svg-wrapper">

@@ -74,8 +74,8 @@ function Scatterchart(props) {
         d3.selectAll('circle').on('contextmenu', function (d, i) {
           d3.event.preventDefault()
           setClicked(true)
-          setX(d3.event.pageX)
-          setY(d3.event.pageY)
+          setX(d3.event.layerX)
+          setY(d3.event.layerY)
         })
 
         svg.append("circle").attr("cx", 330).attr("cy", 30).attr("r", 6).style("fill", "#440154ff")
@@ -89,7 +89,7 @@ function Scatterchart(props) {
   }, [props.data, d3])
 
   return (
-    <>
+    <div className="svg-wrapper">
       <svg ref={svgRef}> </svg>
       {clicked && (
         <div
@@ -103,7 +103,7 @@ function Scatterchart(props) {
           <div className="contextMenu--option">Create</div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 export default Scatterchart

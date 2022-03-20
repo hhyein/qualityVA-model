@@ -31,16 +31,14 @@ body {
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   padding: 10px;
   margin: 10px;
+  position: relative;
+  overflow: auto;
 }
 
 .divide-same-width {
   display: grid;
   grid-auto-columns: minmax(0, 1fr);
   grid-auto-flow: column;
-}
-
-.overflow-scroll {
-  overflow: auto;
 }
 
 .vertical-align-center {

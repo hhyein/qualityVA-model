@@ -52,16 +52,10 @@ const Home = () => {
         <div className="box" style={{ gridArea: 'title' }}>
           데이터셋 이름 적을 곳
         </div>
-        <div
-          className="box overflow-scroll"
-          style={{ gridArea: 'table-chart' }}
-        >
+        <div className="box" style={{ gridArea: 'table-chart' }}>
           <Tablechart data={data} />
         </div>
-        <div
-          className="box overflow-scroll"
-          style={{ gridArea: 'horizontal-bar-chart' }}
-        >
+        <div className="box" style={{ gridArea: 'horizontal-bar-chart' }}>
           <div>
             <Barchart1 />
             <Barchart2 />
