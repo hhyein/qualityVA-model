@@ -12,8 +12,8 @@ function Correlationchart(props) {
     d3.select(svgRef.current).selectAll('*').remove()
 
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = 400 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     svg
       .append('svg')
@@ -124,7 +124,7 @@ function Correlationchart(props) {
           .style('opacity', 0.8)
       }
     )
-  }, [props.data, d3])
+  }, [props.data, d3, svgRef])
 
   return (
     <div className="svg-wrapper">

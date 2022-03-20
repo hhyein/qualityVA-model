@@ -17,8 +17,8 @@ function Scatterchart(props) {
 
     // set the dimensions and margins of the graph
     var margin = { top: 10, right: 30, bottom: 30, left: 60 },
-      width = 400 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     // append the svg object to the body of the page
     svg
@@ -86,7 +86,7 @@ function Scatterchart(props) {
         svg.append("text").attr("x", 340).attr("y", 70).text("virginica").style("font-size", "15px").attr("alignment-baseline","middle")
       }
     )
-  }, [props.data, d3])
+  }, [props.data, d3, svgRef])
 
   return (
     <div className="svg-wrapper">
