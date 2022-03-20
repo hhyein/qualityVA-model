@@ -9,6 +9,22 @@ const exampleData = [
     incons: <Barchart1 />,
     'quantile statistics': <Barchart1 />,
     'descriptive statistics': <Barchart1 />,
+  },
+  {
+    key: 'column 2',
+    missing: <Barchart1 />,
+    outlier: <Barchart1 />,
+    incons: <Barchart1 />,
+    'quantile statistics': <Barchart1 />,
+    'descriptive statistics': <Barchart1 />,
+  },
+  {
+    key: 'column 3',
+    missing: <Barchart1 />,
+    outlier: <Barchart1 />,
+    incons: <Barchart1 />,
+    'quantile statistics': <Barchart1 />,
+    'descriptive statistics': <Barchart1 />,
   }
 ]
 export default function Charttable(props) {
