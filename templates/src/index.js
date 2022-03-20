@@ -1,27 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Home } from './pages';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Home } from './pages'
 import './index.scss'
 
 class Application extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
-      page: '/'
-    };
+      page: '/',
+    }
   }
 
   render() {
     return (
       <>
-      <div className="container">
-        <header></header>
-        <section><Home /></section>
-        <footer></footer>
-      </div>
+        <div className="container">
+          <header></header>
+          <section>
+            <Home />
+          </section>
+          <footer></footer>
+        </div>
       </>
-    );
+    )
   }
 }
 
-ReactDOM.render(<Application />, document.getElementById('app'));
+ReactDOM.render(<Application />, document.getElementById('app'))
