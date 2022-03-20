@@ -7,7 +7,8 @@ import Charttable from '../components/Charttable';
 
 import Treechart from '../components/Treechart';
 
-import Histogramchart from '../components/Histogramchart';
+import Histogramchart1 from '../components/Histogramchart1';
+import Histogramchart2 from '../components/Histogramchart2';
 import Correlationchart from '../components/Correlationchart';
 import Scatterchart from '../components/Scatterchart';
 
@@ -38,11 +39,11 @@ const Home =()=> {
           <Tablechart data={data} />
         </div>
         <div className="box overflow-scroll">
-          <div className="top">
+          <div>
             <Barchart1 />
             <Barchart2 />
           </div>
-          <div className="bottom"><Charttable /></div>
+          <div><Charttable /></div>
         </div>
       </div>
       <div className="box vertical-align-center">
@@ -51,9 +52,15 @@ const Home =()=> {
       <div className="divide-same-width">
         <div className="divide-same-width box">
           <div style={{ borderRight: '2px dashed black' }}>
-            <Histogramchart />
+            <Histogramchart1 />
           </div>
-          <div>점선 기준 오른쪽</div>
+          <div>
+            <Histogramchart2 />
+            <Histogramchart2 />
+            <Histogramchart2 />
+            <Histogramchart2 />
+            <Histogramchart2 />
+          </div>
         </div>
         <div className="box">
           <Correlationchart />
