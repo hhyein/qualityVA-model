@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react'
 
 function Scatterchart(props) {
   const { data } = props
-  console.log(data)
-
   const svgRef = useRef()
   const d3 = window.d3v4
 
