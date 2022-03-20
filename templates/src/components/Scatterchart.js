@@ -77,6 +77,13 @@ function Scatterchart(props) {
           setX(d3.event.pageX)
           setY(d3.event.pageY)
         })
+
+        svg.append("circle").attr("cx", 330).attr("cy", 30).attr("r", 6).style("fill", "#440154ff")
+        svg.append("text").attr("x", 340).attr("y", 30).text("setosa").style("font-size", "15px").attr("alignment-baseline","middle")
+        svg.append("circle").attr("cx", 330).attr("cy", 50).attr("r", 6).style("fill", "#21908dff")
+        svg.append("text").attr("x", 340).attr("y", 50).text("versicolor").style("font-size", "15px").attr("alignment-baseline","middle")
+        svg.append("circle").attr("cx", 330).attr("cy", 70).attr("r", 6).style("fill", "#fde725ff")
+        svg.append("text").attr("x", 340).attr("y", 70).text("virginica").style("font-size", "15px").attr("alignment-baseline","middle")
       }
     )
   }, [props.data, d3])
