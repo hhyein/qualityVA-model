@@ -46,7 +46,7 @@ const Home = () => {
         alert(`ERROR - ${error.message}`)
       })
 
-      axios
+    axios
       .get(
         `http://${window.location.hostname}:${PORT}/static/barchart1.json?` +
           Math.random()
@@ -58,7 +58,7 @@ const Home = () => {
         alert(`ERROR - ${error.message}`)
       })
 
-      axios
+    axios
       .get(
         `http://${window.location.hostname}:${PORT}/static/barchart2.json?` +
           Math.random()
@@ -83,7 +83,7 @@ const Home = () => {
           <Tablechart data={data} />
         </div>
         <div className="box" style={{ gridArea: 'horizontal-bar-chart' }}>
-          <div>
+          <div className="divide-same-width" style={{ gridGap: '10px' }}>
             <Barchart1 data={data1} />
             <Barchart2 data={data2} />
           </div>
@@ -96,7 +96,7 @@ const Home = () => {
                   outlier: <Barchart1 data={data1} />,
                   incons: <Barchart1 data={data1} />,
                   'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />
+                  'descriptive statistics': <Barchart1 data={data1} />,
                 },
                 {
                   key: 'column 2',
@@ -104,7 +104,7 @@ const Home = () => {
                   outlier: <Barchart1 data={data1} />,
                   incons: <Barchart1 data={data1} />,
                   'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />
+                  'descriptive statistics': <Barchart1 data={data1} />,
                 },
                 {
                   key: 'column 3',
@@ -112,8 +112,8 @@ const Home = () => {
                   outlier: <Barchart1 data={data1} />,
                   incons: <Barchart1 data={data1} />,
                   'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />
-                }
+                  'descriptive statistics': <Barchart1 data={data1} />,
+                },
               ]}
               onClick={(rowIdx, colIdx) =>
                 setSelectedCharttablePos({ row: rowIdx, col: colIdx })

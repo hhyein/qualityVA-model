@@ -6,14 +6,14 @@ function Correlationchart(props) {
   const d3 = window.d3v4
 
   useEffect(() => {
-    var svg = d3.select(svgRef.current)
-    d3.select(svgRef.current).selectAll('*').remove()
-
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
-    svg
+    d3.select(svgRef.current).selectAll('*').remove()
+
+    var svg = d3
+      .select(svgRef.current)
       .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
@@ -124,10 +124,6 @@ function Correlationchart(props) {
     )
   }, [props.data, d3, svgRef])
 
-  return (
-    <div className="svg-wrapper">
-      <svg ref={svgRef}></svg>
-    </div>
-  )
+  return <div className="svg-wrapper" ref={svgRef}></div>
 }
 export default Correlationchart

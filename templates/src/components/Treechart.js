@@ -5,9 +5,6 @@ function Treechart() {
   const d3 = window.d3v3
 
   useEffect(() => {
-    var svg = d3.select(svgRef.current)
-    d3.select(svgRef.current).selectAll('*').remove()
-
     var treeData = [
       {
         name: 'Top Level',
@@ -28,23 +25,27 @@ function Treechart() {
     ]
 
     // ************** Generate the tree diagram  *****************
-    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+    var margin = { top: 0, right: 0, bottom: 0, left: 100 },
       width = svgRef.current.clientWidth - margin.right - margin.left,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     var i = 0
+
+    d3.select(svgRef.current).selectAll('*').remove()
+
+    var svg = d3
+      .select(svgRef.current)
+      .append('svg')
+      .attr('width', width + margin.right + margin.left)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     var tree = d3.layout.tree().size([height, width])
 
     var diagonal = d3.svg.diagonal().projection(function (d) {
       return [d.y, d.x]
     })
-
-    svg
-      .attr('width', width + margin.right + margin.left)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     var root = treeData[0]
 
@@ -57,7 +58,7 @@ function Treechart() {
 
       // Normalize for fixed-depth.
       nodes.forEach(function (d) {
-        d.y = d.depth * 180 + 100
+        d.y = d.depth * 180
       })
 
       // Declare the nodesâ€¦
@@ -101,10 +102,6 @@ function Treechart() {
     }
   }, [d3, svgRef])
 
-  return (
-    <div className="svg-wrapper">
-      <svg ref={svgRef} />
-    </div>
-  )
+  return <div className="svg-wrapper" ref={svgRef}></div>
 }
 export default Treechart
