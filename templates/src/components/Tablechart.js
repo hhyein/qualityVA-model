@@ -1,15 +1,11 @@
 import React from 'react';
 
-const divStyle = {
-  overflow: 'scroll'
-};
-
 function Tablechart(props) {
   const {data, onDataClick} = props;
 
   return (
     <>
-      <div className="table" style = {divStyle}>
+      <div className="table">
         <table border={1} style={{ width: '100%'}}>
           <thead>
             <tr>
