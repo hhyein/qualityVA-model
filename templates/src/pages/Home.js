@@ -13,8 +13,8 @@ import Correlationchart from '../components/Correlationchart'
 import Scatterchart from '../components/Scatterchart'
 
 import Spiderchart from '../components/Spiderchart'
-import Densitychart from '../components/Densitychart'
-import Boxchart from '../components/Boxchart'
+import Densitychart2 from '../components/Densitychart2';
+import Boxchart2 from '../components/Boxchart2';
 
 const PORT = 5000
 
@@ -85,10 +85,8 @@ const Home = () => {
         <Spiderchart data={data} />
         <Spiderchart data={data} />
         {/* attribute d: Expected number, "M0,NaNL0.3999999999…". */}
-        <Densitychart data={data} />
-        <Densitychart data={data} />
-        <Boxchart data={data} />
-        <Boxchart data={data} />
+        <Densitychart2 data={data} />
+        <Boxchart2 data={data} />
       </div>
     </div>
   )
