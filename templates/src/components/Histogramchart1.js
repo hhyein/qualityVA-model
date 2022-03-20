@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from 'react'
 
 function Histogramchart1(props) {
   const { data, selectedCharttablePos } = props
-  console.log(data)
-  console.log(selectedCharttablePos)
   const svgRef = useRef()
   const d3 = window.d3v4
 
