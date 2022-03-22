@@ -9,30 +9,25 @@ function Barchart1(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 20, left: 50 },
-      width = svgRef.current.clientWidth - margin.left - margin.right,
-      height = svgRef.current.clientHeight - margin.top - margin.bottom
+    var margin = { top: 20, right: 0, bottom: 0, left: 0 },
+      width = 150 - margin.left - margin.right,
+      height = 50 - margin.top - margin.bottom
 
-    // append the svg object to the body of the page
     svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    // Add X axis
-    var x = d3.scaleLinear().domain([0, 1300]).range([0, width])
+    var x = d3.scaleLinear().domain([0, 100]).range([0, width])
     svg
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(x))
 
-    // Y axis
-    var y = d3.scaleBand().range([0, height]).padding(0.2)
+    var y = d3.scaleBand().range([0, height]).padding(.2)
     svg.append('g').call(d3.axisLeft(y))
 
-    //Bars
     svg
       .selectAll('myRect')
       .data(data)
