@@ -23,7 +23,6 @@ function Correlationchart(props) {
     d3.csv(
       'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_correlogram.csv',
       function (error, rows) {
-        // Going from wide to long format
         var data = []
         rows.forEach(function (d) {
           var x = d['']
@@ -39,7 +38,6 @@ function Correlationchart(props) {
           }
         })
 
-        // List of all variables and number of them
         var domain = d3
           .set(
             data.map(function (d) {
@@ -49,22 +47,15 @@ function Correlationchart(props) {
           .values()
         var num = Math.sqrt(data.length)
 
-        // Create a color scale
         var color = d3
           .scaleLinear()
           .domain([-1, 0, 1])
           .range(['#B22222', '#fff', '#000080'])
 
-        // Create a size scale for bubbles on top right. Watch out: must be a rootscale!
         var size = d3.scaleSqrt().domain([0, 1]).range([0, 9])
-
-        // X scale
         var x = d3.scalePoint().range([0, width]).domain(domain)
-
-        // Y scale
         var y = d3.scalePoint().range([0, height]).domain(domain)
 
-        // Create one 'g' element for each cell of the correlogram
         var cor = svg
           .selectAll('.cor')
           .data(data)
@@ -75,7 +66,6 @@ function Correlationchart(props) {
             return 'translate(' + x(d.x) + ',' + y(d.y) + ')'
           })
 
-        // Low left part + Diagonal: Add the text with specific color
         cor
           .filter(function (d) {
             var ypos = domain.indexOf(d.y)
@@ -101,7 +91,6 @@ function Correlationchart(props) {
             }
           })
 
-        // Up right part: add circles
         cor
           .filter(function (d) {
             var ypos = domain.indexOf(d.y)
