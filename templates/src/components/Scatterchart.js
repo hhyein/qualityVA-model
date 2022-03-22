@@ -13,40 +13,33 @@ function Scatterchart(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 30, left: 60 },
+    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
-    // append the svg object to the body of the page
     svg
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    //Read the data
     d3.csv(
       'https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv',
       function (data) {
-        // Add X axis
         var x = d3.scaleLinear().domain([4, 8]).range([0, width])
         svg
           .append('g')
           .attr('transform', 'translate(0,' + height + ')')
           .call(d3.axisBottom(x))
 
-        // Add Y axis
         var y = d3.scaleLinear().domain([0, 9]).range([height, 0])
         svg.append('g').call(d3.axisLeft(y))
 
-        // Color scale: give me a specie name, I return a color
         var color = d3
           .scaleOrdinal()
           .domain(['setosa', 'versicolor', 'virginica'])
           .range(['#440154ff', '#21908dff', '#fde725ff'])
 
-        // Add dots
         svg
           .append('g')
           .selectAll('dot')
@@ -75,13 +68,6 @@ function Scatterchart(props) {
           setX(d3.event.layerX)
           setY(d3.event.layerY)
         })
-
-        svg.append("circle").attr("cx", 330).attr("cy", 30).attr("r", 6).style("fill", "#440154ff")
-        svg.append("text").attr("x", 340).attr("y", 30).text("setosa").style("font-size", "15px").attr("alignment-baseline","middle")
-        svg.append("circle").attr("cx", 330).attr("cy", 50).attr("r", 6).style("fill", "#21908dff")
-        svg.append("text").attr("x", 340).attr("y", 50).text("versicolor").style("font-size", "15px").attr("alignment-baseline","middle")
-        svg.append("circle").attr("cx", 330).attr("cy", 70).attr("r", 6).style("fill", "#fde725ff")
-        svg.append("text").attr("x", 340).attr("y", 70).text("virginica").style("font-size", "15px").attr("alignment-baseline","middle")
       }
     )
   }, [props.data, d3, svgRef])
