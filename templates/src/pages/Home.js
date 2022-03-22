@@ -24,7 +24,7 @@ import { mainLayout1Style, mainLayout2Style } from '../const'
 const PORT = 5000
 
 const Home = () => {
-  const [mainStyle, setMainStyle] = useState(mainLayout1Style)
+  const [mainStyle, setMainStyle] = useState(mainLayout2Style)
   const [data, setData] = useState([])
   const [data1, setData1] = useState([])
   const [data2, setData2] = useState([])
@@ -73,8 +73,6 @@ const Home = () => {
 
   return (
     <div>
-      <button onClick={() => setMainStyle(mainLayout1Style)}>레이아웃1</button>
-      <button onClick={() => setMainStyle(mainLayout2Style)}>레이아웃2</button>
       <div className="main" style={mainStyle}>
         <div className="box" style={{ gridArea: 'title' }}>
           데이터셋 이름 적을 곳
@@ -85,7 +83,7 @@ const Home = () => {
         <div className="box" style={{ gridArea: 'horizontal-bar-chart' }}>
           <div
             className="divide-same-width"
-            style={{ gridGap: '10px', height: '150px' }}
+            style={{ gridGap: '10px', height: '80px' }}
           >
             <Barchart1 data={data1} />
             <Barchart2 data={data2} />
@@ -98,25 +96,33 @@ const Home = () => {
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
                   incons: <Barchart1 data={data1} />,
-                  'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />,
+                  // 'quantile statistics': <Boxchart1 />,
+                  // 'descriptive statistics': <Barchart1 data={data1} />
                 },
                 {
                   key: 'column 2',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />,
-                  'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />,
+                  incons: <Barchart1 data={data1} />
                 },
                 {
                   key: 'column 3',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />,
-                  'quantile statistics': <Barchart1 data={data1} />,
-                  'descriptive statistics': <Barchart1 data={data1} />,
+                  incons: <Barchart1 data={data1} />
                 },
+                {
+                  key: 'column 4',
+                  missing: <Barchart1 data={data1} />,
+                  outlier: <Barchart1 data={data1} />,
+                  incons: <Barchart1 data={data1} />
+                },
+                {
+                  key: 'column 5',
+                  missing: <Barchart1 data={data1} />,
+                  outlier: <Barchart1 data={data1} />,
+                  incons: <Barchart1 data={data1} />
+                }
               ]}
               onClick={(rowIdx, colIdx) =>
                 setSelectedCharttablePos({ row: rowIdx, col: colIdx })
