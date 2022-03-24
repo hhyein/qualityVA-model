@@ -1,5 +1,4 @@
 import React from 'react'
-import Barchart1 from './Barchart1'
 
 export default function Charttable(props) {
   const { data = [], onClick } = props
