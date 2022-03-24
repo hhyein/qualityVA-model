@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react'
 
-function Histogramchart(props) {
-  const {data} = props;
-  const svgRef = useRef();
-  const d3 = window.d3v4;
+function Histogramchart2(props) {
+  const {data} = props
+  const svgRef = useRef()
+  const d3 = window.d3v4
 
   useEffect(() => {
     var svg = d3.select(svgRef.current);
@@ -21,7 +21,6 @@ function Histogramchart(props) {
               "translate(" + margin.left + "," + margin.top + ")");
 
     d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", function(data) {
-
       var x = d3.scaleLinear()
           .domain([0, 1000])
           .range([0, width]);
@@ -59,9 +58,9 @@ function Histogramchart(props) {
 
   return (
     <>
-      <svg ref={svgRef}>
+      <svg ref = {svgRef}>
       </svg>
     </>
   );
 }
-export default Histogramchart;
+export default Histogramchart2
