@@ -1,11 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react'
 
-function Barchart(props) {
-  const {data} = props;
-  console.log(data);
-
-  const svgRef = useRef();
-  const d3 = window.d3v4;
+function Spiderchart(props) {
+  const {data} = props
+  const svgRef = useRef()
+  const d3 = window.d3v4
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)
@@ -60,7 +58,6 @@ function Barchart(props) {
       var line_coordinate = angleToCoordinate(angle, 10);
       var label_coordinate = angleToCoordinate(angle, 10.5);
   
-      //draw axis line
       svg.append("line")
       .attr("x1", 100)
       .attr("y1", 100)
@@ -68,7 +65,6 @@ function Barchart(props) {
       .attr("y2", line_coordinate.y)
       .attr("stroke","black");
   
-      //draw axis label
       svg.append("text")
       .attr("x", label_coordinate.x)
       .attr("y", label_coordinate.y)
@@ -96,7 +92,6 @@ function Barchart(props) {
       var color = colors[i];
       var coordinates = getPathCoordinates(d);
   
-      //draw the path element
       svg.append("path")
       .datum(coordinates)
       .attr("d",line)
@@ -108,13 +103,11 @@ function Barchart(props) {
     }
     }, [props.data]);
 
-
-    
   return (
     <>
-      <svg ref={svgRef}>
+      <svg ref = {svgRef}>
       </svg>
     </>
   );
 }
-export default Barchart;
+export default Spiderchart
