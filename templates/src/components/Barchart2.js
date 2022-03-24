@@ -19,8 +19,15 @@ function Barchart2(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var subgroups = ['Nitrogen', 'normal', 'stress']
-    var groups = ['banana', 'poacee', 'sorgho', 'triticum']
+    var subgroups = {}
+    Object.assign(subgroups, data[0])
+    subgroups = Object.keys(subgroups)
+    for(var i = 0; i < subgroups.length; i++) {
+      if(subgroups[i] === 'group')  {
+        subgroups.splice(i, 1);
+        i--;
+      }
+    }
 
     var x = d3.scaleLinear().domain([0, 100]).range([0, width])
     svg
@@ -76,11 +83,11 @@ function Barchart2(props) {
         return x(d[1]) - x(d[0])
       })
       .attr('height', y.bandwidth())
-  }, [data, d3, svgRef])
+  }, [props.data])
 
   return (
-    <div className="svg-wrapper">
-      <svg ref={svgRef}></svg>
+    <div className = "svg-wrapper">
+      <svg ref = {svgRef}></svg>
     </div>
   )
 }
