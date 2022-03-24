@@ -77,6 +77,9 @@ const Home = () => {
         <div className="box" style={{ gridArea: 'title' }}>
           데이터셋 이름 적을 곳
         </div>
+        <div className="box" style={{ gridArea: 'line-chart' }}>
+          <Linechart data={data} />
+        </div>
         <div className="box" style={{ gridArea: 'table-chart' }}>
           <Tablechart data={data} />
         </div>
@@ -103,26 +106,26 @@ const Home = () => {
                   key: 'column 2',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />
+                  incons: <Barchart1 data={data1} />,
                 },
                 {
                   key: 'column 3',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />
+                  incons: <Barchart1 data={data1} />,
                 },
                 {
                   key: 'column 4',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />
+                  incons: <Barchart1 data={data1} />,
                 },
                 {
                   key: 'column 5',
                   missing: <Barchart1 data={data1} />,
                   outlier: <Barchart1 data={data1} />,
-                  incons: <Barchart1 data={data1} />
-                }
+                  incons: <Barchart1 data={data1} />,
+                },
               ]}
               onClick={(rowIdx, colIdx) =>
                 setSelectedCharttablePos({ row: rowIdx, col: colIdx })
@@ -152,17 +155,23 @@ const Home = () => {
           </div>
         </div>
         <div
-          className="box divide-same-width"
-          style={{ gridArea: 'scatter-chart' }}
+          className="divide-same-width box"
+          style={{ gridArea: 'class-level' }}
         >
           <Correlationchart />
+          <div>class level 우측</div>
+        </div>
+        <div
+          className="divide-same-width box"
+          style={{ gridArea: 'feature-level' }}
+        >
           <Scatterchart />
+          <div>feature level 우측</div>
         </div>
         <div className="box" style={{ gridArea: 'other-chart' }}>
           <Spiderchart data={data} />
           <Densitychart2 data={data} />
           <Boxchart2 data={data} />
-          <Linechart data={data} />
         </div>
       </div>
     </div>

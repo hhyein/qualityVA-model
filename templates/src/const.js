@@ -10,14 +10,16 @@ export const mainLayout1Style = {
 }
 
 export const mainLayout2Style = {
-  gridTemplateColumns: '1fr 1fr 0.5fr 0.5fr',
-  gridTemplateRows: '100px 100px 200px 200px 200px 200px',
+  gridTemplateColumns: '1fr 0.7fr 0.7fr 0.5fr',
+  gridTemplateRows: '60px 100px 160px 160px 160px 160px 160px 160px',
   gridTemplateAreas: `
     'title title title title'
-    'table-chart tree-chart tree-chart tree-chart'
-    'table-chart vertical-bar-chart vertical-bar-chart other-chart'
+    'line-chart tree-chart tree-chart tree-chart'
+    'line-chart class-level class-level other-chart'
+    'table-chart class-level class-level other-chart'
+    'table-chart feature-level feature-level other-chart'
+    'horizontal-bar-chart feature-level feature-level other-chart'
     'horizontal-bar-chart vertical-bar-chart vertical-bar-chart other-chart'
-    'horizontal-bar-chart scatter-chart scatter-chart other-chart'
-    'horizontal-bar-chart scatter-chart scatter-chart other-chart
+    'horizontal-bar-chart vertical-bar-chart vertical-bar-chart other-chart'
   `,
 }
