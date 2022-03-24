@@ -1,33 +1,35 @@
 import React, { useEffect, useRef } from 'react'
 
 function Histogramchart1(props) {
-  const { data, selectedCharttablePos } = props
+  const { data } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
   useEffect(() => {
+    console.log(data)
+
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
     var data = []
     var ordinals = []
     
-    for(var i = 0; i < 100; i++){
+    for(var i = 0; i < 20; i++){
       data.push({
         value: Math.random()*10,
-        city: 'test' + i
+        city: i
       })
-      ordinals.push('test' + i)
+      ordinals.push(i)
     }
     
-    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = 350 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom - 80,
+    var margin = { top: 20, right: 20, bottom: 0, left: 20 },
+      width = 400 - margin.left - margin.right,
+      height = 300 - margin.top - margin.bottom,
       height2 = 30
     
     svg
-      .attr('width', 550)
-      .attr('height', 400)
+      .attr('width', 400)
+      .attr('height', 300)
     
     var focus = svg.append('g')
       .attr('class', 'focus')
@@ -59,82 +61,90 @@ function Histogramchart1(props) {
     y2.domain([0, d3.max(data, d => d.value)])
     
     focus.append('g')
-         .attr('clip-path','url(#my-clip-path)')
-         .selectAll('.bar')
-         .data(data)
-         .enter()
-         .append('rect')
-         .attr('class', 'bar')
-         .attr('x', (d, i) => {
-          return x(i) - xBand.bandwidth()*0.9/2
-         })
-         .attr('y', (d, i) => {
-          return y(d.value)
-         })
-         .attr('width', xBand.bandwidth()*0.9)
-         .attr('height', d => {
-          return height - y(d.value)
-         })
+      .attr('clip-path','url(#my-clip-path)')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d, i) => {
+      return x(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', (d, i) => {
+      return y(d.value)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', d => {
+      return height - y(d.value)
+      })
+      .style("fill", function(d) {
+        if (d.city > 15) { return 'red' }
+        else {return 'steelblue' }
+      });
     
     focus.append('g')
-          .attr('class', 'axis')
-          .attr('transform', 'translate(' + 0 + ',' + height + ')')
-          .call(xAxis)
+      .attr('class', 'axis')
+      .attr('transform', 'translate(' + 0 + ',' + height + ')')
+      .call(xAxis)
     
     focus.append('g')
-          .attr('class', 'axis axis--y')
-          .call(yAxis)
+      .attr('class', 'axis axis--y')
+      .call(yAxis)
     
     var defs = focus.append('defs')
     
     defs.append('clipPath')
-        .attr('id', 'my-clip-path')
-        .append('rect')
-        .attr('width', width)
-        .attr('height', height)
+      .attr('id', 'my-clip-path')
+      .append('rect')
+      .attr('width', width)
+      .attr('height', height)
     
     context.selectAll('.bar')
-         .data(data)
-         .enter()
-         .append('rect')
-         .attr('class', 'bar')
-         .attr('x', (d, i) => {
-          return x2(i) - xBand.bandwidth()*0.9/2
-         })
-         .attr('y', (d, i) => y2(d.value))
-         .attr('width', xBand.bandwidth()*0.9)
-         .attr('height', d => {
-          return height2 - y2(d.value)
-         })
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d, i) => {
+      return x2(i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', (d, i) => y2(d.value))
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', d => {
+      return height2 - y2(d.value)
+      })
+      .style("fill", function(d) {
+      if (d.city > 15) { return 'red' }
+      else {return 'steelblue' }
+    });
     
     context.append('g')
-          .attr('class', 'axis2')
-          .attr('transform', 'translate(' + 0 + ',' + height2 + ')')
-          .call(xAxis)
+      .attr('class', 'axis2')
+      .attr('transform', 'translate(' + 0 + ',' + height2 + ')')
+      .call(xAxis)
     
     context.append('g')
-          .attr('class', 'brush')
-          .call(brush)
-          .call(brush.move, x.range())
+      .attr('class', 'brush')
+      .call(brush)
+      .call(brush.move, x.range())
     
     function brushed() {
       var s = d3.event.selection || x2.range()
-      console.log(x.invert(s[0]))
-      console.log(x.invert(s[1]))
+      // console.log(x.invert(s[0]))
+      // console.log(x.invert(s[1]))
 
       x.domain(s.map(x2.invert, x2))
       focus.select('.axis').call(xAxis)
       focus.selectAll('.bar')
-           .attr('x', (d, i) => {
-            return x(i) - xBand.bandwidth()*0.9/2
-           })
-          }
+        .attr('x', (d, i) => {
+        return x(i) - xBand.bandwidth()*0.9/2
+        })
+      }
   }, [props.data])
 
   return (
-    <>
-      <svg ref={svgRef}></svg>
-    </>
+    <div className = "svg-wrapper">
+      <svg ref = {svgRef}></svg>
+    </div>
   )
 }
 export default Histogramchart1
