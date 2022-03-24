@@ -5,18 +5,18 @@ function Treechart() {
   const d3 = window.d3v3
 
   useEffect(() => {
-    var treeData = [
+    var data = [
       {
-        name: 'Top Level',
+        name: 'EM',
         parent: 'null',
         children: [
           {
-            name: 'Level 2: A',
-            parent: 'Top Level',
+            name: 'Mean',
+            parent: 'EM',
             children: [
               {
-                name: 'Son of A',
-                parent: 'Level 2: A',
+                name: 'Mode',
+                parent: 'Mean',
               },
             ],
           },
@@ -24,7 +24,6 @@ function Treechart() {
       },
     ]
 
-    // ************** Generate the tree diagram  *****************
     var margin = { top: 0, right: 0, bottom: 0, left: 100 },
       width = svgRef.current.clientWidth - margin.right - margin.left,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
@@ -47,32 +46,26 @@ function Treechart() {
       return [d.y, d.x]
     })
 
-    var root = treeData[0]
-
+    var root = data[0]
     update(root)
 
     function update(source) {
-      // Compute the new tree layout.
       var nodes = tree.nodes(root).reverse(),
         links = tree.links(nodes)
 
-      // Normalize for fixed-depth.
       nodes.forEach(function (d) {
         d.y = d.depth * 180
       })
 
-      // Declare the nodesâ€¦
       var node = svg.selectAll('g.node').data(nodes, function (d) {
         return d.id || (d.id = ++i)
       })
 
-      // Enter the nodes.
       var nodeEnter = node
         .enter()
         .append('g')
         .attr('class', 'node')
         .attr('transform', function (d) {
-          console.log(d)
           return 'translate(' + d.y + ',' + d.x + ')'
         })
 
@@ -92,16 +85,18 @@ function Treechart() {
         })
         .style('fill-opacity', 1)
 
-      // Declare the linksâ€¦
       var link = svg.selectAll('path.link').data(links, function (d) {
         return d.target.id
       })
 
-      // Enter the links.
       link.enter().insert('path', 'g').attr('class', 'link').attr('d', diagonal)
     }
-  }, [d3, svgRef])
+  }, [])
 
-  return <div className="svg-wrapper" ref={svgRef}></div>
+  return (
+    <div className = "svg-wrapper">
+      <svg ref = {svgRef}></svg>
+    </div>
+  )
 }
 export default Treechart
