@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 function Scatterchart(props) {
-  const { data } = props
+  const { data, method } = props
   const svgRef = useRef()
   const d3 = window.d3v4
+
+  if (method === 1) {
+    var df = []
+    Object.assign(df, data.tsneDict)
+  }
+  else {
+    var df = []
+    Object.assign(df, data.pcaDict)
+  }
 
   const [clicked, setClicked] = useState(false)
   const [X, setX] = useState([])
@@ -24,51 +33,55 @@ function Scatterchart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    d3.csv('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv', function (data) {
-      var x = d3.scaleLinear().domain([4, 8]).range([0, width])
-      svg
-        .append('g')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x))
+    var x = d3.scaleLinear()
+      .domain([d3.min(df, function(d) { return d.value1; }) - 1, d3.max(df, function(d) { return d.value1; }) + 1])
+      .range([0, width])
+    svg
+      .append('g')
+      .attr('transform', 'translate(0,' + height + ')')
+      .call(d3.axisBottom(x))
 
-      var y = d3.scaleLinear().domain([0, 9]).range([height, 0])
-      svg.append('g').call(d3.axisLeft(y))
+    var y = d3.scaleLinear()
+      .domain([d3.min(df, function(d) { return d.value2; }) - 1, d3.max(df, function(d) { return d.value2; }) + 1])
+      .range([height, 0])
+    svg
+      .append('g')
+      .call(d3.axisLeft(y))
 
-      var color = d3
-        .scaleOrdinal()
-        .domain(['setosa', 'versicolor', 'virginica'])
-        .range(['#440154ff', '#21908dff', '#fde725ff'])
+    var color = d3
+      .scaleOrdinal()
+      .domain(['setosa', 'versicolor', 'virginica'])
+      .range(['#440154ff', '#21908dff', '#fde725ff'])
 
-      svg
-        .append('g')
-        .selectAll('dot')
-        .data(data)
-        .enter()
-        .append('circle')
-        .attr('cx', function (d) {
-          return x(d.Sepal_Length)
-        })
-        .attr('cy', function (d) {
-          return y(d.Petal_Length)
-        })
-        .attr('r', 3)
-        .style('fill', function (d) {
-          return color(d.Species)
-        })
-
-      d3.selectAll('svg').on('click', function (d, i) {
-        d3.event.preventDefault()
-        setClicked(false)
+    svg
+      .append('g')
+      .selectAll('dot')
+      .data(df)
+      .enter()
+      .append('circle')
+      .attr('cx', function (d) {
+        return x(d.value1)
+      })
+      .attr('cy', function (d) {
+        return y(d.value2)
+      })
+      .attr('r', 3)
+      .style('fill', function (d) {
+        return color(d.className)
       })
 
-      d3.selectAll('circle').on('contextmenu', function (d, i) {
-        d3.event.preventDefault()
-        setClicked(true)
-        setX(d3.event.layerX)
-        setY(d3.event.layerY)
-      })
+    d3.selectAll('svg').on('click', function (d, i) {
+      d3.event.preventDefault()
+      setClicked(false)
     })
-  }, [props.data, d3, svgRef])
+
+    d3.selectAll('circle').on('contextmenu', function (d, i) {
+      d3.event.preventDefault()
+      setClicked(true)
+      setX(d3.event.layerX)
+      setY(d3.event.layerY)
+    })
+  }, [props.data, props.method])
 
   return (
     <div className = "svg-wrapper">
