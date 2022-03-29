@@ -6,12 +6,15 @@ import Charttable from '../components/Charttable'
 
 import Treechart from '../components/Treechart'
 import Correlationchart from '../components/Correlationchart'
+import Parallelchart from '../components/Parallelchart'
 import Scatterchart from '../components/Scatterchart'
+import ECDFchart from '../components/ECDFchart'
 import Spiderchart from '../components/Spiderchart'
 import Linechart from '../components/Linechart'
 
 import Barchart1 from '../components/Barchart1'
 import Barchart2 from '../components/Barchart2'
+import Barchart3 from '../components/Barchart3'
 import Boxchart1 from '../components/Boxchart1'
 import Boxchart2 from '../components/Boxchart2'
 import Densitychart1 from '../components/Densitychart1'
@@ -26,7 +29,10 @@ const Home = () => {
   const [data, setData] = useState([])
   const [dataBarchart2, setDataBarchart2] = useState([])
   const [dataCharttable, setDataCharttable] = useState([])
-  const [dataHistogram1, setHistogram1] = useState([])
+  const [dataHistogramchart1, setHistogramchart1] = useState([])
+  const [dataCorrelationchart, setCorrelationchart] = useState([])
+  const [dataScatterchart, setScatterchart] = useState([])
+  const [dataECDFchart, setECDFchart] = useState([])
 
   const [data1, setData1] = useState([])
   const [data3, setData3] = useState([])
@@ -48,9 +54,26 @@ const Home = () => {
       .catch(error => { alert(`ERROR - ${error.message}`) })
 
     axios
-    .post(`http://${window.location.hostname}:${PORT}/histogram1?` + Math.random(), { 'row': 1, 'col': 1 })
-    .then(response => { setHistogram1(response.data) })
-    .catch(error => { alert(`ERROR - ${error.message}`) })
+      .get(`http://${window.location.hostname}:${PORT}/correlationchart?` + Math.random())
+      .then(response => { setCorrelationchart(response.data) })
+      .catch(error => { alert(`ERROR - ${error.message}`) })    
+
+    axios
+      .get(`http://${window.location.hostname}:${PORT}/scatterchart?` + Math.random())
+      .then(response => { setScatterchart(response.data) })
+      .catch(error => { alert(`ERROR - ${error.message}`) })
+
+    axios
+      .get(`http://${window.location.hostname}:${PORT}/ECDFchart?` + Math.random())
+      .then(response => { setECDFchart(response.data) })
+      .catch(error => { alert(`ERROR - ${error.message}`) })
+
+    axios
+      .post(`http://${window.location.hostname}:${PORT}/histogramchart1?` + Math.random(), { 'row': 1, 'col': 1 })
+      .then(response => { setHistogramchart1(response.data) })
+      .catch(error => { alert(`ERROR - ${error.message}`) })
+
+
 
     axios
       .get(`http://${window.location.hostname}:${PORT}/static/barchart1.json?` + Math.random())
@@ -93,8 +116,8 @@ const Home = () => {
               }))}
               onClick = {(rowIdx, colIdx) =>
                 axios
-                  .post(`http://${window.location.hostname}:${PORT}/histogram1?` + Math.random(), { 'row': rowIdx, 'col': colIdx })
-                  .then(response => { console.log(response.data); setHistogram1(response.data) })
+                  .post(`http://${window.location.hostname}:${PORT}/histogramchart1?` + Math.random(), { 'row': rowIdx, 'col': colIdx })
+                  .then(response => { setHistogramchart1(response.data) })
                   .catch(error => { alert(`ERROR - ${error.message}`) })
               }
             />
@@ -110,27 +133,26 @@ const Home = () => {
           className = "divide-same-width box"
           style = {{ gridArea: 'vertical-bar-chart' }}
         >
-          <div style = {{ borderRight: '2px dashed black' }}>
-            <Histogramchart1 data = { dataHistogram1 }/>
+          <div>
+            <Histogramchart1 data = { dataHistogramchart1 }/>
           </div>
           <div>
-            <Histogramchart2 />
-            <Histogramchart2 />
-            <Histogramchart2 />
+            <ECDFchart data = {dataECDFchart} />
           </div>
         </div>
         <div className = "box divide-same-width" style = {{ gridArea: 'class-level' }}>
-          <Correlationchart />
-          <div>class level 우측</div>
+          <Correlationchart data = {dataCorrelationchart}/>
+          <Parallelchart data = {data} />
         </div>
         <div className = "divide-same-width box" style = {{ gridArea: 'feature-level' }}>
-          <Scatterchart />
-          <div>feature level 우측</div>
+          <Scatterchart data = {dataScatterchart} method = {1} />
+          <Scatterchart data = {dataScatterchart} method = {2} />
         </div>
         <div className = "box" style = {{ gridArea: 'other-chart' }}>
-          <Spiderchart data = {data3} />
-          <Densitychart2 data = {data3} />
-          <Boxchart2 data = {data3} />
+          <Barchart3 />
+          <Spiderchart data = {data} />
+          <Densitychart2 data = {data} />
+          <Boxchart2 data = {data} />
         </div>
       </div>
     </div>
