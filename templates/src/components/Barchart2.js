@@ -5,6 +5,16 @@ function Barchart2(props) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
+  var subgroups = {}
+  Object.assign(subgroups, data[0])
+  subgroups = Object.keys(subgroups)
+  for(var i = 0; i < subgroups.length; i++) {
+    if(subgroups[i] === 'group')  {
+      subgroups.splice(i, 1);
+      i--;
+    }
+  }
+
   useEffect(() => {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
@@ -18,16 +28,6 @@ function Barchart2(props) {
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
-
-    var subgroups = {}
-    Object.assign(subgroups, data[0])
-    subgroups = Object.keys(subgroups)
-    for(var i = 0; i < subgroups.length; i++) {
-      if(subgroups[i] === 'group')  {
-        subgroups.splice(i, 1);
-        i--;
-      }
-    }
 
     var x = d3.scaleLinear().domain([0, 100]).range([0, width])
     svg
@@ -43,7 +43,6 @@ function Barchart2(props) {
       .domain(subgroups)
       .range(['#e41a1c', '#377eb8', '#4daf4a'])
 
-    var dataNormalized = []
     data.forEach(function (d) {
       var tot = 0
       for (var i in subgroups) {
