@@ -9,9 +9,9 @@ function Linechart(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = {top: 10, right: 30, bottom: 30, left: 60},
-      width = 600 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom;
+    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
+      width = 450 - margin.left - margin.right,
+      height = 200 - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
