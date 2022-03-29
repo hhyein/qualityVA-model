@@ -9,9 +9,9 @@ function Spiderchart(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = {top: 50, right: 50, bottom: 50, left: 50},
-    width = 200 - margin.left - margin.right,
-    height = 200 - margin.top - margin.bottom;
+    var margin = {top: 30, right: 30, bottom: 30, left: 30},
+      width = 250 - margin.left - margin.right,
+      height = 250 - margin.top - margin.bottom;
 
     const data = [];
     const features = ["A","B","C"];
