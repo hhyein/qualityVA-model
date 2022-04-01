@@ -9,8 +9,8 @@ function ECDFchart(props) {
     d3.select(svgRef.current).selectAll('*').remove()
 
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = 400 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
       var svg = d3
       .select(svgRef.current)
