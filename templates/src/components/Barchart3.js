@@ -11,7 +11,7 @@ function Barchart3(props) {
 
     var margin = {top: 30, right: 30, bottom: 30, left: 30},
       width = 250 - margin.left - margin.right,
-      height = 250 - margin.top - margin.bottom;
+      height = 180 - margin.top - margin.bottom;
 
     svg
       .attr('width', width + margin.left + margin.right)
