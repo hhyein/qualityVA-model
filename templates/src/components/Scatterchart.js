@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 function Scatterchart(props) {
-  const { data, method } = props
+  const { data, dataClassList, method } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -47,6 +47,8 @@ function Scatterchart(props) {
     svg
       .append('g')
       .call(d3.axisLeft(y))
+
+    console.log("here!")
 
     var color = d3
       .scaleOrdinal()
