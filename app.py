@@ -6,6 +6,8 @@ from flask_cors import CORS
 import json
 import numpy as np
 import pandas as pd
+from scipy import stats
+from nl4dv import NL4DV
 from collections import Counter
 
 import module.imputation as imputation
@@ -13,12 +15,65 @@ import module.imputation as imputation
 app = Flask(__name__)
 CORS(app)
 
+fileName = 'iris'
+filePath = 'static/' + fileName + '.csv'
+
+className = 'Species'
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+  originData = pd.read_csv(filePath, sep = ',')
+  originData.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
+
+  originDf = pd.read_csv(filePath)
+  classList = list(set(originDf[className].values.tolist()))
+
+  response = {}
+  response['className'] = className
+  response['classList'] = classList
+
+  return json.dumps(response)
+
+@app.route('/query', methods=['GET', 'POST'])
+def query():
+  query = request.get_data().decode('utf-8')
+  originDf = pd.read_csv(filePath)
+
+  nl4dvDf = originDf.dropna()
+  nl4dvDf = nl4dvDf.to_dict('records')
+  nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
+  nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
+  nl4dvOutput = nl4dvInstance.analyze_query(query)
+
+  # extraction attribute, task, vistype
+  try:
+    attributes = nl4dvOutput['visList'][0]['attributes']
+    tasks = nl4dvOutput['visList'][0]['tasks']
+    visType = nl4dvOutput['visList'][0]['visType']
+  except:
+    return jsonify({'nl4dv': 'please writing valid query'})
+
+  if type(attributes) == list:
+    attributes = ",".join(attributes)
+  if type(tasks) == list:
+    tasks = ",".join(tasks)
+  if type(visType) == list:
+    visType = ",".join(visType)
+
+  # extraction vlspec
+  vlSpec = nl4dvOutput['visList'][0]['vlSpec']
+  vlSpec['data']['values'] = nl4dvDf
+
+  vlSpec['width'] = "container"
+  vlSpec['height'] = "container"
+
+  return jsonify({'nl4dv': vlSpec})
+
 @app.route('/barchart2', methods = ['GET', 'POST'])
 def barchart2():
-  originDf = pd.read_csv('static/iris.csv')
-  classColumn = 'Species'
+  originDf = pd.read_csv(filePath)
 
-  classList = originDf[classColumn].values.tolist()
+  classList = originDf[className].values.tolist()
   classDict = Counter(classList)
   classDict['group'] = 'class'
 
@@ -26,11 +81,10 @@ def barchart2():
 
 @app.route('/charttable', methods = ['GET', 'POST'])
 def charttable():
-  originDf = pd.read_csv('static/iris.csv')
-  classColumn = 'Species'
+  originDf = pd.read_csv(filePath)
 
   columnList = originDf.columns.tolist()
-  columnList.remove(classColumn)
+  columnList.remove(className)
 
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
@@ -54,24 +108,38 @@ def charttable():
     df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
     inconsList.append(df.isnull().sum().values[0].tolist())
 
+  # quantile
+  quantileList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    quantileList.append(df.tolist())
+
+  # descriptive
+  descriptiveList = []
+  for column in originDf:
+    df = originDf[[column]].dropna()
+    descriptiveList.append(df.to_dict('records'))
+
   response = {}
   response['columnList'] = columnList
   response['missingList'] = missingList
   response['outlierList'] = outlierList
   response['inconsList'] = inconsList
+  response['quantileList'] = quantileList
+  response['descriptiveList'] = descriptiveList
 
   return json.dumps(response)
 
-@app.route('/histogram1', methods = ['GET', 'POST'])
-def histogram1():
+@app.route('/histogramchart1', methods = ['GET', 'POST'])
+def histogramchart1():
   data = request.get_data().decode('utf-8')
 
-  rowHistogram1 = eval(data)['row']
-  colHistogram1 = eval(data)['col']
+  rowHistogramchart1 = eval(data)['row']
+  colHistogramchart1 = eval(data)['col']
 
-  originDf = pd.read_csv('static/iris.csv')
-  df = pd.DataFrame(originDf.iloc[:, rowHistogram1])
-  column = originDf.columns.tolist()[rowHistogram1]
+  originDf = pd.read_csv(filePath)
+  df = pd.DataFrame(originDf.iloc[:, rowHistogramchart1])
+  column = originDf.columns.tolist()[rowHistogramchart1]
 
   df = df.sort_values(by = [column])
   df = df.reset_index(drop = True).dropna()
@@ -100,7 +168,56 @@ def histogram1():
 
   return json.dumps(response)
 
+@app.route('/ECDFchart', methods = ['GET', 'POST'])
+def ECDFchart():
+  originDf = pd.read_csv(filePath)
+  columnName = 'SL'
 
+  ecdfDf = originDf[columnName].dropna()
+  ecdfDf_current = imputation.ecdfDf(ecdfDf, 'kstest2')
+
+  mu = ecdfDf.mean()
+  std = ecdfDf.std()
+
+  rv = stats.norm(loc = mu, scale = std)
+  x = rv.rvs(size = 5000, random_state = 0)
+  ecdfDf_normal = imputation.ecdfDf(x, 'kstest1')
+
+  ecdfDf = pd.concat([ecdfDf_normal, ecdfDf_current])
+  ecdfList = list(ecdfDf.transpose().to_dict().values())
+
+  return jsonify(ecdfList)
+
+@app.route('/scatterchart', methods = ['GET', 'POST'])
+def scatterchart():
+  originDf = pd.read_csv(filePath)
+
+  df = originDf.dropna().reset_index(drop = True)
+  classDf = df[[className]]
+  dataDf = df.drop([className], axis = 1)
+
+  from sklearn.manifold import TSNE
+  dataMatrix = dataDf.values
+  tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+  tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2']).assign(className = classDf)
+
+  from sklearn.decomposition import PCA
+  pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+  pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2']).assign(className = classDf)
+
+  response = {}
+  response['tsneDict'] = list(tsneDf.transpose().to_dict().values())
+  response['pcaDict'] = list(pcaDf.transpose().to_dict().values())
+
+  return json.dumps(response)
+
+@app.route('/correlationchart', methods = ['GET', 'POST'])
+def correlationchart():
+  originDf = pd.read_csv(filePath)
+  corr = originDf.corr(method = 'pearson')
+  corr = corr.applymap(str).transpose().to_dict()
+
+  return jsonify(corr)
 
 if __name__ == '__main__':
   app.jinja_env.auto_reload = True
