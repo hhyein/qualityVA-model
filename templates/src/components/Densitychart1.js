@@ -4,14 +4,20 @@ function Densitychart1(props) {
   const {data} = props
   const svgRef = useRef()
   const d3 = window.d3v4
+  
+  var df = []
+  Object.assign(df, data[0].Value)
+
+  var columnName = []
+  Object.assign(columnName, Object.keys(data[0].Value[0]))
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = {top: 30, right: 30, bottom: 30, left: 50},
-      width = 200 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom;
+    var margin = { top: 10, right: 10, bottom: 10, left: 10 },
+      width = 150 - margin.left - margin.right,
+      height = 50 - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -21,7 +27,7 @@ function Densitychart1(props) {
             "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleLinear()
-      .domain([0, 50])
+      .domain([0, Object(df).length])
       .range([0, width]);
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -29,12 +35,12 @@ function Densitychart1(props) {
 
     var y = d3.scaleLinear()
       .range([height, 0])
-      .domain([0, 0.01]);
+      .domain([0, 0.1]);
     svg.append("g")
       .call(d3.axisLeft(y));
 
     var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))
-    var density =  kde( data.map(function(d){  return d.unemployed; }) )
+    var density =  kde( df.map(function(d){  return d[columnName] }) )
 
     svg.append("path")
       .attr("class", "mypath")
@@ -46,9 +52,9 @@ function Densitychart1(props) {
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
         .curve(d3.curveBasis)
-          .x(function(d) { return x(d[0]); })
-          .y(function(d) { return y(d[1]); })
-      )
+        .x(function(d) { return x(d[0]); })
+        .y(function(d) { return y(d[1]); })
+      );
 
     function kernelDensityEstimator(kernel, X) {
       return function(V) {
@@ -65,9 +71,10 @@ function Densitychart1(props) {
     }, [props.data]);
     
   return (
-    <div className = "svg-wrapper">
-      <svg ref = {svgRef}></svg>
-    </div>
+    <>
+      <svg ref = {svgRef}>
+      </svg>
+    </>
   );
 }
-export default Densitychart1;
+export default Densitychart1
