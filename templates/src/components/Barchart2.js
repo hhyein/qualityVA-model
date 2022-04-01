@@ -19,7 +19,7 @@ function Barchart2(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 20, right: 0, bottom: 0, left: 0 },
+    var margin = { top: 10, right: 10, bottom: 10, left: 10 },
       width = 150 - margin.left - margin.right,
       height = 50 - margin.top - margin.bottom
 
@@ -29,14 +29,18 @@ function Barchart2(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var x = d3.scaleLinear().domain([0, 100]).range([0, width])
+    var x = d3.scaleLinear()
+      .domain([0, 100])
+      .range([0, width])
     svg
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(x))
 
-    var y = d3.scaleBand().range([0, height]).padding(0.2)
-    svg.append('g').call(d3.axisLeft(y))
+    var y = d3.scaleBand()
+      .range([0, height])
+    svg.append('g')
+      .call(d3.axisLeft(y))
 
     var color = d3
       .scaleOrdinal()
@@ -85,9 +89,10 @@ function Barchart2(props) {
   }, [props.data])
 
   return (
-    <div className = "svg-wrapper">
-      <svg ref = {svgRef}></svg>
-    </div>
+    <>
+      <svg ref = {svgRef}>
+      </svg>
+    </>
   )
 }
 export default Barchart2
