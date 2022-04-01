@@ -10,8 +10,8 @@ function Linechart(props) {
     d3.select(svgRef.current).selectAll("*").remove();
 
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = 450 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -61,10 +61,9 @@ function Linechart(props) {
     }, [props.data]);
 
   return (
-    <>
-      <svg ref = {svgRef}>
-      </svg>
-    </>
+    <div className = "svg-wrapper">
+      <svg ref = {svgRef}></svg>
+    </div>
   );
 }
 export default Linechart
