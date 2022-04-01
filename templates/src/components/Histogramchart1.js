@@ -5,8 +5,8 @@ function Histogramchart1(props) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
-  var dfList = {}
-  Object.assign(dfList, data.dfList)
+  var df = {}
+  Object.assign(df, data.dfList)
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)
@@ -17,7 +17,7 @@ function Histogramchart1(props) {
     
     for(var i = 0; i < 20; i++){
       data.push({
-        value: dfList[i],
+        value: df[i],
         city: i
       })
       ordinals.push(i)
@@ -25,20 +25,20 @@ function Histogramchart1(props) {
     
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
-      height = 350 - margin.top - margin.bottom,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom,
       height2 = 30
     
     svg
-      .attr('width', 500)
-      .attr('height', 350)
+      .attr('width', width)
+      .attr('height', height)
     
     var focus = svg.append('g')
       .attr('class', 'focus')
-      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top - (height2 * 2)) + ')')
     
     var context = svg.append('g')
       .attr('class', 'context')
-      .attr('transform', 'translate(' + margin.left + ',' + (margin.top + 350) + ')')
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height - height2) + ')')
     
     var x = d3.scaleLinear().range([0, width])
     var x2 = d3.scaleLinear().range([0, width])
@@ -48,9 +48,7 @@ function Histogramchart1(props) {
     var xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
     
     var xAxis = d3.axisBottom(x).tickFormat((d, e) => ordinals[d])
-    var xAxis2 = d3.axisBottom(x2)
     var yAxis = d3.axisLeft(y)
-    var yAxis2 = d3.axisLeft(y2)
     
     var brush = d3.brushX()
         .extent([[0, 0], [width, height2]])
