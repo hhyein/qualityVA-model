@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 function Boxchart2(props) {
-  const {data} = props
+  const {data, dataClassName, dataClassList} = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -11,7 +11,7 @@ function Boxchart2(props) {
 
     var margin = {top: 30, right: 30, bottom: 30, left: 30},
       width = 250 - margin.left - margin.right,
-      height = 250 - margin.top - margin.bottom;
+      height = 180 - margin.top - margin.bottom;
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -21,11 +21,11 @@ function Boxchart2(props) {
             "translate(" + margin.left + "," + margin.top + ")");
 
     var sumstat = d3.nest()
-      .key(function(d) { return d.Species; })
+      .key(function(d) { return d[dataClassName]; })
       .rollup(function(d) {
-        var q1 = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.25)
-        var median = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.5)
-        var q3 = d3.quantile(d.map(function(g) { return g.Sepal_Length;}).sort(d3.ascending),.75)
+        var q1 = d3.quantile(d.map(function(g) { return g.SL; }).sort(d3.ascending),.25)
+        var median = d3.quantile(d.map(function(g) { return g.SL; }).sort(d3.ascending),.5)
+        var q3 = d3.quantile(d.map(function(g) { return g.SL; }).sort(d3.ascending),.75)
         var interQuantileRange = q3 - q1
         var min = q1 - 1.5 * interQuantileRange
         var max = q3 + 1.5 * interQuantileRange
@@ -35,7 +35,7 @@ function Boxchart2(props) {
 
     var x = d3.scaleBand()
       .range([ 0, width ])
-      .domain(["setosa", "versicolor", "virginica"])
+      .domain(dataClassList)
       .paddingInner(1)
       .paddingOuter(.5)
     svg.append("g")
@@ -43,7 +43,7 @@ function Boxchart2(props) {
       .call(d3.axisBottom(x))
 
     var y = d3.scaleLinear()
-      .domain([3, 9])
+      .domain([3, 8])
       .range([height, 0])
     svg.append("g").call(d3.axisLeft(y))
 
@@ -65,12 +65,12 @@ function Boxchart2(props) {
       .data(sumstat)
       .enter()
       .append("rect")
-          .attr("x", function(d){return(x(d.key)-boxWidth/2)})
-          .attr("y", function(d){return(y(d.value.q3))})
-          .attr("height", function(d){return(y(d.value.q1)-y(d.value.q3))})
-          .attr("width", boxWidth )
-          .attr("stroke", "black")
-          .style("fill", "#69b3a2")
+      .attr("x", function(d){return(x(d.key)-boxWidth/2)})
+      .attr("y", function(d){return(y(d.value.q3))})
+      .attr("height", function(d){return(y(d.value.q1)-y(d.value.q3))})
+      .attr("width", boxWidth )
+      .attr("stroke", "black")
+      .style("fill", "#69b3a2")
 
     svg
       .selectAll("medianLines")
@@ -83,7 +83,7 @@ function Boxchart2(props) {
       .attr("y2", function(d){return(y(d.value.median))})
       .attr("stroke", "black")
       .style("width", 80)
-    }, [props.data]);
+    }, [props.data, props.dataClassName, props.dataClassList]);
     
   return (
     <>
