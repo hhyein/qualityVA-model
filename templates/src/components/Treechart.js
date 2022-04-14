@@ -1,30 +1,13 @@
 import React, { useEffect, useRef } from 'react'
 
-function Treechart() {
+function Treechart(props) {
+  const { data } = props
   const svgRef = useRef()
   const d3 = window.d3v3
 
   useEffect(() => {
-    var data = [
-      {
-        name: 'EM',
-        parent: 'null',
-        children: [
-          {
-            name: 'Mean',
-            parent: 'EM',
-            children: [
-              {
-                name: 'Mode',
-                parent: 'Mean',
-              },
-            ],
-          },
-        ],
-      },
-    ]
 
-    var margin = { top: 0, right: 0, bottom: 0, left: 100 },
+    var margin = { top: 0, right: 0, bottom: 0, left: 30 },
       width = svgRef.current.clientWidth - margin.right - margin.left,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
@@ -91,7 +74,7 @@ function Treechart() {
 
       link.enter().insert('path', 'g').attr('class', 'link').attr('d', diagonal)
     }
-  }, [])
+  }, [props.data])
 
   return (
     <div className = "svg-wrapper">
