@@ -257,8 +257,20 @@ const Home = () => {
             method={2}
           />
         </Box>
-        <Box title="interaction" style={{ overflow: 'visible' }}>
-          <Dropdown />
+        <Box
+          title="interaction"
+          style={{
+            overflow: 'visible',
+            display: 'flex',
+            alignItems: 'center',
+            paddingTop: 0,
+            paddingBottom: 0,
+            height: '100%',
+            gridGap: '10px',
+          }}
+        >
+          <Dropdown placeholder="선택" />
+          <Dropdown placeholder="여기에 추가하고 싶은 드롭다운을 놓으렴..!" />
         </Box>
         <Box title="right-charts">
           <Barchart3 />
