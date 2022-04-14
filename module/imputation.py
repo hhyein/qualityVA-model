@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from scipy import stats
+import impyute as impy
 
 def LowerUpper(df):
     df = df.dropna()
@@ -34,3 +36,45 @@ def ecdfDf(df, index):
 
     outputDf = pd.DataFrame(data)
     return outputDf
+
+def custom_imp_min(df, colName):
+    minValue = df.min()
+    df = df.fillna(minValue)
+    output = df.to_frame(name = colName)
+    return output
+
+def custom_imp_max(df, colName):
+    maxValue = df.max()
+    df = df.fillna(maxValue)
+    output = df.to_frame(name = colName)
+    return output
+
+def custom_imp_mode(df, colName):
+    modeValue = df.mode(dropna = False)
+    df = df.fillna(modeValue)
+    output = df.to_frame(name = colName)
+    return output
+
+def custom_imp_mean(df, colName):
+    df = df.to_frame(name = colName)
+    df = impy.mean(df.values)
+    output = pd.DataFrame(df, columns = [colName])
+    return output
+
+def custom_imp_median(df, colName):
+    df = df.to_frame(name = colName)
+    df = impy.median(df.values)
+    output = pd.DataFrame(df, columns = [colName])
+    return output
+
+def custom_imp_em(df, colName):
+    df = df.to_frame(name = colName)
+    df = impy.em(df.values, loops = 50)
+    output = pd.DataFrame(df, columns = [colName])
+    return output
+
+def custom_imp_locf(df, colName):
+    df = df.to_frame(name = colName)
+    df = impy.locf(df.values, axis = 1)
+    output = pd.DataFrame(df, columns = [colName])
+    return output
