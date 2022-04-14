@@ -1,14 +1,22 @@
 import React, { useEffect, useRef } from 'react'
-import VegaLite from 'react-vega-lite'
+import vegaEmbed from 'vega-embed'
 
 function NL4DV(props) {
-  const { spec, data } = props
+  const { spec } = props
 
   useEffect(() => {
-  }, [props.spec, props.data])
+    if(!spec){ return (<></>) }
+
+    async function init(){
+      await vegaEmbed(".vis", spec.nl4dv,  {"actions": false})
+    }
+    init()
+  }, [props.spec])
 
   return (
-    <VegaLite spec={spec.NL4DV} data={data} />
+    <>
+      <div className="vis" style={{width: "250px", height: "250px"}}></div>
+    </>
   )
 }
 export default NL4DV
