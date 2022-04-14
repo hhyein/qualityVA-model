@@ -4,40 +4,83 @@ from flask import *
 from flask_cors import CORS
 
 import json
+import pyautogui
 import numpy as np
 import pandas as pd
 from scipy import stats
 from nl4dv import NL4DV
 from collections import Counter
+from pycaret.regression import *
+from pycaret.classification import *
 
 import module.imputation as imputation
+import module.tree as tree
 
 app = Flask(__name__)
 CORS(app)
 
 fileName = 'iris'
 filePath = 'static/' + fileName + '.csv'
-
 className = 'Species'
+predictName = 'None'
+
+currentCnt = 0
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-  originData = pd.read_csv(filePath, sep = ',')
-  originData.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
-
-  originDf = pd.read_csv(filePath)
-  classList = list(set(originDf[className].values.tolist()))
+  originDf = pd.read_csv(filePath, sep = ',')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = originDf.dropna()
 
   response = {}
+  response['fileName'] = fileName
   response['className'] = className
-  response['classList'] = classList
 
-  return json.dumps(response)
+  if className == 'None':
+    clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42)
+    models = compare_models()
+    results = pull()
+    print(results)
+
+    classList = []
+    modelList = [results['Model'][0], results['Model'][1], results['Model'][2]]
+    maeList = [results['MAE'][0], results['MAE'][1], results['MAE'][2]]
+    mseList = [results['MSE'][0], results['MSE'][1], results['MSE'][2]]
+    rmseList = [results['RMSE'][0], results['RMSE'][1], results['RMSE'][2]]
+
+    response['classList'] = classList
+    response['modelList'] = modelList
+    response['maeList'] = maeList
+    response['mseList'] = mseList
+    response['rmseList'] = rmseList
+
+    return json.dumps(response)
+
+  else:
+    clf = setup(data = originDf, target = className, preprocess = False, session_id = 42)
+    models = compare_models()
+    results = pull()
+    print(results)
+
+    classList = list(set(originDf[className].values.tolist()))
+    modelList = [results['Model'][0], results['Model'][1], results['Model'][2]]
+    accList = [results['Accuracy'][0], results['Accuracy'][1], results['Accuracy'][2]]
+    aucList = [results['AUC'][0], results['AUC'][1], results['AUC'][2]]
+    recallList = [results['Recall'][0], results['Recall'][1], results['Recall'][2]]
+
+    response['classList'] = classList
+    response['modelList'] = modelList
+    response['accList'] = accList
+    response['aucList'] = aucList
+    response['recallList'] = recallList
+
+    return json.dumps(response)
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
   query = request.get_data().decode('utf-8')
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   nl4dvDf = originDf.dropna()
   nl4dvDf = nl4dvDf.to_dict('records')
@@ -67,24 +110,55 @@ def query():
   vlSpec['width'] = "container"
   vlSpec['height'] = "container"
 
+  # preprocessing vlspec
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'y' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['y']:
+              del vlSpec['encoding']['y']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'bin' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['bin']
+  if 'encoding' in vlSpec:
+      if 'color' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['color']:
+              del vlSpec['encoding']['color']['aggregate']
+
+  del vlSpec['mark']['tooltip']
+  del vlSpec['data']['format']
+  del vlSpec['data']['url']
+
   return jsonify({'nl4dv': vlSpec})
 
-@app.route('/barchart2', methods = ['GET', 'POST'])
-def barchart2():
+@app.route('/barchart', methods = ['GET', 'POST'])
+def barchart():
   originDf = pd.read_csv(filePath)
 
-  classList = originDf[className].values.tolist()
-  classDict = Counter(classList)
-  classDict['group'] = 'class'
+  if className == 'None':
+    classDict = {}
+  
+  else:
+    classList = originDf[className].values.tolist()
+    classDict = Counter(classList)
+    classDict['group'] = 'class'
 
   return jsonify(classDict)
 
 @app.route('/charttable', methods = ['GET', 'POST'])
 def charttable():
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  columnList = originDf.columns.tolist()
-  columnList.remove(className)
+  if className == 'None':
+    columnList = originDf.columns.tolist()
+
+  else:
+    columnList = originDf.columns.tolist()
+    columnList.remove(className)
 
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
@@ -138,6 +212,7 @@ def histogramchart1():
   colHistogramchart1 = eval(data)['col']
 
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   df = pd.DataFrame(originDf.iloc[:, rowHistogramchart1])
   column = originDf.columns.tolist()[rowHistogramchart1]
 
@@ -158,7 +233,6 @@ def histogramchart1():
         cnt = cnt + 1
     dfList.append(cnt)
 
-    # outlier
     lower, upper = imputation.LowerUpper(df)
 
     response = {}
@@ -171,6 +245,7 @@ def histogramchart1():
 @app.route('/ECDFchart', methods = ['GET', 'POST'])
 def ECDFchart():
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnName = 'SL'
 
   ecdfDf = originDf[columnName].dropna()
@@ -191,19 +266,33 @@ def ECDFchart():
 @app.route('/scatterchart', methods = ['GET', 'POST'])
 def scatterchart():
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   df = originDf.dropna().reset_index(drop = True)
-  classDf = df[[className]]
-  dataDf = df.drop([className], axis = 1)
+  if className == 'None':
+    dataDf = df
 
-  from sklearn.manifold import TSNE
-  dataMatrix = dataDf.values
-  tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-  tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2']).assign(className = classDf)
+    from sklearn.manifold import TSNE
+    dataMatrix = dataDf.values
+    tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+    tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2'])
 
-  from sklearn.decomposition import PCA
-  pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-  pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2']).assign(className = classDf)
+    from sklearn.decomposition import PCA
+    pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+    pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2'])
+
+  else:
+    classDf = df[[className]]
+    dataDf = df.drop([className], axis = 1)
+
+    from sklearn.manifold import TSNE
+    dataMatrix = dataDf.values
+    tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+    tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2']).assign(className = classDf)
+
+    from sklearn.decomposition import PCA
+    pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+    pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2']).assign(className = classDf)
 
   response = {}
   response['tsneDict'] = list(tsneDf.transpose().to_dict().values())
@@ -214,10 +303,130 @@ def scatterchart():
 @app.route('/correlationchart', methods = ['GET', 'POST'])
 def correlationchart():
   originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   corr = originDf.corr(method = 'pearson')
   corr = corr.applymap(str).transpose().to_dict()
 
   return jsonify(corr)
+
+@app.route('/action', methods=['GET', 'POST'])
+def action():
+  actionIndex = int(request.get_data().decode('utf-8'))
+  columnIndex = 0
+  target = 'missing'
+
+  originDf = pd.read_csv(filePath)
+  columnList = list(originDf.columns)
+  actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
+
+  actionDf = originDf.iloc[:, columnIndex]
+  remainDf = originDf.drop([columnList[columnIndex]], axis = 1)
+
+  tmpDf = actionDf.to_frame(name = columnList[columnIndex])
+  missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+  if target == 'missing':
+    if actionList[actionIndex] == "remove":
+      actionDf = actionDf.dropna()
+      actionDf = actionDf.to_frame(name = columnList[columnIndex])
+    if actionList[actionIndex] == "min":
+      actionDf = imputation.custom_imp_min(actionDf, columnList[columnIndex])
+    if actionList[actionIndex] == "max":
+      actionDf = imputation.custom_imp_max(actionDf, columnList[columnIndex])
+    if actionList[actionIndex] == "mode":
+      actionDf = imputation.custom_imp_mode(actionDf, columnList[columnIndex])
+    if actionList[actionIndex] == "mean":
+      actionDf = imputation.custom_imp_mean(actionDf, columnList[columnIndex])
+    if actionList[actionIndex] == "median":
+      actionDf = imputation.custom_imp_median(actionDf, columnList[columnIndex])  
+    if actionList[actionIndex] == "em":
+      actionDf = imputation.custom_imp_em(actionDf, columnList[columnIndex])
+    if actionList[actionIndex] == "locf":
+      actionDf = imputation.custom_imp_locf(actionDf, columnList[columnIndex])
+
+  if target == 'outlier':
+    lower, upper = imputation.LowerUpper(actionDf)
+    outlierDf = actionDf[(actionDf < lower) | (actionDf > upper)]
+    outlierIndex = list(outlierDf.index)
+
+    if actionList[actionIndex] == "remove":
+      actionDf = actionDf.drop(outlierIndex)
+      actionDf = actionDf.to_frame(name = columnList[columnIndex])
+
+    else:
+      for i in outlierIndex:
+        actionDf.loc[i] = np.nan
+
+      if actionList[actionIndex] == "min":
+        actionDf = imputation.custom_imp_min(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "max":
+        actionDf = imputation.custom_imp_max(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "mode":
+        actionDf = imputation.custom_imp_mode(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "mean":
+        actionDf = imputation.custom_imp_mean(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "median":
+        actionDf = imputation.custom_imp_median(actionDf, columnList[columnIndex])  
+      if actionList[actionIndex] == "em":
+        actionDf = imputation.custom_imp_em(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "locf":
+        actionDf = imputation.custom_imp_locf(actionDf, columnList[columnIndex])
+
+      for i in missingIndex:
+        actionDf.loc[i, columnList[columnIndex]] = np.nan
+
+  if target == 'incons':
+    actionDf = pd.to_numeric(actionDf, errors = 'coerce')
+
+    if actionList[actionIndex] == "remove":
+      actionDf = actionDf.dropna()
+      actionDf = actionDf.to_frame(name = columnList[columnIndex])
+
+    else:
+      if actionList[actionIndex] == "min":
+        actionDf = imputation.custom_imp_min(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "max":
+        actionDf = imputation.custom_imp_max(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "mode":
+        actionDf = imputation.custom_imp_mode(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "mean":
+        actionDf = imputation.custom_imp_mean(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "median":
+        actionDf = imputation.custom_imp_median(actionDf, columnList[columnIndex])  
+      if actionList[actionIndex] == "em":
+        actionDf = imputation.custom_imp_em(actionDf, columnList[columnIndex])
+      if actionList[actionIndex] == "locf":
+        actionDf = imputation.custom_imp_locf(actionDf, columnList[columnIndex])
+
+      for i in missingIndex:
+        actionDf.loc[i, columnList[columnIndex]] = np.nan
+
+  actionDf = actionDf.sort_index()
+  changeDf = pd.concat([actionDf, remainDf], axis = 1, join = 'inner').reset_index(drop = True)
+  changeDf = changeDf.reindex(sorted(changeDf.columns), axis = 1)
+  
+  changeDf.to_csv(filePath, index = False)
+  changeDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
+
+
+
+  with open('static/treeData.json') as jsonData:
+      treeData = json.load(jsonData)
+
+  root = tree.TreeNode(index = treeData['index'], state = treeData['state'], name = treeData['name'])
+  root = root.dict_to_tree(treeData['children'])
+
+  global currentCnt
+  newNode = tree.TreeNode(index = str(currentCnt + 1), state = '', name = 'locf')
+  root.add_child_to(str(currentCnt), newNode)
+  root.update_state()
+  currentCnt = currentCnt + 1
+
+  treeData = root.tree_to_dict()
+  with open('static/treeData.json', 'w') as f:
+      json.dump(treeData, f, indent = 4)  
+
+  return json.dumps({'state': 'success'})
 
 if __name__ == '__main__':
   app.jinja_env.auto_reload = True
