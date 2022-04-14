@@ -24,6 +24,7 @@ import Densitychart2 from '../components/Densitychart2'
 import Boxchart2 from '../components/Boxchart2'
 
 import { mainLayout2Style } from '../const'
+import { Box } from '../components/Box'
 const PORT = 5000
 
 const Home = () => {
@@ -45,26 +46,38 @@ const Home = () => {
 
   const [data1, setData1] = useState([])
 
-  const [dataQuery, setQuery] = useState("")
+  const [dataQuery, setQuery] = useState('')
   const [dataNL4DV, setNL4DV] = useState()
   const handleChange = ({ target: { value } }) => setQuery(value)
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     e.preventDefault()
     axios
       .post(`http://${window.location.hostname}:${PORT}/query?`, dataQuery)
-      .then(response => { setNL4DV(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
-    }
+      .then(response => {
+        setNL4DV(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
+  }
 
   useEffect(() => {
     axios
       .get(`http://${window.location.hostname}:${PORT}/static/iris.json?`)
-      .then(response => { setData(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setData(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/static/treeData.json?`)
-      .then(response => { setDataTreechart(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setDataTreechart(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/?`)
       .then(response => {
@@ -75,110 +88,188 @@ const Home = () => {
         setOutput2List(response.data.dataOutput2List)
         setOutput3List(response.data.dataOutput3List)
       })
-      .catch(error => { alert(`ERROR - ${error.message}`) })    
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
 
     axios
       .get(`http://${window.location.hostname}:${PORT}/barchart?`)
-      .then(response => { setDataBarchart(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setDataBarchart(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/charttable?`)
-      .then(response => { setDataCharttable(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setDataCharttable(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/correlationchart?`)
-      .then(response => { setCorrelationchart(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setCorrelationchart(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/scatterchart?`)
-      .then(response => { setScatterchart(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setScatterchart(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
       .get(`http://${window.location.hostname}:${PORT}/ECDFchart?`)
-      .then(response => { setECDFchart(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })  
+      .then(response => {
+        setECDFchart(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
     axios
-      .post(`http://${window.location.hostname}:${PORT}/histogramchart1?`, { 'row': 1, 'col': 1 })
-      .then(response => { setHistogramchart1(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .post(`http://${window.location.hostname}:${PORT}/histogramchart1?`, {
+        row: 1,
+        col: 1,
+      })
+      .then(response => {
+        setHistogramchart1(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
 
     axios
       .get(`http://${window.location.hostname}:${PORT}/static/barchart1.json?`)
-      .then(response => { setData1(response.data) })
-      .catch(error => { alert(`ERROR - ${error.message}`) })
+      .then(response => {
+        setData1(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
   }, [])
 
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
-        <div className="box" style={{ gridArea: 'dataset' }}>
-          dataset
-        </div>
-        <div className="box" style={{ gridArea: 'table-chart', overflow: 'auto' }}>
+        <Box title="dataset">dataset</Box>
+        <Box title="table-chart" style={{ overflow: 'auto' }}>
           <Tablechart data={data} />
-        </div>
-        <div className="box" style={{ gridArea: 'line-chart' }}>
+        </Box>
+        <Box title="line-chart">
           <Linechart data={data} />
-        </div>
-        <div className="box" style={{ gridArea: 'visualization' }}>
+        </Box>
+        <Box title="visualization">
           <form onSubmit={handleSubmit}>
-            <input type="text" value={dataQuery} onChange={handleChange} placeholder="type your query here..." />
+            <input
+              type="text"
+              value={dataQuery}
+              onChange={handleChange}
+              placeholder="type your query here..."
+            />
             <button type="submit">submit</button>
           </form>
           <NL4DV spec={dataNL4DV} />
-        </div>
+        </Box>
 
-        <div className="box" style={{ gridArea: 'chart-table-top-left' }}><Barchart1 data={data1} /></div>
-        <div className="box" style={{ gridArea: 'chart-table-top-right' }}><Barchart2 data={[dataBarchart]} /></div>
-        <div className="box" style={{ gridArea: 'chart-table', overflow: 'auto' }}>
+        <Box title="chart-table-top-left">
+          <Barchart1 data={data1} />
+        </Box>
+        <Box title="chart-table-top-right">
+          <Barchart2 data={[dataBarchart]} />
+        </Box>
+        <Box title="chart-table" style={{ overflow: 'auto' }}>
           <Charttable
-            data = {Array.from({ length: Object(dataCharttable.columnList).length }, (_, i) => ({
-              key: Object.values(dataCharttable)[0][i],
-              missing: <Barchart1 data = { [{'Value': Object.values(dataCharttable)[1][i]}] }></Barchart1>,
-              outlier: <Barchart1 data = { [{'Value': Object.values(dataCharttable)[2][i]}] }></Barchart1>,
-              icons: <Barchart1 data = { [{'Value': Object.values(dataCharttable)[3][i]}] }></Barchart1>,
-              quantile: <Boxchart1 data = { [{'Value': Object.values(dataCharttable)[4][i]}] }></Boxchart1>,
-              descriptive: <Densitychart1 data = { [{'Value': Object.values(dataCharttable)[5][i]}] }></Densitychart1>
-            }))}
-            onClick = {(rowIdx, colIdx) =>
+            data={Array.from(
+              { length: Object(dataCharttable.columnList).length },
+              (_, i) => ({
+                key: Object.values(dataCharttable)[0][i],
+                missing: (
+                  <Barchart1
+                    data={[{ Value: Object.values(dataCharttable)[1][i] }]}
+                  ></Barchart1>
+                ),
+                outlier: (
+                  <Barchart1
+                    data={[{ Value: Object.values(dataCharttable)[2][i] }]}
+                  ></Barchart1>
+                ),
+                icons: (
+                  <Barchart1
+                    data={[{ Value: Object.values(dataCharttable)[3][i] }]}
+                  ></Barchart1>
+                ),
+                quantile: (
+                  <Boxchart1
+                    data={[{ Value: Object.values(dataCharttable)[4][i] }]}
+                  ></Boxchart1>
+                ),
+                descriptive: (
+                  <Densitychart1
+                    data={[{ Value: Object.values(dataCharttable)[5][i] }]}
+                  ></Densitychart1>
+                ),
+              })
+            )}
+            onClick={(rowIdx, colIdx) =>
               axios
-                .post(`http://${window.location.hostname}:${PORT}/histogramchart1?` + Math.random(), { 'row': rowIdx, 'col': colIdx })
-                .then(response => { setHistogramchart1(response.data) })
-                .catch(error => { alert(`ERROR - ${error.message}`) })
-              }
-            />
-        </div>
-        <div
-          className="box vertical-align-center"
-          style={{ gridArea: 'tree-chart', overflow: 'auto' }}
+                .post(
+                  `http://${window.location.hostname}:${PORT}/histogramchart1?` +
+                    Math.random(),
+                  { row: rowIdx, col: colIdx }
+                )
+                .then(response => {
+                  setHistogramchart1(response.data)
+                })
+                .catch(error => {
+                  alert(`ERROR - ${error.message}`)
+                })
+            }
+          />
+        </Box>
+        <Box
+          title="tree-chart"
+          style={{ display: 'flex', alignItems: 'center', overflow: 'auto' }}
         >
-          <Treechart data = {[dataTreechart]} />
-        </div>
-        <div
-          className="box"
+          <Treechart data={[dataTreechart]} />
+        </Box>
+        <Box
+          title="center-charts"
           style={{
-            gridArea: 'center-charts',
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            gridGap: '10px'
+            gridGap: '10px',
           }}
         >
           <Histogramchart1 data={dataHistogramchart1} />
-          <Correlationchart data={dataCorrelationchart}/>
+          <Correlationchart data={dataCorrelationchart} />
           <Scatterchart data={dataScatterchart} method={1} />
           <ECDFchart data={dataECDFchart} />
           <Parallelchart data={data} />
-          <Scatterchart data={dataScatterchart} dataClassList={dataClassList} method={2} />
-        </div>
-        <div className="box" style={{ gridArea: 'interaction', overflow: 'visible' }}>
+          <Scatterchart
+            data={dataScatterchart}
+            dataClassList={dataClassList}
+            method={2}
+          />
+        </Box>
+        <Box title="interaction" style={{ overflow: 'visible' }}>
           <Dropdown />
-        </div>
-        <div className="box" style={{ gridArea: 'right-charts' }}>
+        </Box>
+        <Box title="right-charts">
           <Barchart3 />
           <Spiderchart data={data} />
           <Densitychart2 data={data} />
-          <Boxchart2 data={data} dataClassName={dataClassName} dataClassList={dataClassList} />
-        </div>
+          <Boxchart2
+            data={data}
+            dataClassName={dataClassName}
+            dataClassList={dataClassList}
+          />
+        </Box>
       </div>
     </div>
   )
