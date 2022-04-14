@@ -9,9 +9,9 @@ function Densitychart2(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = {top: 30, right: 30, bottom: 30, left: 50},
-      width = 300 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom;
+    var margin = {top: 30, right: 30, bottom: 30, left: 30},
+      width = 250 - margin.left - margin.right,
+      height = 180 - margin.top - margin.bottom;
 
     svg
       .attr("width", width + margin.left + margin.right)
