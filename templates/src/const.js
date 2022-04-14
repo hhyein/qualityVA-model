@@ -18,6 +18,6 @@ export const mainLayout2Style = {
     'table-chart tree-chart tree-chart right-charts'
     'line-chart center-charts center-charts right-charts'
     'visualization center-charts center-charts right-charts'
-    'visualization center-charts center-charts right-charts'
+    'visualization interaction interaction right-charts'
   `,
 }
