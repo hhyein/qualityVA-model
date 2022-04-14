@@ -48,8 +48,6 @@ function Scatterchart(props) {
       .append('g')
       .call(d3.axisLeft(y))
 
-    console.log("here!")
-
     var color = d3
       .scaleOrdinal()
       .domain(['setosa', 'versicolor', 'virginica'])
