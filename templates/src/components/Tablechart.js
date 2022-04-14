@@ -1,12 +1,12 @@
 import React from 'react'
 
 function Tablechart(props) {
-  const { data, onDataClick } = props
+  const { data } = props
 
   return (
     <>
       <div className="table">
-        <table border={1} style={{ width: '100%' }}>
+        <table border={1} style={{ minWidth: '100%' }}>
           <thead>
             <tr>
               {data.length > 0 &&
@@ -14,10 +14,10 @@ function Tablechart(props) {
             </tr>
           </thead>
           <tbody>
-            {data.map((el, i) => (
+            {data && data.map((el, i) => (
               <tr key={i.toString()}>
                 {Object.entries(el).map(([k, v], j) => (
-                  <td key={k} onClick={() => onDataClick(k, j)}>
+                  <td key={k} style={{ width: 'fit-content' }}>
                     {v}
                   </td>
                 ))}
