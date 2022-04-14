@@ -4,7 +4,7 @@ export default function Charttable(props) {
   const { data = [], onClick } = props
 
   return data.length > 0 ? (
-    <table>
+    <table style = {{ minWidth: '100%' }}>
       <thead>
         <tr>
           <th />
