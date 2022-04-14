@@ -4,7 +4,6 @@ from flask import *
 from flask_cors import CORS
 
 import json
-import pyautogui
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -37,42 +36,42 @@ def home():
   response['className'] = className
 
   if className == 'None':
-    clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42)
+    clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, silent = True)
     models = compare_models()
     results = pull()
     print(results)
 
     classList = []
-    modelList = [results['Model'][0], results['Model'][1], results['Model'][2]]
-    maeList = [results['MAE'][0], results['MAE'][1], results['MAE'][2]]
-    mseList = [results['MSE'][0], results['MSE'][1], results['MSE'][2]]
-    rmseList = [results['RMSE'][0], results['RMSE'][1], results['RMSE'][2]]
+    modelList = list(results['Model'].values)
+    maeList = list(results['MAE'].values)
+    mseList = list(results['MSE'].values)
+    rmseList = list(results['RMSE'].values)
 
     response['classList'] = classList
     response['modelList'] = modelList
-    response['maeList'] = maeList
-    response['mseList'] = mseList
-    response['rmseList'] = rmseList
+    response['output1List'] = maeList
+    response['output2List'] = mseList
+    response['output3List'] = rmseList
 
     return json.dumps(response)
 
   else:
-    clf = setup(data = originDf, target = className, preprocess = False, session_id = 42)
+    clf = setup(data = originDf, target = className, preprocess = False, session_id = 42, silent = True)
     models = compare_models()
     results = pull()
     print(results)
 
     classList = list(set(originDf[className].values.tolist()))
-    modelList = [results['Model'][0], results['Model'][1], results['Model'][2]]
-    accList = [results['Accuracy'][0], results['Accuracy'][1], results['Accuracy'][2]]
-    aucList = [results['AUC'][0], results['AUC'][1], results['AUC'][2]]
-    recallList = [results['Recall'][0], results['Recall'][1], results['Recall'][2]]
+    modelList = list(results['Model'].values)
+    accList = list(results['Accuracy'].values)
+    aucList = list(results['AUC'].values)
+    recallList = list(results['Recall'].values)
 
     response['classList'] = classList
     response['modelList'] = modelList
-    response['accList'] = accList
-    response['aucList'] = aucList
-    response['recallList'] = recallList
+    response['output1List'] = accList
+    response['output2List'] = aucList
+    response['output3List'] = recallList
 
     return json.dumps(response)
 
