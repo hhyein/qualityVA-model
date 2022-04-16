@@ -6,8 +6,7 @@ function Treechart(props) {
   const d3 = window.d3v3
 
   useEffect(() => {
-
-    var margin = { top: 0, right: 0, bottom: 0, left: 30 },
+    var margin = { top: 30, right: 0, bottom: 0, left: 0 },
       width = svgRef.current.clientWidth - margin.right - margin.left,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
@@ -24,23 +23,25 @@ function Treechart(props) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     var tree = d3.layout.tree().size([height, width])
-
     var diagonal = d3.svg.diagonal().projection(function (d) {
-      return [d.y, d.x]
+      return [d.x, d.y]
     })
 
     var root = data[0]
     update(root)
 
-    function update(source) {
-      var nodes = tree.nodes(root).reverse(),
-        links = tree.links(nodes)
+    function update() {
+      var nodes = tree.nodes(root).reverse()
+      var links = tree.links(nodes)
 
       nodes.forEach(function (d) {
-        d.y = d.depth * 180
+        d.x = 30
+        d.y = d.depth * 60
       })
 
-      var node = svg.selectAll('g.node').data(nodes, function (d) {
+      var node = svg
+        .selectAll('g.node')
+        .data(nodes, function (d) {
         return d.id || (d.id = ++i)
       })
 
@@ -49,30 +50,36 @@ function Treechart(props) {
         .append('g')
         .attr('class', 'node')
         .attr('transform', function (d) {
-          return 'translate(' + d.y + ',' + d.x + ')'
+          return 'translate(' + d.x + ',' + d.y + ')'
         })
 
-      nodeEnter.append('circle').attr('r', 10).style('fill', '#fff')
+      nodeEnter
+        .append('circle')
+        .attr('r', 10)
+        .style('fill', function (d) {
+          if (d.state == 'current') {
+            return '#999999'
+          }
+          else {
+            return '#cccccc'
+          }
+        })
 
       nodeEnter
         .append('text')
-        .attr('x', function (d) {
-          return d.children || d._children ? -13 : 13
-        })
-        .attr('dy', '.35em')
-        .attr('text-anchor', function (d) {
-          return d.children || d._children ? 'end' : 'start'
-        })
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'middle')
         .text(function (d) {
-          return d.name
+          return d.index
         })
-        .style('fill-opacity', 1)
 
-      var link = svg.selectAll('path.link').data(links, function (d) {
-        return d.target.id
-      })
-
-      link.enter().insert('path', 'g').attr('class', 'link').attr('d', diagonal)
+      var link = svg
+        .selectAll('path.link')
+        .data(links)
+        .enter()
+        .insert('path', 'g')
+        .attr('class', 'link')
+        .attr('d', diagonal)
     }
   }, [props.data])
 
