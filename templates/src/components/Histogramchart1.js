@@ -18,7 +18,7 @@ function Histogramchart1(props) {
     for(var i = 0; i < 20; i++){
       data.push({
         value: df[i],
-        city: i
+        index: i
       })
       ordinals.push(i)
     }
@@ -67,7 +67,7 @@ function Histogramchart1(props) {
       .append('rect')
       .attr('class', 'bar')
       .attr('x', (d, i) => {
-      return x(i) - xBand.bandwidth()*0.9/2
+        return x(i) - xBand.bandwidth()*0.9/2
       })
       .attr('y', (d, i) => {
       return y(d.value)
@@ -76,10 +76,7 @@ function Histogramchart1(props) {
       .attr('height', d => {
       return height - y(d.value)
       })
-      .style("fill", function(d) {
-        if (d.city > 15) { return 'red' }
-        else {return 'steelblue' }
-      });
+      .style("fill", 'steelblue');
     
     focus.append('g')
       .attr('class', 'axis')
@@ -111,10 +108,7 @@ function Histogramchart1(props) {
       .attr('height', d => {
       return height2 - y2(d.value)
       })
-      .style("fill", function(d) {
-      if (d.city > 15) { return 'red' }
-      else {return 'steelblue' }
-    });
+      .style("fill", 'steelblue');
     
     context.append('g')
       .attr('class', 'axis2')
@@ -128,14 +122,17 @@ function Histogramchart1(props) {
     
     function brushed() {
       var s = d3.event.selection || x2.range()
-      // console.log(x.invert(s[0]))
-      // console.log(x.invert(s[1]))
 
-      x.domain(s.map(x2.invert, x2))
-      focus.select('.axis').call(xAxis)
-      focus.selectAll('.bar')
-        .attr('x', (d, i) => {
-        return x(i) - xBand.bandwidth()*0.9/2
+      
+
+      focus.selectAll('rect')
+        .style('fill', (d, i) => {
+          if ((i >= x.invert(s[0])) && (i <= x.invert(s[1]))){
+            return 'red';
+          }       
+          else {
+            return 'steelblue';
+          }
         })
       }
   }, [props.data])
