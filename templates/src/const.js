@@ -1,5 +1,5 @@
 export const mainLayout1Style = {
-  gridTemplateRows: '100px 400px 100px 500px 300px',
+  gridTemplateRows: "100px 400px 100px 500px 300px",
   gridTemplateAreas: `
     'title title'
     'table-chart horizontal-bar-chart'
@@ -10,28 +10,27 @@ export const mainLayout1Style = {
 }
 
 export const mainLayout2Style = {
-  gridGap: '10px',
-  gridTemplateColumns: '300px 450px 450px 300px',
-  gridTemplateRows: '80px 180px 100px 150px 250px 70px',
+  gridGap: "10px",
+  gridTemplateColumns: "300px 900px 300px",
+  gridTemplateRows: "80px 180px 100px 160px 130px 130px",
   gridTemplateAreas: `
-    'dataset chart-table-top-left chart-table-top-right tree-chart'
-    'setting chart-table chart-table tree-chart'
-    'table-chart center-charts center-charts tree-chart'
-    'table-chart center-charts center-charts model'
-    'visualization center-charts center-charts model'
-    'visualization interaction interaction model'
+    'dataset overview tree-chart'
+    'setting overview tree-chart'
+    'table-chart class-level tree-chart'
+    'table-chart class-level model'
+    'visualization instance-level model'
+    'visualization instance-level model'
   `,
 }
 
 export const boxTitles = {
-  dataset: 'dataset upload',
-  setting: 'setting',
-  'table-chart': 'dataset',
-  visualization: 'nl4dv',
-  'chart-table-top-left': 'high correlation column',
-  'chart-table-top-right': 'class imbalance',
-  'center-chart': 'data correction',
-  interaction: 'action',
-  'tree-chart': 'action log',
-  'model': 'model accuracy'
+  dataset: "dataset upload",
+  setting: "setting",
+  "table-chart": "dataset",
+  visualization: "nl4dv",
+  overview: "overview",
+  "class-level": "class-level",
+  "instance-level": "instance level",
+  "tree-chart": "action log",
+  model: "model accuracy",
 }
