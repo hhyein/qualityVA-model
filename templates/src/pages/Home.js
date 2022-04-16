@@ -19,6 +19,10 @@ import Dropdown from "../components/Dropdown"
 
 import { mainLayout2Style } from "../const"
 import { Box } from "../components/Box"
+import Fileupload from "../components/FileUpload"
+import Input from "../components/Input"
+import Button from "../components/Button"
+import RadioButton from "../components/RadioButton"
 const PORT = 5000
 
 const Home = () => {
@@ -29,6 +33,8 @@ const Home = () => {
   const [dataFileName, setFileName] = useState([])
   const [dataClassName, setClassName] = useState([])
   const [dataClassList, setClassList] = useState([])
+
+  const [selectedRadioButton, setSelectedRadioButton] = useState("prediction")
 
   const [dataBarchart, setDataBarchart] = useState([])
   const [dataCharttable, setDataCharttable] = useState([])
@@ -183,7 +189,9 @@ const Home = () => {
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
-        <Box title="dataset">fileName: {dataFileName}.csv</Box>
+        <Box title="dataset">
+          <Fileupload />
+        </Box>
         <Box
           title="setting"
           style={{
@@ -192,20 +200,36 @@ const Home = () => {
             gridGap: "5px",
           }}
         >
+          <div style={{ display: "grid", gridAutoFlow: "column" }}>
+            {["prediction", "classification"].map((id) => (
+              <RadioButton
+                key={id}
+                id={id}
+                onClick={(id) => setSelectedRadioButton(id)}
+                checked={selectedRadioButton === id}
+              />
+            ))}
+          </div>
           <Dropdown />
         </Box>
         <Box title="table-chart" style={{ overflow: "auto" }}>
           <Tablechart data={data} />
         </Box>
         <Box title="visualization">
-          <form onSubmit={handleSubmit}>
-            <input
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: "grid", gridAutoFlow: "column" }}
+          >
+            <Input
               type="text"
               value={dataQuery}
               onChange={handleChange}
               placeholder="type your query here..."
+              style={{ borderRadius: "4px 0 0 4px", borderRightWidth: 0 }}
             />
-            <button type="submit">submit</button>
+            <Button type="submit" style={{ borderRadius: "0 4px 4px 0" }}>
+              submit
+            </Button>
           </form>
           <NL4DV spec={dataNL4DV} />
         </Box>

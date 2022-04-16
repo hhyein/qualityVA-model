@@ -12,13 +12,13 @@ export const mainLayout1Style = {
 export const mainLayout2Style = {
   gridGap: "10px",
   gridTemplateColumns: "300px 900px 300px",
-  gridTemplateRows: "80px 180px 100px 160px 130px 130px",
+  gridTemplateRows: "80px 130px 150px 140px 150px 140px",
   gridTemplateAreas: `
     'dataset overview tree-chart'
     'setting overview tree-chart'
-    'table-chart class-level tree-chart'
+    'setting class-level tree-chart'
     'table-chart class-level model'
-    'visualization instance-level model'
+    'table-chart instance-level model'
     'visualization instance-level model'
   `,
 }
