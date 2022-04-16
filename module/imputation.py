@@ -14,6 +14,25 @@ def LowerUpper(df):
 
     return lower, upper
 
+def densityDf(df1, df2):
+    tmpIndex = []
+    tmpValue  = []
+    data = {}
+
+    for i in range(len(df1)):
+        tmpIndex.append('normal')
+        tmpValue.append(df1.iloc[i][0])
+
+    for i in range(len(df2)):
+        tmpIndex.append('data')
+        tmpValue.append(df2.iloc[i][0])
+    
+    data['index'] = tmpIndex
+    data['value'] = tmpValue
+
+    outputDf = pd.DataFrame(data)
+    return outputDf
+
 def ecdfDf(df, index):
     tmpIndex, tmpX, tmpY = [], [], []
     data = {}
