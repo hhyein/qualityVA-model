@@ -4,7 +4,7 @@ function Densitychart1(props) {
   const {data} = props
   const svgRef = useRef()
   const d3 = window.d3v4
-  
+
   var df = []
   Object.assign(df, data[0].Value)
 
@@ -27,34 +27,53 @@ function Densitychart1(props) {
             "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleLinear()
-      .domain([0, Object(df).length])
+      .domain([d3.min(df, d => d.value) - 10, d3.max(df, d => d.value) + 10])
       .range([0, width]);
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x));
 
     var y = d3.scaleLinear()
-      .range([height, 0])
-      .domain([0, 0.1]);
+      .domain([0, 0.15])
+      .range([height, 0]);
     svg.append("g")
       .call(d3.axisLeft(y));
 
     var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))
-    var density =  kde( df.map(function(d){  return d[columnName] }) )
+    var density1 =  kde( df
+      .filter( function(d){ return d.index === "normal"; })
+      .map(function(d){  return d.value; })
+    )
+    var density2 =  kde( df
+      .filter( function(d){return d.index === "data"; })
+      .map(function(d){  return d.value; })
+    )
 
     svg.append("path")
       .attr("class", "mypath")
-      .datum(density)
-      .attr("fill", "#69b3a2")
-      .attr("opacity", ".8")
-      .attr("stroke", "#000")
-      .attr("stroke-width", 1)
+      .datum(density1)
+      .attr("fill", "none")
+      .attr("stroke", "#9e9e9e")
+      .attr("stroke-width", 1.5)
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
-        .curve(d3.curveBasis)
-        .x(function(d) { return x(d[0]); })
-        .y(function(d) { return y(d[1]); })
-      );
+      .curve(d3.curveBasis)
+      .x(function(d) { return x(d[0]); })
+      .y(function(d) { return y(d[1]); })
+    )
+
+    svg.append("path")
+      .attr("class", "mypath")
+      .datum(density2)
+      .attr("fill", "none")
+      .attr("stroke", "#69b3a2")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-linejoin", "round")
+      .attr("d",  d3.line()
+      .curve(d3.curveBasis)
+      .x(function(d) { return x(d[0]); })
+      .y(function(d) { return y(d[1]); })
+    );
 
     function kernelDensityEstimator(kernel, X) {
       return function(V) {
