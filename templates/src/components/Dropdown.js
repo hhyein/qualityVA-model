@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import Select from 'react-select'
+import TitleWithDivider from "./TitleWithDivider"
 
 function Dropdown() {
   const PORT = 5000
@@ -45,12 +46,12 @@ function Dropdown() {
         value[0] = e.value
         }
       }/>
-      <div>model evaluation method</div>
+      <TitleWithDivider title="model evaluation method"/>
       <Select options = { column } loadOptions = {loadOptions} onChange = { e => {
         value[1] = e.value
         }
       }/>
-      <div>number of models used</div>
+      <TitleWithDivider title="number of models used"/>
       <Select options = { action } loadOptions = {loadOptions} onChange = { e => {
         value[2] = e.value
         axios
