@@ -56,6 +56,30 @@ def ecdfDf(df, index):
     outputDf = pd.DataFrame(data)
     return outputDf
 
+def heatmapDf(columnList, df):
+    size = int(len(df)/10)
+    
+    tmpIndex, tmpY, tmpValue = [], [], []
+    data = {}
+
+    for i in range(len(columnList)):
+        tmpDf = df[columnList[i]]
+
+        for j in range(int(len(df)/size)):
+            sliceDf = tmpDf.iloc[size * j : size * (j + 1)]
+            missing = sliceDf.isnull().sum()
+
+            tmpIndex.append(columnList[i])
+            tmpY.append(size * (j + 1))
+            tmpValue.append(missing)
+
+    data['index'] = tmpIndex
+    data['y'] = tmpY
+    data['value'] = tmpValue
+    
+    outputDf = pd.DataFrame(data)
+    return outputDf, tmpY
+
 def custom_imp_min(df, colName):
     minValue = df.min()
     df = df.fillna(minValue)
