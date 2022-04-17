@@ -36,6 +36,12 @@ body {
   position: relative;
 }
 
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgb(173, 173, 173);
+}
+
 .divide-same-width {
   display: grid;
   grid-auto-columns: minmax(0, 1fr);
