@@ -12,7 +12,7 @@ export const mainLayout1Style = {
 export const mainLayout2Style = {
   gridGap: "10px",
   gridTemplateColumns: "300px 900px 300px",
-  gridTemplateRows: "80px 130px 150px 140px 150px 140px",
+  gridTemplateRows: "80px 130px 190px 110px 100px 200px",
   gridTemplateAreas: `
     'dataset overview tree-chart'
     'setting overview tree-chart'
@@ -29,7 +29,7 @@ export const boxTitles = {
   "table-chart": "dataset",
   visualization: "nl4dv",
   overview: "overview",
-  "class-level": "class-level",
+  "class-level": "class level",
   "instance-level": "instance level",
   "tree-chart": "action log",
   model: "model accuracy",
