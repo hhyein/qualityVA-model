@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 function Scatterchart(props) {
-  const { data, dataClassList, method } = props
+  const { data, method, dataClassList, dataColorCode } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -39,19 +39,23 @@ function Scatterchart(props) {
     svg
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x).ticks(0))
+      .selectAll("text")
+      .remove()
 
     var y = d3.scaleLinear()
       .domain([d3.min(df, function(d) { return d.value2; }) - 1, d3.max(df, function(d) { return d.value2; }) + 1])
       .range([height, 0])
     svg
       .append('g')
-      .call(d3.axisLeft(y))
+      .call(d3.axisLeft(y).ticks(0))
+      .selectAll("text")
+      .remove()
 
     var color = d3
       .scaleOrdinal()
-      .domain(['setosa', 'versicolor', 'virginica'])
-      .range(['#440154ff', '#21908dff', '#fde725ff'])
+      .domain(dataClassList)
+      .range(dataColorCode)
 
     svg
       .append('g')
