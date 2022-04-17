@@ -14,7 +14,7 @@ function Boxchart1(props) {
 
     var margin = { top: 10, right: 10, bottom: 10, left: 10 },
       width = 150 - margin.left - margin.right,
-      height = 50 - margin.top - margin.bottom
+      height = 30 - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -37,12 +37,11 @@ function Boxchart1(props) {
     svg
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
-      .call(d3.axisBottom(x))
+      
 
     var y = d3.scaleBand()
       .range([0, height])
     svg.append('g')
-      .call(d3.axisLeft(y))
 
     var height = 20
     var center = 15
@@ -62,7 +61,7 @@ function Boxchart1(props) {
     .attr("height", height )
     .attr("width", (x(q3) - x(q1)) )
     .attr("stroke", "black")
-    .style("fill", "#69b3a2")
+    .style("fill", "steelblue")
 
     svg
     .selectAll("toto")
