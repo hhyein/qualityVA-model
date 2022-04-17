@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 function Heatmapchart(props) {
-  const {data} = props
+  const {data, yList, columnList} = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -9,50 +9,69 @@ function Heatmapchart(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = {top: 30, right: 30, bottom: 30, left: 30},
-      width = 200 - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom;
+    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
-    svg
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+      svg
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var myGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-    var myVars = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
+      var x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(columnList)
+        .padding(0.05)
 
-    var x = d3.scaleBand()
-      .range([ 0, width ])
-      .domain(myGroups)
-      .padding(0.01);
-    svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
+      var y = d3.scaleBand()
+        .range([ height, 0 ])
+        .domain(yList)
+        .padding(0.05)
+      
+      var color1 = d3.scaleLinear()
+        .range(["white", "#9e9e9e"])
+        .domain([0, 100])
 
-    var y = d3.scaleBand()
-      .range([ height, 0 ])
-      .domain(myVars)
-      .padding(0.01);
-    svg.append("g")
-      .call(d3.axisLeft(y));
+      var color2 = d3.scaleLinear()
+        .range(["white", "steelblue"])
+        .domain([0, 100])
 
-    var myColor = d3.scaleLinear()
-      .range(["white", "#69b3a2"])
-      .domain([1,100])
+      var mouseover = function(d) {
+        d3.select(this)
+          .style("stroke", "#999999")
+          .style("stroke-width", "2px")
+          .style("opacity", 1)
+      }
+      var mouseleave = function(d) {
+        d3.select(this)
+          .style("stroke", "none")
+          .style("opacity", 0.8)
+      }
 
-    svg.selectAll()
-        .data(data, function(d) {return d.group+':'+d.variable;})
+      svg.selectAll()
+        .data(data, function(d) {return d.index + ':' + d.y;})
         .enter()
         .append("rect")
-        .attr("x", function(d) { return x(d.group) })
-        .attr("y", function(d) { return y(d.variable) })
+        .attr("x", function(d) { return x(d.index) })
+        .attr("y", function(d) { return y(d.y) })
+        .attr("rx", 4)
+        .attr("ry", 4)
         .attr("width", x.bandwidth() )
         .attr("height", y.bandwidth() )
-        .style("fill", function(d) { return myColor(d.value)} )
+        .style("fill", function(d) {
+          if (d.value == 0) {
+            return color1(20);
+          }
+          return color2(d.value * 20);
+        })
+        .style("stroke-width", 4)
+        .style("stroke", "none")
+        .style("opacity", 0.8)
+        .on("mouseover", mouseover)
+        .on("mouseleave", mouseleave)
 
-    }, [props.data]);
+    }, [props.data, props.yList, props.columnList]);
 
   return (
     <div className = "svg-wrapper">
