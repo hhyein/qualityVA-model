@@ -45,10 +45,12 @@ function Dropdown() {
         value[0] = e.value
         }
       }/>
+      <div>model evaluation method</div>
       <Select options = { column } loadOptions = {loadOptions} onChange = { e => {
         value[1] = e.value
         }
       }/>
+      <div>number of models used</div>
       <Select options = { action } loadOptions = {loadOptions} onChange = { e => {
         value[2] = e.value
         axios
