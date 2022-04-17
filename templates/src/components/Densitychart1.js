@@ -17,7 +17,7 @@ function Densitychart1(props) {
 
     var margin = { top: 10, right: 10, bottom: 10, left: 10 },
       width = 150 - margin.left - margin.right,
-      height = 50 - margin.top - margin.bottom
+      height = 30 - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -28,16 +28,20 @@ function Densitychart1(props) {
 
     var x = d3.scaleLinear()
       .domain([d3.min(df, d => d.value) - 10, d3.max(df, d => d.value) + 10])
-      .range([0, width]);
+      .range([0, width])
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+      .call(d3.axisBottom(x).ticks(0))
+      .selectAll("text")
+      .remove()
 
     var y = d3.scaleLinear()
       .domain([0, 0.15])
-      .range([height, 0]);
+      .range([height, 0])
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y).ticks(0))
+      .selectAll("text")
+      .remove()
 
     var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))
     var density1 =  kde( df
@@ -53,7 +57,7 @@ function Densitychart1(props) {
       .attr("class", "mypath")
       .datum(density1)
       .attr("fill", "none")
-      .attr("stroke", "#9e9e9e")
+      .attr("stroke", "#cccccc")
       .attr("stroke-width", 1.5)
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
@@ -66,7 +70,7 @@ function Densitychart1(props) {
       .attr("class", "mypath")
       .datum(density2)
       .attr("fill", "none")
-      .attr("stroke", "#69b3a2")
+      .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
