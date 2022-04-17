@@ -76,7 +76,7 @@ function Histogramchart1(props) {
       .attr('height', d => {
       return height - y(d.value)
       })
-      .style("fill", 'steelblue');
+      .style("fill", '#cccccc');
     
     focus.append('g')
       .attr('class', 'axis')
@@ -108,7 +108,7 @@ function Histogramchart1(props) {
       .attr('height', d => {
       return height2 - y2(d.value)
       })
-      .style("fill", 'steelblue');
+      .style("fill", '#cccccc');
     
     context.append('g')
       .attr('class', 'axis2')
@@ -122,16 +122,14 @@ function Histogramchart1(props) {
     
     function brushed() {
       var s = d3.event.selection || x2.range()
-
       
-
       focus.selectAll('rect')
         .style('fill', (d, i) => {
           if ((i >= x.invert(s[0])) && (i <= x.invert(s[1]))){
-            return 'red';
+            return 'steelblue';
           }       
           else {
-            return 'steelblue';
+            return '#cccccc';
           }
         })
       }
