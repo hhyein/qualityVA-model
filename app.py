@@ -3,9 +3,13 @@ import os
 from flask import *
 from flask_cors import CORS
 
+import ast
+import csv
 import json
+import codecs
 import numpy as np
 import pandas as pd
+from io import StringIO
 from scipy import stats
 from nl4dv import NL4DV
 from collections import Counter
@@ -18,60 +22,68 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-fileName = 'iris'
+fileName = 'wine'
 filePath = 'static/' + fileName + '.csv'
-className = 'Species'
-predictName = 'None'
+originDf = pd.read_csv('static/wine.csv', sep = ',')
 
 currentCnt = 0
+predictName = 'None'
+className = 'class'
+
+@app.route('/fileUpload', methods=['GET', 'POST'])
+def fileUpload():
+  req = request.files['file']
+
+  data = []
+  stream = codecs.iterdecode(req.stream, 'utf-8')
+  for row in csv.reader(stream, dialect = csv.excel):
+    if row:
+      data.append(row)
+
+  global originDf
+  df = pd.DataFrame(data)
+  df = df.rename(columns = df.iloc[0])
+  originDf = df.drop(df.index[0])
+
+  return json.dumps({'state': 'success'})
+
+@app.route('/setting', methods=['GET', 'POST'])
+def setting():
+
+  return json.dumps({'state': 'success'})
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
   originDf = pd.read_csv(filePath, sep = ',')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  originDf = originDf.dropna()
+  originDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
 
   response = {}
   response['fileName'] = fileName
   response['className'] = className
 
+  originDf = originDf.dropna()
   if className == 'None':
-    clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, silent = True)
-    models = compare_models()
-    results = pull()
-    print(results)
+    # clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, silent = True)
+    # models = compare_models()
+    # results = pull()
+    # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
-    classList = []
-    modelList = list(results['Model'].values)
-    maeList = list(results['MAE'].values)
-    mseList = list(results['MSE'].values)
-    rmseList = list(results['RMSE'].values)
-
-    response['classList'] = classList
-    response['modelList'] = modelList
-    response['output1List'] = maeList
-    response['output2List'] = mseList
-    response['output3List'] = rmseList
+    response['columnList'] = list(originDf.columns)
+    response['classList'] = []
 
     return json.dumps(response)
 
   else:
-    clf = setup(data = originDf, target = className, preprocess = False, session_id = 42, silent = True)
-    models = compare_models()
-    results = pull()
-    print(results)
+    # clf = setup(data = originDf, target = className, preprocess = False, session_id = 42, silent = True)
+    # models = compare_models()
+    # results = pull()
+    # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
-    classList = list(set(originDf[className].values.tolist()))
-    modelList = list(results['Model'].values)
-    accList = list(results['Accuracy'].values)
-    aucList = list(results['AUC'].values)
-    recallList = list(results['Recall'].values)
-
-    response['classList'] = classList
-    response['modelList'] = modelList
-    response['output1List'] = accList
-    response['output2List'] = aucList
-    response['output3List'] = recallList
+    df = originDf.drop(columns = [className])
+    response['columnList'] = list(df.columns)
+    response['classList'] = list(set(originDf[className].values.tolist()))
 
     return json.dumps(response)
 
@@ -133,8 +145,8 @@ def query():
 
   return jsonify({'nl4dv': vlSpec})
 
-@app.route('/barchart', methods = ['GET', 'POST'])
-def barchart():
+@app.route('/barchart2', methods = ['GET', 'POST'])
+def barchart2():
   originDf = pd.read_csv(filePath)
 
   if className == 'None':
@@ -163,23 +175,47 @@ def charttable():
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
       originDf = originDf.drop([column], axis = 1)
 
-  # missing      
-  missingList = originDf.isnull().sum().values.tolist()
-  
+  # missing
+  missingList = []
+  tmpList = originDf.isnull().sum().values.tolist()
+
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    missingList.append(tmpDict)
+
   # outlier
-  outlierList = []
+  tmpList = []
   for column in originDf:
     lower, upper = imputation.LowerUpper(originDf[column])
     data1 = originDf[originDf[column] > upper]
     data2 = originDf[originDf[column] < lower]
-    outlierList.append(data1.shape[0] + data2.shape[0])
+    tmpList.append(data1.shape[0] + data2.shape[0])
+
+  outlierList = []
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    outlierList.append(tmpDict)
 
   # incons
-  inconsList = []
+  tmpList = []
   for column in originDf:
     df = originDf[column].dropna()
     df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-    inconsList.append(df.isnull().sum().values[0].tolist())
+    tmpList.append(df.isnull().sum().values[0].tolist())
+
+  inconsList = []
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    inconsList.append(tmpDict)
 
   # quantile
   quantileList = []
@@ -191,7 +227,15 @@ def charttable():
   descriptiveList = []
   for column in originDf:
     df = originDf[[column]].dropna()
-    descriptiveList.append(df.to_dict('records'))
+
+    # normal distribution
+    mu = df.mean()
+    std = df.std()
+    rv = stats.norm(loc = mu, scale = std)
+    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+
+    densityDf = imputation.densityDf(normalDf, df)
+    descriptiveList.append(densityDf.to_dict('records'))
 
   response = {}
   response['columnList'] = columnList
@@ -245,7 +289,7 @@ def histogramchart1():
 def ECDFchart():
   originDf = pd.read_csv(filePath)
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  columnName = 'SL'
+  columnName = 'alcohol'
 
   ecdfDf = originDf[columnName].dropna()
   ecdfDf_current = imputation.ecdfDf(ecdfDf, 'kstest2')
@@ -261,6 +305,21 @@ def ECDFchart():
   ecdfList = list(ecdfDf.transpose().to_dict().values())
 
   return jsonify(ecdfList)
+
+@app.route('/heatmapchart', methods = ['GET', 'POST'])
+def heatmapchart():
+  originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  columnList = list(originDf.columns)
+
+  heatmapDf, yList = imputation.heatmapDf(columnList, originDf)
+  heatmapList = list(heatmapDf.transpose().to_dict().values())
+
+  response = {}
+  response['heatmapList'] = heatmapList
+  response['yList'] = yList 
+
+  return json.dumps(response)  
 
 @app.route('/scatterchart', methods = ['GET', 'POST'])
 def scatterchart():
@@ -310,11 +369,15 @@ def correlationchart():
 
 @app.route('/action', methods=['GET', 'POST'])
 def action():
-  actionIndex = int(request.get_data().decode('utf-8'))
-  columnIndex = 0
-  target = 'missing'
+  reqList = request.get_data().decode('utf-8')
+  reqList = ast.literal_eval(reqList)
+
+  targetIndex = int(reqList[0])
+  columnIndex = int(reqList[1])
+  actionIndex = int(reqList[2])
 
   originDf = pd.read_csv(filePath)
+  targetList = ['missing', 'outlier', 'incons']
   columnList = list(originDf.columns)
   actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
 
@@ -324,7 +387,7 @@ def action():
   tmpDf = actionDf.to_frame(name = columnList[columnIndex])
   missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
 
-  if target == 'missing':
+  if targetList[targetIndex] == 'missing':
     if actionList[actionIndex] == "remove":
       actionDf = actionDf.dropna()
       actionDf = actionDf.to_frame(name = columnList[columnIndex])
@@ -343,7 +406,7 @@ def action():
     if actionList[actionIndex] == "locf":
       actionDf = imputation.custom_imp_locf(actionDf, columnList[columnIndex])
 
-  if target == 'outlier':
+  if targetList[targetIndex] == 'outlier':
     lower, upper = imputation.LowerUpper(actionDf)
     outlierDf = actionDf[(actionDf < lower) | (actionDf > upper)]
     outlierIndex = list(outlierDf.index)
@@ -374,7 +437,7 @@ def action():
       for i in missingIndex:
         actionDf.loc[i, columnList[columnIndex]] = np.nan
 
-  if target == 'incons':
+  if targetList[targetIndex] == 'incons':
     actionDf = pd.to_numeric(actionDf, errors = 'coerce')
 
     if actionList[actionIndex] == "remove":
@@ -416,7 +479,7 @@ def action():
   root = root.dict_to_tree(treeData['children'])
 
   global currentCnt
-  newNode = tree.TreeNode(index = str(currentCnt + 1), state = '', name = 'locf')
+  newNode = tree.TreeNode(index = str(currentCnt + 1), state = '', name = actionList[actionIndex])
   root.add_child_to(str(currentCnt), newNode)
   root.update_state()
   currentCnt = currentCnt + 1
