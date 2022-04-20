@@ -4,6 +4,7 @@ import { PORT } from "../../../const"
 import HorizontalBarChart from "../../charts/HorizontalBarChart"
 import Legend from "./Legend"
 import HeatmapChart from "../../charts/HeatmapChart"
+import { Box } from "../../Box"
 
 const dataColorInfo = {
   missing: "steelblue",
@@ -11,7 +12,7 @@ const dataColorInfo = {
   incons: "darkgreen",
 }
 
-export default function Dataset({ columnList }) {
+export default function DataOverview({ columnList }) {
   const [barChartData, setBarChartData] = useState()
   const [heatmapChartData, setHeatmapChartData] = useState([])
   const [heatmapChartYList, setHeatmapChartYList] = useState([])
@@ -45,7 +46,7 @@ export default function Dataset({ columnList }) {
   }, [])
 
   return (
-    <>
+    <Box title="data-overview">
       <Legend dataColorInfo={dataColorInfo} />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         {Object.entries(dataColorInfo).map(([k, v]) => (
@@ -62,6 +63,6 @@ export default function Dataset({ columnList }) {
         columnList={columnList}
         color={heatmapColor}
       />
-    </>
+    </Box>
   )
 }

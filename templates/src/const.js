@@ -17,9 +17,9 @@ export const mainLayout2Style = {
     'dataset overview tree-chart'
     'setting overview tree-chart'
     'setting instance-level tree-chart'
-    'table-chart instance-level model'
-    'table-chart class-level model'
-    'table-chart class-level visualization'
+    'data-overview instance-level model'
+    'data-overview class-level model'
+    'data-overview class-level visualization'
   `,
 }
 

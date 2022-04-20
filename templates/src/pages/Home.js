@@ -20,7 +20,7 @@ import Treetable from "../components/Treetable"
 
 import { mainLayout2Style } from "../const"
 import { Box } from "../components/Box"
-import Dataset from "../components/modules/dataset"
+import DataOverview from "../components/modules/dataOverview"
 
 const PORT = 5000
 
@@ -170,9 +170,7 @@ const Home = () => {
           </div>
           <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
         </Box>
-        <Box title="table-chart">
-          <Dataset columnList={dataColumnList} />
-        </Box>
+        <DataOverview columnList={dataColumnList} />
         <Box title="overview">
           <Linechartlegend />
           <Linechart data={dataLinechart} />
