@@ -1,29 +1,26 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
 
-import Fileupload from '../components/Fileupload'
-import Setting from '../components/Setting'
+import Fileupload from "../components/Fileupload"
+import Setting from "../components/Setting"
 import Input from "../components/Input"
 import Button from "../components/Button"
 import Radiobutton from "../components/Radiobutton"
 import NL4DV from "../components/NL4DV"
-import Barchart1 from "../components/Barchart1"
-import Barchart2 from "../components/Barchart2"
 import Linechart from "../components/Linechart"
-import Linechartlegend from '../components/Linechartlegend'
+import Linechartlegend from "../components/Linechartlegend"
 import Treechart1 from "../components/Treechart1"
 import Histogramchart1 from "../components/Histogramchart1"
-import Barchart1legend from '../components/Barchart1legend'
-import Heatmapchart from "../components/Heatmapchart"
 import Scatterchart from "../components/Scatterchart"
 import ECDFchart from "../components/ECDFchart"
 import Instance from "../components/Instance"
 import Class from "../components/Class"
-import Title from '../components/Title'
+import Title from "../components/Title"
 import Treetable from "../components/Treetable"
 
 import { mainLayout2Style } from "../const"
 import { Box } from "../components/Box"
+import Dataset from "../components/modules/dataset"
 
 const PORT = 5000
 
@@ -35,13 +32,9 @@ const Home = () => {
   const [dataTypeList, setTypeList] = useState([])
   const [dataEvalList, setEvalList] = useState([])
 
-  const [dataBarchart1, setBarchart1] = useState([])
-  const [dataBarchart2, setBarchart2] = useState([])
   const [dataHistogramchart1, setHistogramchart1] = useState([])
   const [dataScatterchart, setScatterchart] = useState([])
   const [dataECDFchart, setECDFchart] = useState([])
-  const [dataHeatmapchart, setHeatmapchart] = useState([])
-  const [dataHeatmapchartY, setHeatmapchartY] = useState([])
   const [dataLinechart, setLinechart] = useState([])
 
   const [dataQuery, setQuery] = useState("")
@@ -51,9 +44,8 @@ const Home = () => {
     e.preventDefault()
     axios
       .post(
-        `http://${window.location.hostname}:${PORT}/query?` +
-          Math.random(),
-          dataQuery
+        `http://${window.location.hostname}:${PORT}/query?` + Math.random(),
+        dataQuery
       )
       .then((response) => {
         setNL4DV(response.data)
@@ -77,8 +69,7 @@ const Home = () => {
       })
 
     axios
-      .get(`http://${window.location.hostname}:${PORT}/?` +
-        Math.random())
+      .get(`http://${window.location.hostname}:${PORT}/?` + Math.random())
       .then((response) => {
         setColumnList(response.data.columnList)
         setClassList(response.data.classList)
@@ -95,8 +86,7 @@ const Home = () => {
 
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/setting?` +
-          Math.random()
+        `http://${window.location.hostname}:${PORT}/setting?` + Math.random()
       )
       .then((response) => {
         setTypeList(response.data.typeList)
@@ -106,29 +96,6 @@ const Home = () => {
         alert(`ERROR - ${error.message}`)
       })
 
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/barchart1?` +
-          Math.random()
-      )
-      .then((response) => {
-        setBarchart1(response.data)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
-
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/barchart2?` +
-          Math.random()
-      )
-      .then((response) => {
-        setBarchart2(response.data.classDict)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
     axios
       .get(
         `http://${window.location.hostname}:${PORT}/scatterchart?` +
@@ -142,8 +109,7 @@ const Home = () => {
       })
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/ECDFchart?` +
-          Math.random()
+        `http://${window.location.hostname}:${PORT}/ECDFchart?` + Math.random()
       )
       .then((response) => {
         setECDFchart(response.data)
@@ -151,18 +117,7 @@ const Home = () => {
       .catch((error) => {
         alert(`ERROR - ${error.message}`)
       })
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/heatmapchart?` +
-          Math.random()
-      )
-      .then((response) => {
-        setHeatmapchart(response.data.heatmapList)
-        setHeatmapchartY(response.data.yList)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
+
     axios
       .post(
         `http://${window.location.hostname}:${PORT}/histogramchart1?` +
@@ -180,10 +135,10 @@ const Home = () => {
         `http://${window.location.hostname}:${PORT}/static/linechart.json?` +
           Math.random()
       )
-      .then(response => {
+      .then((response) => {
         setLinechart(response.data)
       })
-      .catch(error => {
+      .catch((error) => {
         alert(`ERROR - ${error.message}`)
       })
   }, [])
@@ -216,28 +171,7 @@ const Home = () => {
           <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
         </Box>
         <Box title="table-chart">
-          <Title title="instance level" />
-          <Barchart1legend />
-            <div
-              style={{
-                display: "grid",
-                gridAutoFlow: "column",
-                gridGap: "3px",
-                marginTop: "10px",
-                marginBottom: "10px"
-              }}
-            >
-              <Barchart1 data={[dataBarchart1.missing]} colorCode={'steelblue'} />
-              <Barchart1 data={[dataBarchart1.outlier]} colorCode={'orange'} />
-              <Barchart1 data={[dataBarchart1.incons]} colorCode={'darkgreen'} />
-            </div>
-            <Heatmapchart
-              data={dataHeatmapchart}
-              yList={dataHeatmapchartY}
-              columnList={dataColumnList}
-            />
-            <Title title="class level" />
-            <Barchart2 data={dataBarchart2} dataClassList={dataClassList} dataColorCode={dataColorCode} />
+          <Dataset columnList={dataColumnList} />
         </Box>
         <Box title="overview">
           <Linechartlegend />
@@ -293,15 +227,11 @@ const Home = () => {
           >
             <Class dataTypeList={dataTypeList} />
           </Box>
-        </Box>        
-        <Box
-          title="tree-chart"
-          style={{ display: "flex", overflow: "auto" }}
-        >
+        </Box>
+        <Box title="tree-chart" style={{ display: "flex", overflow: "auto" }}>
           <Treetable />
         </Box>
-        <Box title="model" style={{ overflow: "auto" }}>
-        </Box>
+        <Box title="model" style={{ overflow: "auto" }}></Box>
         <Box title="visualization">
           <form
             onSubmit={handleSubmit}
@@ -319,7 +249,7 @@ const Home = () => {
             </Button>
           </form>
           <NL4DV spec={dataNL4DV} />
-        </Box>        
+        </Box>
       </div>
     </div>
   )

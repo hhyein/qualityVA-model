@@ -11,10 +11,7 @@ import numpy as np
 import pandas as pd
 from io import StringIO
 from scipy import stats
-from nl4dv import NL4DV
 from collections import Counter
-from pycaret.regression import *
-from pycaret.classification import *
 
 import module.imputation as imputation
 import module.tree as tree

@@ -34,3 +34,5 @@ export const boxTitles = {
   "tree-chart": "action log",
   model: "model accuracy",
 }
+
+export const PORT = 5000
