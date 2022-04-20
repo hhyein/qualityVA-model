@@ -111,61 +111,62 @@ def home():
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
-  query = request.get_data().decode('utf-8')
-  originDf = pd.read_csv(filePath)
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  # query = request.get_data().decode('utf-8')
+  # originDf = pd.read_csv(filePath)
+  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  nl4dvDf = originDf.dropna()
-  nl4dvDf = nl4dvDf.to_dict('records')
-  nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
-  nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
-  nl4dvOutput = nl4dvInstance.analyze_query(query)
+  # nl4dvDf = originDf.dropna()
+  # nl4dvDf = nl4dvDf.to_dict('records')
+  # nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
+  # nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
+  # nl4dvOutput = nl4dvInstance.analyze_query(query)
 
-  # extraction attribute, task, vistype
-  try:
-    attributes = nl4dvOutput['visList'][0]['attributes']
-    tasks = nl4dvOutput['visList'][0]['tasks']
-    visType = nl4dvOutput['visList'][0]['visType']
-  except:
-    return jsonify({'nl4dv': 'please writing valid query'})
+  # # extraction attribute, task, vistype
+  # try:
+  #   attributes = nl4dvOutput['visList'][0]['attributes']
+  #   tasks = nl4dvOutput['visList'][0]['tasks']
+  #   visType = nl4dvOutput['visList'][0]['visType']
+  # except:
+  #   return jsonify({'nl4dv': 'please writing valid query'})
 
-  if type(attributes) == list:
-    attributes = ",".join(attributes)
-  if type(tasks) == list:
-    tasks = ",".join(tasks)
-  if type(visType) == list:
-    visType = ",".join(visType)
+  # if type(attributes) == list:
+  #   attributes = ",".join(attributes)
+  # if type(tasks) == list:
+  #   tasks = ",".join(tasks)
+  # if type(visType) == list:
+  #   visType = ",".join(visType)
 
-  # extraction vlspec
-  vlSpec = nl4dvOutput['visList'][0]['vlSpec']
-  vlSpec['data']['values'] = nl4dvDf
+  # # extraction vlspec
+  # vlSpec = nl4dvOutput['visList'][0]['vlSpec']
+  # vlSpec['data']['values'] = nl4dvDf
 
-  vlSpec['width'] = "container"
-  vlSpec['height'] = "container"
+  # vlSpec['width'] = "container"
+  # vlSpec['height'] = "container"
 
-  # preprocessing vlspec
-  if 'encoding' in vlSpec:
-      if 'x' in vlSpec['encoding']:
-          if 'aggregate' in vlSpec['encoding']['x']:
-              del vlSpec['encoding']['x']['aggregate']
-  if 'encoding' in vlSpec:
-      if 'y' in vlSpec['encoding']:
-          if 'aggregate' in vlSpec['encoding']['y']:
-              del vlSpec['encoding']['y']['aggregate']
-  if 'encoding' in vlSpec:
-      if 'x' in vlSpec['encoding']:
-          if 'bin' in vlSpec['encoding']['x']:
-              del vlSpec['encoding']['x']['bin']
-  if 'encoding' in vlSpec:
-      if 'color' in vlSpec['encoding']:
-          if 'aggregate' in vlSpec['encoding']['color']:
-              del vlSpec['encoding']['color']['aggregate']
+  # # preprocessing vlspec
+  # if 'encoding' in vlSpec:
+  #     if 'x' in vlSpec['encoding']:
+  #         if 'aggregate' in vlSpec['encoding']['x']:
+  #             del vlSpec['encoding']['x']['aggregate']
+  # if 'encoding' in vlSpec:
+  #     if 'y' in vlSpec['encoding']:
+  #         if 'aggregate' in vlSpec['encoding']['y']:
+  #             del vlSpec['encoding']['y']['aggregate']
+  # if 'encoding' in vlSpec:
+  #     if 'x' in vlSpec['encoding']:
+  #         if 'bin' in vlSpec['encoding']['x']:
+  #             del vlSpec['encoding']['x']['bin']
+  # if 'encoding' in vlSpec:
+  #     if 'color' in vlSpec['encoding']:
+  #         if 'aggregate' in vlSpec['encoding']['color']:
+  #             del vlSpec['encoding']['color']['aggregate']
 
-  del vlSpec['mark']['tooltip']
-  del vlSpec['data']['format']
-  del vlSpec['data']['url']
+  # del vlSpec['mark']['tooltip']
+  # del vlSpec['data']['format']
+  # del vlSpec['data']['url']
 
-  return jsonify({'nl4dv': vlSpec})
+  # return jsonify({'nl4dv': vlSpec})
+  return jsonify({'nl4dv': 'success'})
 
 @app.route('/barchart1', methods = ['GET', 'POST'])
 def barchart1():
@@ -424,15 +425,6 @@ def scatterchart():
 
   return json.dumps(response)
 
-@app.route('/correlationchart', methods = ['GET', 'POST'])
-def correlationchart():
-  originDf = pd.read_csv(filePath)
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  corr = originDf.corr(method = 'pearson')
-  corr = corr.applymap(str).transpose().to_dict()
-
-  return jsonify(corr)
-
 @app.route('/action', methods=['GET', 'POST'])
 def action():
   reqList = request.get_data().decode('utf-8')
@@ -535,8 +527,6 @@ def action():
   
   changeDf.to_csv(filePath, index = False)
   changeDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
-
-
 
   with open('static/treeData.json') as jsonData:
       treeData = json.load(jsonData)
