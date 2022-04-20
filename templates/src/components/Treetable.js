@@ -7,23 +7,23 @@ export default function Treetable() {
   const exampleDataList = [
     {
       actionName: "EM",
-      data: "alcohol"
+      data: "alcohol",
     },
     {
       actionName: "LOCF",
-      data: "hue"
+      data: "hue",
     },
     {
       actionName: "normalization",
-      data: "proline"
+      data: "proline",
     },
     {
       actionName: "remove",
-      data: "class"
+      data: "class",
     },
     {
       actionName: "remove",
-      data: "class"
+      data: "class",
     },
   ]
 
@@ -31,20 +31,20 @@ export default function Treetable() {
 
   useEffect(() => {
     axios
-    .get(
-      `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
-        Math.random()
-    )
-    .then((response) => {
-      setTreechart(response.data)
-    })
-    .catch((error) => {
-      alert(`ERROR - ${error.message}`)
-    })
+      .get(
+        `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
+          Math.random()
+      )
+      .then((response) => {
+        setTreechart(response.data)
+      })
+      .catch((error) => {
+        console.log(`ERROR - ${error.message}`)
+      })
   }, [])
 
   return (
-    <table style={{ minWidth: '90%' }}>
+    <table style={{ minWidth: "90%" }}>
       <thead>
         <th>action index</th>
         <th>action name</th>

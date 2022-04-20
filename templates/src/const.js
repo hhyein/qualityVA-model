@@ -12,27 +12,26 @@ export const mainLayout1Style = {
 export const mainLayout2Style = {
   gridGap: "10px",
   gridTemplateColumns: "300px 900px 300px",
-  gridTemplateRows: "80px 110px 190px 110px 100px 220px",
+  gridTemplateRows: "80px 180px 100px 70px 150px 130px",
   gridTemplateAreas: `
-    'data-upload model-overview tree-chart'
-    'setting model-overview tree-chart'
-    'setting instance-level tree-chart'
-    'data-overview instance-level model'
-    'data-overview class-level model'
-    'data-overview class-level visualization'
+    'data-upload model-overview data-overview'
+    'setting model-overview data-overview'
+    'setting model-overview data-overview'
+    'setting overview detail-action'
+    'action overview detail-action'
+    'action overview visualization'
   `,
 }
 
 export const boxTitles = {
   "data-upload": "data upload",
   setting: "setting",
-  "table-chart": "dataset",
-  visualization: "nl4dv",
+  action: "action",
+  "model-overview": "model overview",
+  overview: "overview",
   "data-overview": "data overview",
-  "class-level": "class level",
-  "instance-level": "instance level",
-  "tree-chart": "action log",
-  model: "model accuracy",
+  "detail-action": "detail-action",
+  visualization: "nl4dv",
 }
 
 export const PORT = 5000

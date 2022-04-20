@@ -22,7 +22,7 @@ export default function DataUpload() {
         console.log(response.data)
       })
       .catch((error) => {
-        alert(`ERROR - ${error.message}`)
+        console.log(`ERROR - ${error.message}`)
       })
   }
 
