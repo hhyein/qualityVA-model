@@ -26,7 +26,7 @@ function Histogramchart1(props) {
     var margin = { top: 20, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom,
-      height2 = 30
+      height2 = 40
     
     svg
       .attr('width', width)
