@@ -49,9 +49,31 @@ def fileUpload():
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
+  originDf = pd.read_csv(filePath)
 
-  return json.dumps({'state': 'success'})
+  if className == 'None':
+    dataDf = originDf
+  else:
+    dataDf = originDf.drop([className], axis = 1)
 
+  # type
+  typeList = []
+  tmpList = dataDf.columns.tolist()
+  for i in range(len(tmpList)):
+    typeList.append({'label': tmpList[i], 'value': i})
+
+  # evaluation
+  evalList = []
+  tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
+              'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+  for i in range(len(tmpList)):
+    evalList.append({'label': tmpList[i], 'value': i})
+
+  response = {}
+  response['typeList'] = typeList
+  response['evalList'] = evalList
+
+  return json.dumps(response)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -145,19 +167,57 @@ def query():
 
   return jsonify({'nl4dv': vlSpec})
 
+@app.route('/barchart1', methods = ['GET', 'POST'])
+def barchart1():
+  originDf = pd.read_csv(filePath)
+
+  for column in originDf:
+    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
+      originDf = originDf.drop([column], axis = 1)
+
+  missing = sum(originDf.isnull().sum().values.tolist())
+
+  tmpList = []
+  for column in originDf:
+    lower, upper = imputation.LowerUpper(originDf[column])
+    data1 = originDf[originDf[column] > upper]
+    data2 = originDf[originDf[column] < lower]
+    tmpList.append(data1.shape[0] + data2.shape[0])
+  outlier = sum(tmpList)
+
+  tmpList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    tmpList.append(df.isnull().sum().values[0].tolist())
+  incons = sum(tmpList)
+
+  response = {}
+  response['missing'] = {'data': missing, 'originData': len(originDf) - missing}
+  response['outlier'] = {'data': outlier, 'originData': len(originDf) - outlier}
+  response['incons'] = {'data': incons, 'originData': len(originDf) - incons}
+
+  return jsonify(response)
+
 @app.route('/barchart2', methods = ['GET', 'POST'])
 def barchart2():
   originDf = pd.read_csv(filePath)
 
   if className == 'None':
-    classDict = {}
+    response = {}
   
   else:
     classList = originDf[className].values.tolist()
     classDict = Counter(classList)
-    classDict['group'] = 'class'
 
-  return jsonify(classDict)
+    tmpList = []
+    for i, (key, val) in enumerate(classDict.items()):
+      tmpList.append({'class': key, 'value': val})
+
+    response = {}
+    response['classDict'] = tmpList
+
+  return jsonify(response)
 
 @app.route('/charttable', methods = ['GET', 'POST'])
 def charttable():
@@ -310,9 +370,15 @@ def ECDFchart():
 def heatmapchart():
   originDf = pd.read_csv(filePath)
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  columnList = list(originDf.columns)
 
-  heatmapDf, yList = imputation.heatmapDf(columnList, originDf)
+  if className == 'None':
+    dataDf = originDf
+  else:
+    dataDf = originDf.drop([className], axis = 1)
+
+  columnList = list(dataDf.columns)
+
+  heatmapDf, yList = imputation.heatmapDf(columnList, dataDf)
   heatmapList = list(heatmapDf.transpose().to_dict().values())
 
   response = {}
