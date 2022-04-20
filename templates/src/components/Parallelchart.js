@@ -48,13 +48,15 @@ function Parallelchart(props) {
     svg
       .selectAll("myPath")
       .data(data)
-      .enter().append("path")
+      .enter()
+      .append("path")
       .attr("d",  path)
       .style("fill", "none")
       .style("stroke", "#69b3a2")
       .style("opacity", 0.5)
 
-    svg.selectAll("myAxis")
+    svg
+      .selectAll("myAxis")
       .data(dimensions).enter()
       .append("g")
       .attr("transform", function(d) { return "translate(" + x(d) + ")"; })
