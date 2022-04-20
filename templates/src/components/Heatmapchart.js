@@ -9,9 +9,9 @@ function Heatmapchart(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = svgRef.current.clientWidth - margin.left - margin.right,
-      height = svgRef.current.clientHeight - margin.top - margin.bottom
+    var margin = { top: 0, right: 0, bottom: 10, left: 0 },
+      width = 275 - margin.left - margin.right,
+      height = 200 - margin.top - margin.bottom
 
       svg
         .attr("width", width + margin.left + margin.right)
@@ -30,7 +30,7 @@ function Heatmapchart(props) {
         .padding(0.05)
       
       var color1 = d3.scaleLinear()
-        .range(["white", "#9e9e9e"])
+        .range(["white", "#cccccc"])
         .domain([0, 100])
 
       var color2 = d3.scaleLinear()
@@ -61,7 +61,7 @@ function Heatmapchart(props) {
         .attr("height", y.bandwidth() )
         .style("fill", function(d) {
           if (d.value == 0) {
-            return color1(20);
+            return color1(35);
           }
           return color2(d.value * 20);
         })
@@ -74,9 +74,10 @@ function Heatmapchart(props) {
     }, [props.data, props.yList, props.columnList]);
 
   return (
-    <div className = "svg-wrapper">
-      <svg ref = {svgRef}></svg>
-    </div>
+    <>
+      <svg ref = {svgRef}>
+      </svg>
+    </>
   );
 }
 export default Heatmapchart
