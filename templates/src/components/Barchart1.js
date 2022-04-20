@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 
 function Barchart1(props) {
-  const { data } = props
+  const { data, colorCode } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -19,8 +19,8 @@ function Barchart1(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 10, right: 10, bottom: 10, left: 10 },
-      width = 100 - margin.left - margin.right,
+    var margin = { top: 0, right: 0, bottom: 10, left: 0 },
+      width = 85 - margin.left - margin.right,
       height = 30 - margin.top - margin.bottom
 
     svg
@@ -39,7 +39,7 @@ function Barchart1(props) {
     var color = d3
       .scaleOrdinal()
       .domain(subgroups)
-      .range(['steelblue', '#cccccc'])
+      .range([colorCode, '#cccccc'])
 
     data.forEach(function (d) {
       var tot = 0
@@ -61,24 +61,16 @@ function Barchart1(props) {
       .data(stackedData)
       .enter()
       .append('g')
-      .attr('fill', function (d) {
-        return color(d.key)
-      })
+      .attr('fill', function (d) { return color(d.key) })
       .selectAll('rect')
-      .data(function (d) {
-        return d
-      })
+      .data(function (d) { return d })
       .enter()
       .append('rect')
-      .attr('y', function (d) {
-        return y(d.data.group)
-      })
-      .attr('x', function (d) {
-        return x(d[0])
-      })
-      .attr('width', 100)
-      .attr('height', 30)
-  }, [props.data])
+      .attr('y', function (d) { return y(d.data.group) })
+      .attr('x', function (d) { return x(d[0]) })
+      .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+      .attr("height", y.bandwidth())
+  }, [props.data, props.colorCode])
 
   return (
     <>
