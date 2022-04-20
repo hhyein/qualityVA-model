@@ -1,32 +1,25 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
-
-import Fileupload from "../components/modules/dataUpload/FileUpload"
-import Setting from "../components/Setting"
 import Input from "../components/Input"
 import Button from "../components/Button"
-import Radiobutton from "../components/Radiobutton"
 import NL4DV from "../components/NL4DV"
-import Linechart from "../components/Linechart"
-import Linechartlegend from "../components/Linechartlegend"
-import Treechart1 from "../components/Treechart1"
 import Histogramchart1 from "../components/Histogramchart1"
 import Scatterchart from "../components/Scatterchart"
 import ECDFchart from "../components/ECDFchart"
 import Instance from "../components/Instance"
 import Class from "../components/Class"
-import Title from "../components/Title"
 import Treetable from "../components/Treetable"
 
 import { mainLayout2Style } from "../const"
 import { Box } from "../components/Box"
 import DataOverview from "../components/modules/dataOverview"
 import DataUpload from "../components/modules/dataUpload"
+import Setting from "../components/modules/setting"
+import ModelOverview from "../components/modules/modelOverview"
 
 const PORT = 5000
 
 const Home = () => {
-  const [data, setData] = useState([])
   const [dataColumnList, setColumnList] = useState([])
   const [dataClassList, setClassList] = useState([])
   const [dataColorCode, setColorCode] = useState([])
@@ -36,7 +29,6 @@ const Home = () => {
   const [dataHistogramchart1, setHistogramchart1] = useState([])
   const [dataScatterchart, setScatterchart] = useState([])
   const [dataECDFchart, setECDFchart] = useState([])
-  const [dataLinechart, setLinechart] = useState([])
 
   const [dataQuery, setQuery] = useState("")
   const [dataNL4DV, setNL4DV] = useState()
@@ -57,18 +49,6 @@ const Home = () => {
   }
 
   useEffect(() => {
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/static/wine.json?` +
-          Math.random()
-      )
-      .then((response) => {
-        setData(response.data)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
-
     axios
       .get(`http://${window.location.hostname}:${PORT}/?` + Math.random())
       .then((response) => {
@@ -131,50 +111,15 @@ const Home = () => {
       .catch((error) => {
         alert(`ERROR - ${error.message}`)
       })
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/static/linechart.json?` +
-          Math.random()
-      )
-      .then((response) => {
-        setLinechart(response.data)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
   }, [])
 
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
         <DataUpload />
-        <Box
-          title="setting"
-          style={{
-            display: "grid",
-            overflow: "visible",
-            gridGap: "5px",
-          }}
-        >
-          <Title title="dataset type" />
-          <div style={{ display: "grid", gridAutoFlow: "column" }}>
-            {["prediction", "classification"].map((id) => (
-              <Radiobutton
-                key={id}
-                id={id}
-                // onClick={(id) => setSelectedRadioButton(id)}
-                // checked={selectedRadioButton === id}
-              />
-            ))}
-          </div>
-          <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
-        </Box>
+        <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
         <DataOverview columnList={dataColumnList} />
-        <Box title="overview">
-          <Linechartlegend />
-          <Linechart data={dataLinechart} />
-          <Treechart1 data={data} />
-        </Box>
+        <ModelOverview />
         <Box
           title="instance-level"
           style={{

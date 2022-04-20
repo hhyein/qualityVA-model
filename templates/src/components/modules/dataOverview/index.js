@@ -2,7 +2,7 @@ import axios from "axios"
 import React, { useEffect, useState } from "react"
 import { PORT } from "../../../const"
 import HorizontalBarChart from "../../charts/HorizontalBarChart"
-import Legend from "./Legend"
+import Legend from "../../Legend"
 import HeatmapChart from "../../charts/HeatmapChart"
 import { Box } from "../../Box"
 

@@ -14,8 +14,8 @@ export const mainLayout2Style = {
   gridTemplateColumns: "300px 900px 300px",
   gridTemplateRows: "80px 110px 190px 110px 100px 220px",
   gridTemplateAreas: `
-    'data-upload overview tree-chart'
-    'setting overview tree-chart'
+    'data-upload model-overview tree-chart'
+    'setting model-overview tree-chart'
     'setting instance-level tree-chart'
     'data-overview instance-level model'
     'data-overview class-level model'
