@@ -41,7 +41,7 @@ function ECDFchart(props) {
     var res = sumstat.map(function(d){ return d.key })
     var color = d3.scaleOrdinal()
       .domain(res)
-      .range(["#6a3d9a", "#9e9e9e"]);
+      .range(["steelblue", "#cccccc"]);
 
     svg.selectAll(".line")
       .data(sumstat)
