@@ -9,9 +9,9 @@ function Linechart(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
-      width = svgRef.current.clientWidth - margin.left - margin.right,
-      height = svgRef.current.clientHeight - margin.top - margin.bottom
+    var margin = { top: 20, right: 10, bottom: 10, left: 0 },
+      width = 850 - margin.left - margin.right,
+      height = 100 - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -20,50 +20,68 @@ function Linechart(props) {
       .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
-    d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/5_OneCatSevNumOrdered.csv", function(data) {
-      var sumstat = d3.nest()
-        .key(function(d) { return d.name;})
-        .entries(data);
+    var allGroup = ["valueA", "valueB", "valueC"]
 
-      var x = d3.scaleLinear()
-        .domain(d3.extent(data, function(d) { return d.year; }))
-        .range([ 0, width ]);
-      svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(5));
+    var dataReady = allGroup.map( function(grpName) {
+      return {
+        name: grpName,
+        values: data.map(function(d) {
+          return {time: d.time, value: +d[grpName]};
+        })
+      };
+    });
 
-      var y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return +d.n; })])
-        .range([ height, 0 ]);
-      svg.append("g")
-        .call(d3.axisLeft(y));
+    var myColor = d3.scaleOrdinal()
+      .domain(allGroup)
+      .range(['#eb3477', '#8934eb', '#4ceb34']);
 
-      var res = sumstat.map(function(d){ return d.key })
-      var color = d3.scaleOrdinal()
-        .domain(res)
-        .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf','#999999'])
+    var x = d3.scaleLinear()
+      .domain([0, 10])
+      .range([ 0, width ]);
+    svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
 
-      svg.selectAll(".line")
-        .data(sumstat)
-        .enter()
-        .append("path")
-        .attr("fill", "none")
-        .attr("stroke", function(d){ return color(d.key) })
-        .attr("stroke-width", 1.5)
-        .attr("d", function(d){
-          return d3.line()
-            .x(function(d) { return x(d.year); })
-            .y(function(d) { return y(+d.n); })
-            (d.values)
-        }
-      )
-    })
+    var y = d3.scaleLinear()
+      .domain( [0, 20])
+      .range([ height, 0 ]);
+    svg.append("g")
+      .call(d3.axisLeft(y));
+
+    var line = d3.line()
+      .x(function(d) { return x(+d.time) })
+      .y(function(d) { return y(+d.value) })
+
+    svg.selectAll("myLines")
+      .data(dataReady)
+      .enter()
+      .append("path")
+      .attr("d", function(d){ return line(d.values) } )
+      .attr("stroke", function(d){ return myColor(d.name) })
+      .style("stroke-width", 4)
+      .style("fill", "none")
+
+    svg
+      .selectAll("myDots")
+      .data(dataReady)
+      .enter()
+      .append('g')
+      .style("fill", function(d){ return myColor(d.name) })
+      .selectAll("myPoints")
+      .data(function(d){ return d.values })
+      .enter()
+      .append("circle")
+      .attr("cx", function(d) { return x(d.time) } )
+      .attr("cy", function(d) { return y(d.value) } )
+      .attr("r", 5)
+      .attr("stroke", "white")
     }, [props.data]);
 
   return (
-    <div className = "svg-wrapper">
-      <svg ref = {svgRef}></svg>
-    </div>
+    <>
+      <svg ref = {svgRef}>
+      </svg>
+    </>
   );
 }
 export default Linechart
