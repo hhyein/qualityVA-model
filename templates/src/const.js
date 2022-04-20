@@ -14,7 +14,7 @@ export const mainLayout2Style = {
   gridTemplateColumns: "300px 900px 300px",
   gridTemplateRows: "80px 110px 190px 110px 100px 220px",
   gridTemplateAreas: `
-    'dataset overview tree-chart'
+    'data-upload overview tree-chart'
     'setting overview tree-chart'
     'setting instance-level tree-chart'
     'data-overview instance-level model'
@@ -24,11 +24,11 @@ export const mainLayout2Style = {
 }
 
 export const boxTitles = {
-  dataset: "dataset upload",
+  "data-upload": "data upload",
   setting: "setting",
   "table-chart": "dataset",
   visualization: "nl4dv",
-  overview: "overview",
+  "data-overview": "data overview",
   "class-level": "class level",
   "instance-level": "instance level",
   "tree-chart": "action log",

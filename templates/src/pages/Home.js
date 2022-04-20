@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import axios from "axios"
 
-import Fileupload from "../components/Fileupload"
+import Fileupload from "../components/modules/dataUpload/FileUpload"
 import Setting from "../components/Setting"
 import Input from "../components/Input"
 import Button from "../components/Button"
@@ -21,6 +21,7 @@ import Treetable from "../components/Treetable"
 import { mainLayout2Style } from "../const"
 import { Box } from "../components/Box"
 import DataOverview from "../components/modules/dataOverview"
+import DataUpload from "../components/modules/dataUpload"
 
 const PORT = 5000
 
@@ -146,9 +147,7 @@ const Home = () => {
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
-        <Box title="dataset">
-          <Fileupload />
-        </Box>
+        <DataUpload />
         <Box
           title="setting"
           style={{
