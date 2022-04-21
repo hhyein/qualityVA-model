@@ -4,7 +4,6 @@ import Input from "../components/Input"
 import Button from "../components/Button"
 import NL4DV from "../components/modules/visualization/NL4DV"
 import Histogramchart1 from "../components/modules/detailAction/HistogramChart"
-import Scatterchart from "../components/Scatterchart"
 import ECDFchart from "../components/ECDFchart"
 import Instance from "../components/Instance"
 import Class from "../components/Class"
@@ -102,5 +101,3 @@ const Home = () => {
 }
 
 export default Home
-// bar chart: Error: <rect> attribute width: Expected length, "NaN".
-// histogram: Error: <rect> attribute width: A negative value is not valid. ("-1")
