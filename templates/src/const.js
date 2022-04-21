@@ -14,12 +14,12 @@ export const mainLayout2Style = {
   gridTemplateColumns: "300px 900px 300px",
   gridTemplateRows: "80px 120px 100px 70px 150px 150px",
   gridTemplateAreas: `
-    'data-upload model-overview data-overview'
-    'setting model-overview data-overview'
-    'setting overview data-overview'
+    'data-upload model-overview detail-action'
+    'setting model-overview detail-action'
+    'setting model-overview detail-action'
     'setting overview detail-action'
-    'action overview detail-action'
-    'action overview visualization'
+    'visualization overview detail-action'
+    'visualization overview detail-action'
   `,
 }
 

@@ -33,6 +33,7 @@ export default function Visualization() {
         display: "grid",
         overflow: "visible",
         gridGap: "5px",
+        gridTemplateRows: "auto 1fr",
       }}
     >
       <form
