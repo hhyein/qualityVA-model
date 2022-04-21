@@ -1,6 +1,6 @@
 import React from "react"
 
-export default function Button({ style, children, otherProps }) {
+export default function Button({ style, children, ...otherProps }) {
   return (
     <button
       style={{
