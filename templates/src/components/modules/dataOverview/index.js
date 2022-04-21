@@ -61,7 +61,7 @@ export default function DataOverview({ columnList }) {
         data={heatmapChartData}
         yList={heatmapChartYList}
         columnList={columnList}
-        color={heatmapColor}
+        colorCode={heatmapColor}
       />
     </Box>
   )
