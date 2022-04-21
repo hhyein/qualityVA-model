@@ -93,7 +93,7 @@ def custom_imp_max(df, colName):
     return output
 
 def custom_imp_mode(df, colName):
-    modeValue = df.mode(dropna = False)
+    modeValue = df.mode(dropna = True)[0]
     df = df.fillna(modeValue)
     output = df.to_frame(name = colName)
     return output
