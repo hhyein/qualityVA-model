@@ -29,7 +29,6 @@ export default function HorizontalBarChart({ data, colorCode, onClick }) {
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
     var x = d3.scaleLinear().domain([0, 100]).range([0, width])
-
     var y = d3.scaleBand().range([0, height])
 
     var color = d3
