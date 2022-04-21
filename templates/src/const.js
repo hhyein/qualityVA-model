@@ -17,21 +17,19 @@ export const mainLayout2Style = {
     'data-upload model-overview detail-action'
     'setting model-overview detail-action'
     'setting model-overview detail-action'
-    'setting overview detail-action'
-    'visualization overview detail-action'
-    'visualization overview detail-action'
+    'setting model-detail detail-action'
+    'visualization model-detail detail-action'
+    'visualization model-detail detail-action'
   `,
 }
 
 export const boxTitles = {
   "data-upload": "data upload",
   setting: "setting",
-  action: "action",
-  "model-overview": "model overview",
-  overview: "overview",
-  "data-overview": "data overview",
-  "detail-action": "detail-action",
   visualization: "nl4dv",
+  "model-overview": "model overview",
+  "model-detail": "model detail",
+  "detail-action": "detail-action"
 }
 
 export const PORT = 5000

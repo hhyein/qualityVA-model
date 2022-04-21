@@ -49,9 +49,9 @@ export default function HorizontalTreeChart() {
   ]
 
   useEffect(() => {
-    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
-      width = 900 - margin.right - margin.left,
-      height = 300 - margin.top - margin.bottom
+    var margin = { top: 0, right: 0, bottom: 0, left: 20 },
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     var i = 0
 
@@ -78,8 +78,8 @@ export default function HorizontalTreeChart() {
       var links = tree.links(nodes)
 
       nodes.forEach(function (d) {
-        d.x = 10
-        d.y = d.depth * 85
+        d.x = 20
+        d.y = d.depth * 88
       })
 
       var node = svg.selectAll("g.node").data(nodes, function (d) {
@@ -124,8 +124,6 @@ export default function HorizontalTreeChart() {
   }, [])
 
   return (
-    <div className="svg-wrapper">
-      <svg ref={svgRef}></svg>
-    </div>
+    <svg ref={svgRef} style={{ width: "100%", height: "25%" }}></svg>
   )
 }

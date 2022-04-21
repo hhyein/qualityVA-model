@@ -21,7 +21,7 @@ function ScatterChart(props) {
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+    var margin = { top: 20, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
@@ -74,34 +74,32 @@ function ScatterChart(props) {
         return color(d.className)
       })
 
-    d3.selectAll('svg').on('click', function (d, i) {
-      d3.event.preventDefault()
-      setClicked(false)
+    d3.selectAll('svg')
+      .on('click', function () {
+        d3.event.preventDefault()
+        setClicked(false)
     })
 
-    d3.selectAll('circle').on('contextmenu', function (d, i) {
-      d3.event.preventDefault()
-      setClicked(true)
-      setX(d3.event.layerX)
-      setY(d3.event.layerY)
-    })
+    // d3.selectAll('circle')
+    //   .on('contextmenu', function () {
+    //     d3.event.preventDefault()
+    //     setClicked(true)
+    //     setX(d3.event.layerX)
+    //     setY(d3.event.layerY)
+    // })
   }, [props.data, props.method])
 
   return (
       <>
-      <div className="svg-wrapper">
-        <svg ref={svgRef}></svg>
-      </div>
+      <svg ref={svgRef} style={{ width: "100%", height: "100%" }}></svg>
       {clicked && (
         <div
           className = "contextMenu"
           style={{ position: 'absolute', left: X, top: Y }}
         >
-          <div className = "contextMenu--option">Remove</div>
+          <div className = "contextMenu--option">remove cell</div>
           <div className = "contextMenu--separator" />
-          <div className = "contextMenu--option">Change</div>
-          <div className = "contextMenu--separator" />
-          <div className = "contextMenu--option">Create</div>
+          <div className = "contextMenu--option">remove cluster</div>
         </div>
       )}
     </>

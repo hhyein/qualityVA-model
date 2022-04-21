@@ -12,9 +12,9 @@ export default function LineChart(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll("*").remove()
 
-    var margin = { top: 20, right: 10, bottom: 10, left: 0 },
-      width = 850 - margin.left - margin.right,
-      height = 100 - margin.top - margin.bottom
+    var margin = { top: 0, right: 0, bottom: 20, left: 0 },
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     svg
       .attr("width", width + margin.left + margin.right)
@@ -41,16 +41,21 @@ export default function LineChart(props) {
     var x = d3.scaleLinear().domain([0, 10]).range([0, width])
     svg
       .append("g")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", "translate(20," + height + ")")
       .call(d3.axisBottom(x))
+      .selectAll("text")
+      .remove()
 
-    var y = d3.scaleLinear().domain([0, 20]).range([height, 0])
-    svg.append("g").call(d3.axisLeft(y))
+    var y = d3.scaleLinear().domain([0, 20]).range([height - 10, 0])
+    svg
+      .append("g")
+      .attr("transform", "translate(" + 20 + ", 10)")
+      .call(d3.axisLeft(y))
 
     var line = d3
       .line()
       .x(function (d) {
-        return x(+d.time)
+        return x(+d.time) + 20
       })
       .y(function (d) {
         return y(+d.value)
@@ -85,7 +90,7 @@ export default function LineChart(props) {
       .enter()
       .append("circle")
       .attr("cx", function (d) {
-        return x(d.time)
+        return x(d.time) + 20
       })
       .attr("cy", function (d) {
         return y(d.value)
@@ -96,7 +101,7 @@ export default function LineChart(props) {
 
   return (
     <>
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef} style={{ width: "100%", height: "60%" }}></svg>
     </>
   )
 }

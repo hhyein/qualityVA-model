@@ -23,7 +23,7 @@ export default function HistogramChart(props) {
       ordinals.push(i)
     }
 
-    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+    var margin = { top: 100, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom,
       height2 = 40
@@ -33,18 +33,12 @@ export default function HistogramChart(props) {
     var focus = svg
       .append("g")
       .attr("class", "focus")
-      .attr(
-        "transform",
-        "translate(" + margin.left + "," + (margin.top - height2 * 2) + ")"
-      )
+      .attr("transform", "translate(" + margin.left + "," + (margin.top - height2 * 2) + ")")
 
     var context = svg
       .append("g")
       .attr("class", "context")
-      .attr(
-        "transform",
-        "translate(" + margin.left + "," + (margin.top + height - height2) + ")"
-      )
+      .attr("transform", "translate(" + margin.left + "," + (margin.top + height - height2) + ")")
 
     var x = d3.scaleLinear().range([0, width])
     var x2 = d3.scaleLinear().range([0, width])
@@ -98,11 +92,13 @@ export default function HistogramChart(props) {
       .attr("transform", "translate(" + 0 + "," + height + ")")
       .call(xAxis)
 
-    focus.append("g").attr("class", "axis axis--y").call(yAxis)
+    focus
+      .append("g")
+      .attr("class", "axis axis--y")
+      .call(yAxis)
 
-    var defs = focus.append("defs")
-
-    defs
+    focus
+      .append("defs")
       .append("clipPath")
       .attr("id", "my-clip-path")
       .append("rect")
@@ -151,8 +147,6 @@ export default function HistogramChart(props) {
   }, [data, d3, df])
 
   return (
-    <div className="svg-wrapper">
-      <svg ref={svgRef}></svg>
-    </div>
+    <svg ref={svgRef} style={{ width: "100%", height: "100%" }}></svg>
   )
 }

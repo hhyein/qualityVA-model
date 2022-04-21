@@ -4,6 +4,7 @@ import { PORT } from "../../../const"
 import { Box } from "../../Box"
 import HistogramChart from "./HistogramChart"
 import ScatterChart from "./ScatterChart"
+import Action from "./Action"
 import Button from "../../Button"
 import Legend from "../../Legend"
 import HorizontalBarChart from "../../charts/HorizontalBarChart"
@@ -140,6 +141,7 @@ export default function DetailAction({ columnList }) {
           border: "1px solid var(--grey-100)",
           borderTopWidth: 0,
           background: "white",
+          height: "35%"
         }}
       >
         {selectedButton === "column data" ? (
@@ -153,6 +155,7 @@ export default function DetailAction({ columnList }) {
           />
         )}
       </div>
+      <Action />
     </Box>
   )
 }

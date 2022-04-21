@@ -9,9 +9,9 @@ function Linechartlegend(props) {
     var svg = d3.select(svgRef.current);
     d3.select(svgRef.current).selectAll("*").remove();
 
-    var margin = { top: 0, right: 0, bottom: 10, left: 0 },
-      width = 850 - margin.left - margin.right,
-      height = 30 - margin.top - margin.bottom
+    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+      width = svgRef.current.clientWidth - margin.left - margin.right,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     svg
         .attr("width", width + margin.left + margin.right)
@@ -30,7 +30,7 @@ function Linechartlegend(props) {
 
   return (
     <>
-      <svg ref = {svgRef}>
+      <svg ref = {svgRef} style={{ width: "100%", height: "15%" }}>
       </svg>
     </>
   );

@@ -35,7 +35,9 @@ export default function HeatmapChart({
         .style("opacity", 1)
     }
     var mouseleave = function (d) {
-      d3.select(this).style("stroke", "none").style("opacity", 0.8)
+      d3.select(this)
+        .style("stroke", "none")
+        .style("opacity", 0.8)
     }
 
     svg
@@ -69,6 +71,6 @@ export default function HeatmapChart({
   }, [data, yList, columnList, d3, colorCode])
 
   return (
-    <svg ref={svgRef} style={{ width: "100%", height: "75%" }}></svg>
+    <svg ref={svgRef} style={{ width: "100%", height: "35%" }}></svg>
   )
 }

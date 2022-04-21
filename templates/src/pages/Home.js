@@ -7,7 +7,7 @@ import Setting from "../components/modules/setting"
 import ModelOverview from "../components/modules/modelOverview"
 import Visualization from "../components/modules/visualization"
 import DetailAction from "../components/modules/detailAction"
-import Overview from "../components/modules/overview"
+import ModelDetail from "../components/modules/modelDetail"
 
 const PORT = 5000
 
@@ -44,10 +44,10 @@ const Home = () => {
       <div className="main" style={mainLayout2Style}>
         <DataUpload />
         <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
-        <Overview />
-        <ModelOverview />
-        <DetailAction columnList={dataColumnList} />
         <Visualization />
+        <ModelOverview />
+        <ModelDetail />
+        <DetailAction columnList={dataColumnList} />
       </div>
     </div>
   )
