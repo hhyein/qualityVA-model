@@ -4,7 +4,7 @@ import Select from "react-select"
 import Title from "../../Title"
 import { PORT } from "../../../const"
 import { Box } from "../../Box"
-import RadioButton from "./RadioButton"
+import RadioButton from "../../RadioButton"
 
 export default function Setting(props) {
   const { dataTypeList, dataEvalList } = props
