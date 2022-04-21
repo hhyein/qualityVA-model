@@ -4,6 +4,7 @@ import Select from "react-select"
 import { Box } from "../../Box"
 import { PORT } from "../../../const"
 import Title from "../../Title"
+import RadioButton from "../../RadioButton"
 
 export default function Action(props) {
   const { dataTypeList } = props
@@ -41,18 +42,35 @@ export default function Action(props) {
     })
 
   return (
-    <Box title="action">
-      <Title title="issue to be replaced" />
+    <Box
+    title="action"
+    style={{
+      display: "grid",
+      overflow: "visible",
+      gridGap: "5px",
+    }}
+    >
+      <Title title="data to be action on" />
+      <div style={{ display: "grid", gridAutoFlow: "column" }}>
+        {["total data", "specific column"].map((id) => (
+          <RadioButton
+            key={id}
+            id={id}
+            // onClick={(id) => setSelectedRadioButton(id)}
+            // checked={selectedRadioButton === id}
+          />
+        ))}
+      </div>
       <Select
-        options={target}
+        options={column}
         loadOptions={loadOptions}
         onChange={(e) => {
           value[0] = e.value
         }}
       />
-      <Title title="column to be action on" />
+      <Title title="issue to be action on" />
       <Select
-        options={column}
+        options={target}
         loadOptions={loadOptions}
         onChange={(e) => {
           value[1] = e.value
@@ -82,6 +100,3 @@ export default function Action(props) {
     </Box>
   )
 }
-
-/* isMulti */
-/* window.location.reload() */
