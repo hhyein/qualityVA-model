@@ -1,50 +1,50 @@
-import React, { useState, useEffect } from "react"
-import axios from "axios"
-import { PORT } from "../../../const"
-import VerticalTreeChart from "./VerticalTreeChart"
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { PORT } from '../../../const'
+import VerticalTreeChart from './VerticalTreeChart'
 
 export default function Treetable() {
   const exampleDataList = [
     {
-      actionName: "EM",
-      data: "alcohol"
+      actionName: 'EM',
+      data: 'alcohol',
     },
     {
-      actionName: "LOCF",
-      data: "hue"
+      actionName: 'LOCF',
+      data: 'hue',
     },
     {
-      actionName: "normalization",
-      data: "proline"
+      actionName: 'normalization',
+      data: 'proline',
     },
     {
-      actionName: "remove",
-      data: "class"
+      actionName: 'remove',
+      data: 'class',
     },
     {
-      actionName: "remove",
-      data: "class"
-    }
+      actionName: 'remove',
+      data: 'class',
+    },
   ]
 
   const [treeChartData, setTreeChartData] = useState([])
 
   useEffect(() => {
     axios
-    .get(
-      `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
-        Math.random()
-    )
-    .then((response) => {
-      setTreeChartData(response.data)
-    })
-    .catch((error) => {
-      alert(`ERROR - ${error.message}`)
-    })
+      .get(
+        `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
+          Math.random()
+      )
+      .then(response => {
+        setTreeChartData(response.data)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
   }, [])
 
   return (
-    <table height="350px">
+    <table height="350px" style={{ minWidth: '100%', margin: 0 }}>
       <thead>
         <th>actionIndex</th>
         <th>actionName</th>

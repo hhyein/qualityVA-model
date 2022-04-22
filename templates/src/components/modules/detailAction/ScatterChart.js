@@ -8,8 +8,7 @@ function ScatterChart(props) {
   if (method === 1) {
     var df = []
     Object.assign(df, data.tsneDict)
-  }
-  else {
+  } else {
     var df = []
     Object.assign(df, data.pcaDict)
   }
@@ -33,29 +32,38 @@ function ScatterChart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var x = d3.scaleLinear()
-      .domain([d3.min(df, function(d) { return d.value1; }) - 1, d3.max(df, function(d) { return d.value1; }) + 1])
+    var x = d3
+      .scaleLinear()
+      .domain([
+        d3.min(df, function (d) {
+          return d.value1
+        }) - 1,
+        d3.max(df, function (d) {
+          return d.value1
+        }) + 1,
+      ])
       .range([0, width])
     svg
       .append('g')
       .attr('transform', 'translate(0,' + height + ')')
       .call(d3.axisBottom(x).ticks(0))
-      .selectAll("text")
+      .selectAll('text')
       .remove()
 
-    var y = d3.scaleLinear()
-      .domain([d3.min(df, function(d) { return d.value2; }) - 1, d3.max(df, function(d) { return d.value2; }) + 1])
+    var y = d3
+      .scaleLinear()
+      .domain([
+        d3.min(df, function (d) {
+          return d.value2
+        }) - 1,
+        d3.max(df, function (d) {
+          return d.value2
+        }) + 1,
+      ])
       .range([height, 0])
-    svg
-      .append('g')
-      .call(d3.axisLeft(y).ticks(0))
-      .selectAll("text")
-      .remove()
+    svg.append('g').call(d3.axisLeft(y).ticks(0)).selectAll('text').remove()
 
-    var color = d3
-      .scaleOrdinal()
-      .domain(dataClassList)
-      .range(dataColorCode)
+    var color = d3.scaleOrdinal().domain(dataClassList).range(dataColorCode)
 
     svg
       .append('g')
@@ -74,10 +82,9 @@ function ScatterChart(props) {
         return color(d.className)
       })
 
-    d3.selectAll('svg')
-      .on('click', function () {
-        d3.event.preventDefault()
-        setClicked(false)
+    d3.selectAll('svg').on('click', function () {
+      d3.event.preventDefault()
+      setClicked(false)
     })
 
     // d3.selectAll('circle')
@@ -90,16 +97,16 @@ function ScatterChart(props) {
   }, [props.data, props.method])
 
   return (
-      <>
-      <svg ref={svgRef} style={{ width: "100%", height: "100%" }}></svg>
+    <>
+      <svg ref={svgRef} style={{ width: '100%', height: '95%' }}></svg>
       {clicked && (
         <div
-          className = "contextMenu"
+          className="contextMenu"
           style={{ position: 'absolute', left: X, top: Y }}
         >
-          <div className = "contextMenu--option">remove cell</div>
-          <div className = "contextMenu--separator" />
-          <div className = "contextMenu--option">remove cluster</div>
+          <div className="contextMenu--option">remove cell</div>
+          <div className="contextMenu--separator" />
+          <div className="contextMenu--option">remove cluster</div>
         </div>
       )}
     </>

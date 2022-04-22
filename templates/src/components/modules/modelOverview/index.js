@@ -1,15 +1,16 @@
-import axios from "axios"
-import React, { useEffect, useState } from "react"
-import { PORT } from "../../../const"
-import { Box } from "../../Box"
-import Legend from "../../Legend"
-import LineChart from "./LineChart"
-import HorizontalTreeChart from "./HorizontalTreeChart"
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { PORT } from '../../../const'
+import { Box } from '../../Box'
+import Legend from '../../Legend'
+import LineChart from './LineChart'
+import HorizontalTreeChart from './HorizontalTreeChart'
+import ModelOverviewTable from './ModelOverviewTable'
 
 const dataColorInfo = {
-  lr: "#eb3477",
-  knn: "#8934eb",
-  nb: "#4ceb34",
+  lr: '#eb3477',
+  knn: '#8934eb',
+  nb: '#4ceb34',
 }
 
 export default function ModelOverview() {
@@ -22,10 +23,10 @@ export default function ModelOverview() {
         `http://${window.location.hostname}:${PORT}/static/linechart.json?` +
           Math.random()
       )
-      .then((response) => {
+      .then(response => {
         setLineChartData(response.data)
       })
-      .catch((error) => {
+      .catch(error => {
         console.log(`ERROR - ${error.message}`)
       })
     axios
@@ -33,19 +34,61 @@ export default function ModelOverview() {
         `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
           Math.random()
       )
-      .then((response) => {
+      .then(response => {
         setTreeChartData(response.data)
       })
-      .catch((error) => {
+      .catch(error => {
         alert(`ERROR - ${error.message}`)
       })
   }, [])
 
   return (
-    <Box title="model-overview">
+    <Box
+      title="model-overview"
+      style={{
+        display: 'grid',
+        gridTemplateRows: 'auto 1fr 40px 160px',
+      }}
+    >
       <Legend dataColorInfo={dataColorInfo} />
       <LineChart data={lineChartData} />
       <HorizontalTreeChart data={[treeChartData]} />
+      <div style={{ overflow: 'auto' }}>
+        <ModelOverviewTable
+          data={[
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+            {
+              chart1: 'eee',
+              chart2: 'eee',
+              chart3: 'eee',
+            },
+          ]}
+        />
+      </div>
     </Box>
   )
 }

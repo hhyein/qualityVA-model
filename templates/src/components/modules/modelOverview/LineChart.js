@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from 'react'
 
 export default function LineChart(props) {
   const { data } = props
@@ -10,19 +10,19 @@ export default function LineChart(props) {
       return
     }
     var svg = d3.select(svgRef.current)
-    d3.select(svgRef.current).selectAll("*").remove()
+    d3.select(svgRef.current).selectAll('*').remove()
 
     var margin = { top: 0, right: 0, bottom: 20, left: 0 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     svg
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var allGroup = ["valueA", "valueB", "valueC"]
+    var allGroup = ['valueA', 'valueB', 'valueC']
 
     var dataReady = allGroup.map(function (grpName) {
       return {
@@ -36,20 +36,23 @@ export default function LineChart(props) {
     var myColor = d3
       .scaleOrdinal()
       .domain(allGroup)
-      .range(["#eb3477", "#8934eb", "#4ceb34"])
+      .range(['#eb3477', '#8934eb', '#4ceb34'])
 
     var x = d3.scaleLinear().domain([0, 10]).range([0, width])
     svg
-      .append("g")
-      .attr("transform", "translate(20," + height + ")")
+      .append('g')
+      .attr('transform', 'translate(20,' + height + ')')
       .call(d3.axisBottom(x))
-      .selectAll("text")
+      .selectAll('text')
       .remove()
 
-    var y = d3.scaleLinear().domain([0, 20]).range([height - 10, 0])
+    var y = d3
+      .scaleLinear()
+      .domain([0, 20])
+      .range([height - 10, 0])
     svg
-      .append("g")
-      .attr("transform", "translate(" + 20 + ", 10)")
+      .append('g')
+      .attr('transform', 'translate(' + 20 + ', 10)')
       .call(d3.axisLeft(y))
 
     var line = d3
@@ -62,46 +65,46 @@ export default function LineChart(props) {
       })
 
     svg
-      .selectAll("myLines")
+      .selectAll('myLines')
       .data(dataReady)
       .enter()
-      .append("path")
-      .attr("d", function (d) {
+      .append('path')
+      .attr('d', function (d) {
         return line(d.values)
       })
-      .attr("stroke", function (d) {
+      .attr('stroke', function (d) {
         return myColor(d.name)
       })
-      .style("stroke-width", 4)
-      .style("fill", "none")
+      .style('stroke-width', 4)
+      .style('fill', 'none')
 
     svg
-      .selectAll("myDots")
+      .selectAll('myDots')
       .data(dataReady)
       .enter()
-      .append("g")
-      .style("fill", function (d) {
+      .append('g')
+      .style('fill', function (d) {
         return myColor(d.name)
       })
-      .selectAll("myPoints")
+      .selectAll('myPoints')
       .data(function (d) {
         return d.values
       })
       .enter()
-      .append("circle")
-      .attr("cx", function (d) {
+      .append('circle')
+      .attr('cx', function (d) {
         return x(d.time) + 20
       })
-      .attr("cy", function (d) {
+      .attr('cy', function (d) {
         return y(d.value)
       })
-      .attr("r", 5)
-      .attr("stroke", "white")
+      .attr('r', 5)
+      .attr('stroke', 'white')
   }, [data, d3])
 
   return (
     <>
-      <svg ref={svgRef} style={{ width: "95%", height: "60%" }}></svg>
+      <svg ref={svgRef} style={{ width: '95%' }}></svg>
     </>
   )
 }
