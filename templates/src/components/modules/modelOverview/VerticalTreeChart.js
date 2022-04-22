@@ -10,8 +10,8 @@ function VerticalTreeChart(props) {
     d3.select(svgRef.current).selectAll("*").remove();
     
     var margin = { top: 0, right: 0, bottom: 0, left: 0 },
-      width = 30 - margin.right - margin.left,
-      height = 200 - margin.top - margin.bottom
+      width = svgRef.current.clientWidth - margin.right - margin.left,
+      height = svgRef.current.clientHeight - margin.top - margin.bottom
 
     var i = 0
 
@@ -83,9 +83,7 @@ function VerticalTreeChart(props) {
   }, [props.data])
 
   return (
-    <div className = "svg-wrapper">
-      <svg ref = {svgRef}></svg>
-    </div>
+    <svg ref = {svgRef} style={{ width: '100%', height: '100%'}}></svg>
   )
 }
 export default VerticalTreeChart

@@ -44,7 +44,7 @@ export default function Treetable() {
   }, [])
 
   return (
-    <table>
+    <table height="350px">
       <thead>
         <th>actionIndex</th>
         <th>actionName</th>
