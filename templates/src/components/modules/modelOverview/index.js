@@ -44,16 +44,14 @@ export default function ModelOverview() {
   }, [])
 
   return (
-    <Box title="model-overview">
-      <div style={{ display: "flex" }}>
-        <div style={{ width: '60%' }}>
-          <Legend dataColorInfo={dataColorInfo} />
-          <LineChart data={lineChartData} />
-          <HorizontalTreeChart data={treeChartData} />
-        </div>
-        <div style={{ width: '30%' }}>
-          <TreeTable />
-        </div>
+    <Box title="model-overview" style={{ display: "grid", height: '100%', gridTemplateColumns: '1.5fr 1fr', gridAutoFlow: 'column', padding: 0 }}>
+      <div style={{ minHeight: 0, display: 'grid', gridTemplateRows: 'auto 1fr 40px', padding: '10px',  boxSizing: 'border-box'}}>
+        <Legend dataColorInfo={dataColorInfo} />
+        <LineChart data={lineChartData} />
+        <HorizontalTreeChart data={treeChartData} />
+      </div>
+      <div style={{ minHeight: 0, overflow: 'auto'}}>
+        <TreeTable />
       </div>
     </Box>
   )

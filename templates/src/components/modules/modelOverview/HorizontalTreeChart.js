@@ -124,6 +124,6 @@ export default function HorizontalTreeChart() {
   }, [])
 
   return (
-    <svg ref={svgRef} style={{ width: "100%"}}></svg>
+    <svg ref={svgRef} style={{ width: "100%", height: '100%' }}></svg>
   )
 }
