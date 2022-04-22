@@ -35,10 +35,11 @@ export default function Action() {
         overflow: "visible",
         gridGap: "5px",
       }}>
-      <Title title="action method" />
+      <Title title="action to do" />
       <Select
         options={action}
         loadOptions={loadOptions}
+        placeholder={<div>select action</div>}
         onChange={(e) => {
           axios
             .post(

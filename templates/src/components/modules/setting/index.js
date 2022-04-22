@@ -8,15 +8,9 @@ import RadioButton from "../../RadioButton"
 
 export default function Setting(props) {
   const { dataTypeList, dataEvalList } = props
-
-  const typeList = dataTypeList
+  
   const evalList = dataEvalList
-  const number = [
-    { label: "1", value: 0 },
-    { label: "3", value: 1 },
-    { label: "5", value: 2 },
-    { label: "10", value: 3 },
-  ]
+  const typeList = dataTypeList
 
   const value = []
 
@@ -24,7 +18,7 @@ export default function Setting(props) {
     new Promise((resolve) => {
       setTimeout(() => {
         resolve(
-          number.filter((item) =>
+          typeList.filter((item) =>
             item.label.toLowerCase().includes(inputValue.toLowerCase())
           )
         )
@@ -40,41 +34,24 @@ export default function Setting(props) {
         gridGap: "5px",
       }}
     >
-      <Title title="dataset type" />
-      <div style={{ display: "grid", gridAutoFlow: "column" }}>
-        {["prediction", "classification"].map((id) => (
-          <RadioButton
-            key={id}
-            id={id}
-            // onClick={(id) => setSelectedRadioButton(id)}
-            // checked={selectedRadioButton === id}
-          />
-        ))}
-      </div>
+      <Title title="model to use" />
       <Select
-        options={typeList}
+        isMulti
+        options={evalList}
         loadOptions={loadOptions}
-        placeholder={<div>select column</div>}
+        placeholder={<div>select model</div>}
         onChange={(e) => {
           value[0] = e.value
         }}
-      />
-      <Title title="model evaluation method" />
+      />    
+      <Title title="evaluation method to use" />
       <Select
-        options={evalList}
+        isMulti
+        options={typeList}
         loadOptions={loadOptions}
-        placeholder={<div>select method</div>}
+        placeholder={<div>select evaluation method</div>}
         onChange={(e) => {
           value[1] = e.value
-        }}
-      />
-      <Title title="number of models used" />
-      <Select
-        options={number}
-        loadOptions={loadOptions}
-        placeholder={<div>select number</div>}
-        onChange={(e) => {
-          value[2] = e.value
           // axios
           //   .post(`http://${window.location.hostname}:${PORT}/action?` + Math.random(), value)
           //   .then(response => {

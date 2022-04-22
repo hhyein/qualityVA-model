@@ -11,8 +11,8 @@ export const mainLayout1Style = {
 
 export const mainLayout2Style = {
   gridGap: "10px",
-  gridTemplateColumns: "300px 900px 300px",
-  gridTemplateRows: "80px 120px 100px 70px 150px 150px",
+  gridTemplateColumns: "300px 800px 300px",
+  gridTemplateRows: "80px 70px 90px 70px 150px 150px",
   gridTemplateAreas: `
     'data-upload model-overview detail-action'
     'setting model-overview detail-action'

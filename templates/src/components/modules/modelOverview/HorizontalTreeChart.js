@@ -79,7 +79,7 @@ export default function HorizontalTreeChart() {
 
       nodes.forEach(function (d) {
         d.x = 20
-        d.y = d.depth * 88
+        d.y = d.depth * 78
       })
 
       var node = svg.selectAll("g.node").data(nodes, function (d) {
@@ -124,6 +124,6 @@ export default function HorizontalTreeChart() {
   }, [])
 
   return (
-    <svg ref={svgRef} style={{ width: "100%", height: "25%" }}></svg>
+    <svg ref={svgRef} style={{ width: "100%"}}></svg>
   )
 }

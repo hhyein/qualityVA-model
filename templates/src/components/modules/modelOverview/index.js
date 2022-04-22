@@ -3,8 +3,9 @@ import React, { useEffect, useState } from "react"
 import { PORT } from "../../../const"
 import { Box } from "../../Box"
 import Legend from "../../Legend"
-import HorizontalTreeChart from "./HorizontalTreeChart"
 import LineChart from "./LineChart"
+import HorizontalTreeChart from "./HorizontalTreeChart"
+import TreeTable from "./TreeTable"
 
 const dataColorInfo = {
   lr: "#eb3477",
@@ -44,9 +45,16 @@ export default function ModelOverview() {
 
   return (
     <Box title="model-overview">
-      <Legend dataColorInfo={dataColorInfo} />
-      <LineChart data={lineChartData} />
-      <HorizontalTreeChart data={treeChartData} />
+      <div style={{ display: "flex" }}>
+        <div style={{ width: '60%' }}>
+          <Legend dataColorInfo={dataColorInfo} />
+          <LineChart data={lineChartData} />
+          <HorizontalTreeChart data={treeChartData} />
+        </div>
+        <div style={{ width: '30%' }}>
+          <TreeTable />
+        </div>
+      </div>
     </Box>
   )
 }
