@@ -55,7 +55,7 @@ def setting():
 
   # type
   typeList = []
-  tmpList = dataDf.columns.tolist()
+  tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
   for i in range(len(tmpList)):
     typeList.append({'label': tmpList[i], 'value': i})
 
