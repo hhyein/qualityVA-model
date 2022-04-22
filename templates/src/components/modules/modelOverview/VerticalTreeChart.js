@@ -41,7 +41,7 @@ function VerticalTreeChart(props) {
       var node = svg
         .selectAll('g.node')
         .data(nodes, function (d) {
-        return d.id || (d.id = ++i)
+          return d.id || (d.id = ++i)
       })
 
       var nodeEnter = node

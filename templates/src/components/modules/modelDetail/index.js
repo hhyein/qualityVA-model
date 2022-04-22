@@ -33,10 +33,10 @@ export default function ModelDetail() {
           (_, i) => ({
             key: i,
             combination: (
-              <img src={require("../../icons/sample.jpg")} alt={""} style={{height:'30px', width:'30px'}}></img>
+              <img src={require("../../icons/sample.jpg")} alt={""} style={{height:'20px', width:'20px'}}></img>
             ),
             combinationDetail: (
-              <img src={require("../../icons/sample.jpg")} alt={""} style={{height:'30px', width:'30px'}}></img>
+              <img src={require("../../icons/sample.jpg")} alt={""} style={{height:'20px', width:'20px'}}></img>
             ),
             accuracy: (
               <HorizontalBarChart

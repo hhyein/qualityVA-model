@@ -27,7 +27,7 @@ export default function Treetable() {
     }
   ]
 
-  const [dataTreechart, setTreechart] = useState([])
+  const [treeChartData, setTreeChartData] = useState([])
 
   useEffect(() => {
     axios
@@ -36,7 +36,7 @@ export default function Treetable() {
         Math.random()
     )
     .then((response) => {
-      setTreechart(response.data)
+      setTreeChartData(response.data)
     })
     .catch((error) => {
       alert(`ERROR - ${error.message}`)
@@ -57,7 +57,7 @@ export default function Treetable() {
           <tr key={idx}>
             {idx === 0 && (
               <td rowSpan={exampleDataList.length} style={{ borderBottom: 0 }}>
-                <VerticalTreeChart data={[dataTreechart]} />
+                <VerticalTreeChart data={[treeChartData]} />
               </td>
             )}
             {Object.entries(data).map(([k, v]) => (

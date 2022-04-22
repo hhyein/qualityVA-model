@@ -122,7 +122,7 @@ export default function DetailAction({ columnList }) {
         columnList={columnList}
         colorCode={heatmapColor}
       />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", marginTop: "5px" }}>
         {buttonLabels.map((label) => (
           <Button
             onClick={() => setSelectedButton(label)}
@@ -141,7 +141,8 @@ export default function DetailAction({ columnList }) {
           border: "1px solid var(--grey-100)",
           borderTopWidth: 0,
           background: "white",
-          height: "35%"
+          height: "40%",
+          marginBottom: "5px"
         }}
       >
         {selectedButton === "column data" ? (

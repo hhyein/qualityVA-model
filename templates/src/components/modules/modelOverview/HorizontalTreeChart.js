@@ -1,52 +1,9 @@
 import React, { useEffect, useRef } from "react"
 
-export default function HorizontalTreeChart() {
+function HorizontalTreeChart(props) {
+  const { data } = props
   const svgRef = useRef()
   const d3 = window.d3v3
-
-  var data = [
-    {
-      index: "0",
-      state: "none",
-      name: "start",
-      children: [
-        {
-          index: "1",
-          state: "none",
-          name: "EM",
-          children: [
-            {
-              index: "2",
-              state: "none",
-              name: "LOCF",
-              children: [
-                {
-                  index: "3",
-                  state: "none",
-                  name: "normalization",
-                  children: [
-                    {
-                      index: "4",
-                      state: "none",
-                      name: "remove",
-                      children: [
-                        {
-                          index: "5",
-                          state: "current",
-                          name: "remove",
-                          children: [],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ]
 
   useEffect(() => {
     var margin = { top: 0, right: 0, bottom: 0, left: 20 },
@@ -79,7 +36,7 @@ export default function HorizontalTreeChart() {
 
       nodes.forEach(function (d) {
         d.x = 20
-        d.y = d.depth * 78
+        d.y = d.depth * 74
       })
 
       var node = svg.selectAll("g.node").data(nodes, function (d) {
@@ -121,9 +78,10 @@ export default function HorizontalTreeChart() {
         .attr("class", "link")
         .attr("d", diagonal)
     }
-  }, [])
+  }, [props.data])
 
   return (
     <svg ref={svgRef} style={{ width: "100%", height: '100%' }}></svg>
   )
 }
+export default HorizontalTreeChart

@@ -23,8 +23,8 @@ export default function HeatmapChart({
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-    var x = d3.scaleBand().range([0, width]).domain(columnList).padding(0.05)
-    var y = d3.scaleBand().range([height, 0]).domain(yList).padding(0.05)
+    var x = d3.scaleBand().range([0, width]).domain(columnList).padding(0.1)
+    var y = d3.scaleBand().range([height, 0]).domain(yList).padding(0.1)
     var color1 = d3.scaleLinear().range(["white", "#cccccc"]).domain([0, 100])
     var color2 = d3.scaleLinear().range(["white", colorCode]).domain([0, 100])
 
@@ -53,8 +53,8 @@ export default function HeatmapChart({
       .attr("y", function (d) {
         return y(d.y)
       })
-      .attr("rx", 4)
-      .attr("ry", 4)
+      .attr("rx", 3)
+      .attr("ry", 3)
       .attr("width", x.bandwidth())
       .attr("height", y.bandwidth())
       .style("fill", function (d) {
@@ -71,6 +71,6 @@ export default function HeatmapChart({
   }, [data, yList, columnList, d3, colorCode])
 
   return (
-    <svg ref={svgRef} style={{ width: "100%", height: "35%" }}></svg>
+    <svg ref={svgRef} style={{ width: "100%", height: "30%" }}></svg>
   )
 }

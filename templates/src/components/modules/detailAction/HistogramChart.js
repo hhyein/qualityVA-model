@@ -80,7 +80,7 @@ export default function HistogramChart(props) {
       .attr("y", (d, i) => {
         return y(d.value)
       })
-      .attr("width", xBand.bandwidth() * 0.9)
+      .attr("width", xBand.bandwidth() * 0.7)
       .attr("height", (d) => {
         return height - y(d.value)
       })
@@ -115,7 +115,7 @@ export default function HistogramChart(props) {
         return x2(i) - (xBand.bandwidth() * 0.9) / 2
       })
       .attr("y", (d, i) => y2(d.value))
-      .attr("width", xBand.bandwidth() * 0.9)
+      .attr("width", xBand.bandwidth() * 0.7)
       .attr("height", (d) => {
         return height2 - y2(d.value)
       })
