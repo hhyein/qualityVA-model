@@ -73,7 +73,10 @@ export default function HeatmapChart({
       .style('opacity', 0.8)
       .on('mouseover', mouseover)
       .on('mouseleave', mouseleave)
-  }, [data, dataHeatmapChartYList, dataColumnList, d3, colorCode])
+      .on('click', function (d) {
+
+      })
+  }, [data, dataHeatmapChartYList, dataColumnList, colorCode, d3])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '30%' }}></svg>
 }
