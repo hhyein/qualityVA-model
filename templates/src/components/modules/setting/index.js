@@ -4,13 +4,13 @@ import Select from "react-select"
 import Title from "../../Title"
 import { PORT } from "../../../const"
 import { Box } from "../../Box"
-import RadioButton from "../../RadioButton"
 
 export default function Setting(props) {
-  const { dataTypeList, dataEvalList } = props
-  
-  const evalList = dataEvalList
-  const typeList = dataTypeList
+  const { dataSettingColumnList, dataSettingModelList, dataSettingEvalList } = props
+
+  const columnList = dataSettingColumnList
+  const modelList = dataSettingModelList
+  const evaluationList = dataSettingEvalList
 
   const value = []
 
@@ -18,7 +18,7 @@ export default function Setting(props) {
     new Promise((resolve) => {
       setTimeout(() => {
         resolve(
-          typeList.filter((item) =>
+          evaluationList.filter((item) =>
             item.label.toLowerCase().includes(inputValue.toLowerCase())
           )
         )
@@ -34,26 +34,36 @@ export default function Setting(props) {
         gridGap: "5px",
       }}
     >
+      <Title title="column to predict" />
+      <Select
+        isMulti
+        options={columnList}
+        loadOptions={loadOptions}
+        placeholder={<div>select column</div>}
+        onChange={(e) => {
+          value[0] = e.value
+        }}
+      />
       <Title title="model to use" />
       <Select
         isMulti
-        options={evalList}
+        options={modelList}
         loadOptions={loadOptions}
         placeholder={<div>select model</div>}
         onChange={(e) => {
-          value[0] = e.value
+          value[1] = e.value
         }}
       />    
       <Title title="evaluation method to use" />
       <Select
         isMulti
-        options={typeList}
+        options={evaluationList}
         loadOptions={loadOptions}
         placeholder={<div>select evaluation method</div>}
         onChange={(e) => {
-          value[1] = e.value
+          value[2] = e.value
           // axios
-          //   .post(`http://${window.location.hostname}:${PORT}/action?` + Math.random(), value)
+          //   .post(`http://${window.location.hostname}:${PORT}/?` + Math.random(), value)
           //   .then(response => {
           //     console.log(response.data);
           //     window.location.reload()

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react"
 
-export default function Legend({ dataColorInfo }) {
+export default function Legend(props) {
+  const { dataColorInfo } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -33,7 +34,7 @@ export default function Legend({ dataColorInfo }) {
         .style("font-size", "15px")
         .attr("alignment-baseline", "middle")
     })
-  }, [dataColorInfo, d3])
+  }, [dataColorInfo])
 
   return (
     <>

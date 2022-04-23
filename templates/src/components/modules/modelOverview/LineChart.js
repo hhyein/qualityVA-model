@@ -100,7 +100,7 @@ export default function LineChart(props) {
       })
       .attr('r', 5)
       .attr('stroke', 'white')
-  }, [data, d3])
+  }, [data])
 
   return (
     <>

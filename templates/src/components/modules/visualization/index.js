@@ -11,7 +11,6 @@ export default function Visualization() {
   const [dataQuery, setQuery] = useState("")
 
   const handleChange = ({ target: { value } }) => setQuery(value)
-
   const handleSubmit = (e) => {
     e.preventDefault()
     axios
@@ -51,7 +50,7 @@ export default function Visualization() {
           submit
         </Button>
       </form>
-      <NL4DV spec={dataNL4DV} />
+      <NL4DV data={dataNL4DV} />
     </Box>
   )
 }

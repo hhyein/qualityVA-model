@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react"
 import axios from "axios"
 
 import { mainLayout2Style } from "../const"
-import DataUpload from "../components/modules/dataUpload"
+import FileUpload from "../components/modules/fileUpload"
 import Setting from "../components/modules/setting"
 import ModelOverview from "../components/modules/modelOverview"
 import Visualization from "../components/modules/visualization"
@@ -13,8 +13,9 @@ const PORT = 5000
 
 const Home = () => {
   const [dataColumnList, setColumnList] = useState([])
-  const [dataTypeList, setTypeList] = useState([])
-  const [dataEvalList, setEvalList] = useState([])
+  const [dataSettingColumnList, setSettingColumnList] = useState([])
+  const [dataSettingModelList, setSettingModelList] = useState([])
+  const [dataSettingEvalList, setSettingEvalList] = useState([])
 
   useEffect(() => {
     axios
@@ -31,8 +32,9 @@ const Home = () => {
         `http://${window.location.hostname}:${PORT}/setting?` + Math.random()
       )
       .then((response) => {
-        setTypeList(response.data.typeList)
-        setEvalList(response.data.evalList)
+        setSettingColumnList(response.data.columnList)
+        setSettingModelList(response.data.modelList)
+        setSettingEvalList(response.data.evalList)
       })
       .catch((error) => {
         console.log(`ERROR - ${error.message}`)
@@ -42,12 +44,12 @@ const Home = () => {
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
-        <DataUpload />
-        <Setting dataTypeList={dataTypeList} dataEvalList={dataEvalList} />
+        <FileUpload />
+        <Setting dataSettingColumnList={dataSettingColumnList} dataSettingModelList={dataSettingModelList} dataSettingEvalList={dataSettingEvalList} />
         <Visualization />
         <ModelOverview />
         <ModelDetail />
-        <DetailAction columnList={dataColumnList} />
+        <DetailAction dataColumnList={dataColumnList} />
       </div>
     </div>
   )

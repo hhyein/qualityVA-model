@@ -14,8 +14,8 @@ const dataColorInfo = {
 }
 
 export default function ModelOverview() {
-  const [lineChartData, setLineChartData] = useState()
-  const [treeChartData, setTreeChartData] = useState([])
+  const [dataLineChart, setLineChart] = useState()
+  const [dataTreeChart, setTreeChart] = useState([])
 
   useEffect(() => {
     axios
@@ -24,7 +24,7 @@ export default function ModelOverview() {
           Math.random()
       )
       .then(response => {
-        setLineChartData(response.data)
+        setLineChart(response.data)
       })
       .catch(error => {
         console.log(`ERROR - ${error.message}`)
@@ -35,7 +35,7 @@ export default function ModelOverview() {
           Math.random()
       )
       .then(response => {
-        setTreeChartData(response.data)
+        setTreeChart(response.data)
       })
       .catch(error => {
         alert(`ERROR - ${error.message}`)
@@ -51,8 +51,8 @@ export default function ModelOverview() {
       }}
     >
       <Legend dataColorInfo={dataColorInfo} />
-      <LineChart data={lineChartData} />
-      <HorizontalTreeChart data={[treeChartData]} />
+      <LineChart data={dataLineChart} />
+      <HorizontalTreeChart data={[dataTreeChart]} />
       <div style={{ overflow: 'auto' }}>
         <ModelOverviewTable
           data={[

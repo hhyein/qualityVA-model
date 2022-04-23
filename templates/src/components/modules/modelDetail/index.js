@@ -6,16 +6,16 @@ import ChartTable from "./ChartTable"
 import HorizontalBarChart from "../../charts/HorizontalBarChart"
 
 export default function ModelDetail() {
-  const [chartTableData, setChartTableData] = useState([])
+  const [dataChartTable, setChartTable] = useState([])
 
   useEffect(() => {
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/charttable?` +
+        `http://${window.location.hostname}:${PORT}/chartTable?` +
           Math.random()
       )
       .then((response) => {
-        setChartTableData(response.data)
+        setChartTable(response.data)
       })
       .catch((error) => {
         alert(`ERROR - ${error.message}`)
@@ -29,7 +29,7 @@ export default function ModelDetail() {
     >
       <ChartTable
         data={Array.from(
-          { length: Object(chartTableData.columnList).length },
+          { length: Object(dataChartTable.columnList).length },
           (_, i) => ({
             key: i,
             combination: (
@@ -40,38 +40,24 @@ export default function ModelDetail() {
             ),
             accuracy: (
               <HorizontalBarChart
-                data={[Object.values(chartTableData)[1][i]]}
+                data={[Object.values(dataChartTable)[1][i]]}
                 colorCode={'steelblue'}
               ></HorizontalBarChart>
             ),
             AUC: (
               <HorizontalBarChart
-                data={[Object.values(chartTableData)[2][i]]}
+                data={[Object.values(dataChartTable)[2][i]]}
                 colorCode={'orange'}
               ></HorizontalBarChart>
             ),
             recall: (
               <HorizontalBarChart
-                data={[Object.values(chartTableData)[3][i]]}
+                data={[Object.values(dataChartTable)[3][i]]}
                 colorCode={'darkgreen'}
               ></HorizontalBarChart>
             )
           })
         )}
-        // onClick={(rowIdx, colIdx) =>
-        //   axios
-        //     .post(
-        //       `http://${window.location.hostname}:${PORT}/histogramchart1?` +
-        //         Math.random(),
-        //       { row: rowIdx, col: colIdx }
-        //     )
-        //     .then((response) => {
-        //       setHistogramchart1(response.data)
-        //     })
-        //     .catch((error) => {
-        //       alert(`ERROR - ${error.message}`)
-        //     })
-        // }
       />
     </Box>
   )

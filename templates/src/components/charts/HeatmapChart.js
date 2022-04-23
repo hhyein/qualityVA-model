@@ -2,8 +2,8 @@ import React, { useEffect, useRef } from "react"
 
 export default function HeatmapChart({
   data,
-  yList,
-  columnList,
+  dataHeatmapChartYList,
+  dataColumnList,
   colorCode = "steelblue",
 }) {
   const svgRef = useRef()
@@ -23,8 +23,8 @@ export default function HeatmapChart({
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
-    var x = d3.scaleBand().range([0, width]).domain(columnList).padding(0.1)
-    var y = d3.scaleBand().range([height, 0]).domain(yList).padding(0.1)
+    var x = d3.scaleBand().range([0, width]).domain(dataColumnList).padding(0.1)
+    var y = d3.scaleBand().range([height, 0]).domain(dataHeatmapChartYList).padding(0.1)
     var color1 = d3.scaleLinear().range(["white", "#cccccc"]).domain([0, 100])
     var color2 = d3.scaleLinear().range(["white", colorCode]).domain([0, 100])
 
@@ -68,7 +68,7 @@ export default function HeatmapChart({
       .style("opacity", 0.8)
       .on("mouseover", mouseover)
       .on("mouseleave", mouseleave)
-  }, [data, yList, columnList, d3, colorCode])
+  }, [data, dataHeatmapChartYList, dataColumnList, d3, colorCode])
 
   return (
     <svg ref={svgRef} style={{ width: "100%", height: "30%" }}></svg>

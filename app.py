@@ -21,99 +21,83 @@ CORS(app)
 
 fileName = 'wine'
 filePath = 'static/' + fileName + '.csv'
-originDf = pd.read_csv('static/wine.csv', sep = ',')
+originDf = pd.read_csv(filePath, sep = ',')
 
 currentCnt = 0
-predictName = 'None'
-className = 'class'
+predictName = 'hue'
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
 def fileUpload():
   req = request.files['file']
 
-  data = []
+  fileUploadList = []
   stream = codecs.iterdecode(req.stream, 'utf-8')
   for row in csv.reader(stream, dialect = csv.excel):
     if row:
-      data.append(row)
+      fileUploadList.append(row)
+
+  fileUploadDf = pd.DataFrame(fileUploadList)
+  fileUploadDf = fileUploadDf.rename(columns = df.iloc[0])
+  fileUploadDf = fileUploadDf.drop(df.index[0])
 
   global originDf
-  df = pd.DataFrame(data)
-  df = df.rename(columns = df.iloc[0])
-  originDf = df.drop(df.index[0])
+  originDf = fileUploadDf.reindex(sorted(df.columns), axis = 1)
 
   return json.dumps({'state': 'success'})
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-  originDf = pd.read_csv(filePath)
-
-  if className == 'None':
-    dataDf = originDf
-  else:
-    dataDf = originDf.drop([className], axis = 1)
-
-  # type
-  typeList = []
-  tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+  columnList = []
+  tmpList = list(originDf.columns)
   for i in range(len(tmpList)):
-    typeList.append({'label': tmpList[i], 'value': i})
+    columnList.append({'label': tmpList[i], 'value': i})
 
-  # evaluation
-  evalList = []
+  modelList = []
   tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
               'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+  for i in range(len(tmpList)):
+    modelList.append({'label': tmpList[i], 'value': i})
+
+  evalList = []
+  tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
   for i in range(len(tmpList)):
     evalList.append({'label': tmpList[i], 'value': i})
 
   response = {}
-  response['typeList'] = typeList
+  response['columnList'] = columnList  
+  response['modelList'] = modelList
   response['evalList'] = evalList
 
   return json.dumps(response)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-  originDf = pd.read_csv(filePath, sep = ',')
+  global originDf
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   originDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
 
   response = {}
-  response['fileName'] = fileName
-  response['className'] = className
+  response['columnList'] = list(originDf.columns)
 
-  originDf = originDf.dropna()
-  if className == 'None':
-    # clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, silent = True)
-    # models = compare_models()
-    # results = pull()
-    # results.to_json('static/modelData.json', orient = 'records', indent = 4)
+  return json.dumps(response)
 
-    response['columnList'] = list(originDf.columns)
-    response['classList'] = []
+@app.route('/autoML', methods=['GET', 'POST'])
+def autoML():
+  # clf = setup(data = originDf.dropna(), target = predictName, preprocess = False, session_id = 42, silent = True)
+  # models = compare_models()
+  # results = pull()
+  # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
-    return json.dumps(response)
-
-  else:
-    # clf = setup(data = originDf, target = className, preprocess = False, session_id = 42, silent = True)
-    # models = compare_models()
-    # results = pull()
-    # results.to_json('static/modelData.json', orient = 'records', indent = 4)
-
-    df = originDf.drop(columns = [className])
-    response['columnList'] = list(df.columns)
-    response['classList'] = list(set(originDf[className].values.tolist()))
-
-    return json.dumps(response)
+  return json.dumps({'state': 'success'})
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
   # query = request.get_data().decode('utf-8')
-  # originDf = pd.read_csv(filePath)
+
+  # global originDf
   # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  # nl4dvDf = originDf.dropna()
-  # nl4dvDf = nl4dvDf.to_dict('records')
+  # nl4dvDict = originDf.dropna().to_dict('records')
   # nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
   # nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
   # nl4dvOutput = nl4dvInstance.analyze_query(query)
@@ -135,7 +119,7 @@ def query():
 
   # # extraction vlspec
   # vlSpec = nl4dvOutput['visList'][0]['vlSpec']
-  # vlSpec['data']['values'] = nl4dvDf
+  # vlSpec['data']['values'] = nl4dvDict
 
   # vlSpec['width'] = "container"
   # vlSpec['height'] = "container"
@@ -163,12 +147,12 @@ def query():
   # del vlSpec['data']['url']
 
   # return jsonify({'nl4dv': vlSpec})
-  return jsonify({'nl4dv': 'success'})
 
-@app.route('/barchart1', methods = ['GET', 'POST'])
-def barchart1():
-  originDf = pd.read_csv(filePath)
+  return json.dumps({'state': 'success'})
 
+@app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
+def actionDetailBarchart():
+  global originDf
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
       originDf = originDf.drop([column], axis = 1)
@@ -197,37 +181,17 @@ def barchart1():
 
   return jsonify(response)
 
-@app.route('/barchart2', methods = ['GET', 'POST'])
-def barchart2():
-  originDf = pd.read_csv(filePath)
+##### to do
+@app.route('/modelDetailBarchart', methods = ['GET', 'POST'])
+def modelDetailBarchart():
 
-  if className == 'None':
-    response = {}
-  
-  else:
-    classList = originDf[className].values.tolist()
-    classDict = Counter(classList)
+  return json.dumps({'state': 'success'})
 
-    tmpList = []
-    for i, (key, val) in enumerate(classDict.items()):
-      tmpList.append({'class': key, 'value': val})
-
-    response = {}
-    response['classDict'] = tmpList
-
-  return jsonify(response)
-
-@app.route('/charttable', methods = ['GET', 'POST'])
-def charttable():
+@app.route('/chartTable', methods = ['GET', 'POST'])
+def chartTable():
   originDf = pd.read_csv(filePath)
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-
-  if className == 'None':
-    columnList = originDf.columns.tolist()
-
-  else:
-    columnList = originDf.columns.tolist()
-    columnList.remove(className)
+  columnList = originDf.columns.tolist()
 
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
@@ -305,116 +269,62 @@ def charttable():
 
   return json.dumps(response)
 
-@app.route('/histogramchart1', methods = ['GET', 'POST'])
-def histogramchart1():
-  data = request.get_data().decode('utf-8')
-
-  rowHistogramchart1 = eval(data)['row']
-  colHistogramchart1 = eval(data)['col']
-
-  originDf = pd.read_csv(filePath)
+@app.route('/histogramChart', methods = ['GET', 'POST'])
+def histogramChart():
+  global originDf
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  df = pd.DataFrame(originDf.iloc[:, rowHistogramchart1])
-  column = originDf.columns.tolist()[rowHistogramchart1]
+  # example - column index 0
+  histogramDf = pd.DataFrame(originDf.iloc[:, 0])
+  histogramDf = histogramDf.dropna()
 
-  df = df.sort_values(by = [column])
-  df = df.reset_index(drop = True).dropna()
-
-  minValue = df.iloc[0][0]
-  maxValue = df.iloc[len(df) - 1][0]
+  minValue = histogramDf.iloc[0][0]
+  maxValue = histogramDf.iloc[len(histogramDf) - 1][0]
   size = (maxValue - minValue)/20
 
-  dfList = []
+  histogramList = []
   for i in range(20):
     minRange = minValue + (size * (i))
     maxRange = minValue + (size * (i + 1))
     cnt = 0
-    for j in range(len(df)):
-      if df.iloc[j][0] >= minRange and df.iloc[j][0] < maxRange:
+    for j in range(len(histogramDf)):
+      if histogramDf.iloc[j][0] >= minRange and histogramDf.iloc[j][0] < maxRange:
         cnt = cnt + 1
-    dfList.append(cnt)
-
-    lower, upper = imputation.LowerUpper(df)
+    histogramList.append(cnt)
 
     response = {}
-    response['dfList'] = dfList
-    response['lower'] = [lower]
-    response['upper'] = [upper]
-
+    response['histogramList'] = histogramList
+    
   return json.dumps(response)
 
-@app.route('/ECDFchart', methods = ['GET', 'POST'])
-def ECDFchart():
-  originDf = pd.read_csv(filePath)
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  columnName = 'alcohol'
+@app.route('/heatmapChart', methods = ['GET', 'POST'])
+def heatmapChart():
+  global originDf
+  heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  ecdfDf = originDf[columnName].dropna()
-  ecdfDf_current = imputation.ecdfDf(ecdfDf, 'kstest2')
-
-  mu = ecdfDf.mean()
-  std = ecdfDf.std()
-
-  rv = stats.norm(loc = mu, scale = std)
-  x = rv.rvs(size = 5000, random_state = 0)
-  ecdfDf_normal = imputation.ecdfDf(x, 'kstest1')
-
-  ecdfDf = pd.concat([ecdfDf_normal, ecdfDf_current])
-  ecdfList = list(ecdfDf.transpose().to_dict().values())
-
-  return jsonify(ecdfList)
-
-@app.route('/heatmapchart', methods = ['GET', 'POST'])
-def heatmapchart():
-  originDf = pd.read_csv(filePath)
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-
-  if className == 'None':
-    dataDf = originDf
-  else:
-    dataDf = originDf.drop([className], axis = 1)
-
-  columnList = list(dataDf.columns)
-
-  heatmapDf, yList = imputation.heatmapDf(columnList, dataDf)
+  columnList = list(heatmapDf.columns)
+  heatmapDf, heatmapYList = imputation.heatmapDf(columnList, heatmapDf)
   heatmapList = list(heatmapDf.transpose().to_dict().values())
 
   response = {}
   response['heatmapList'] = heatmapList
-  response['yList'] = yList 
+  response['heatmapYList'] = heatmapYList 
 
   return json.dumps(response)  
 
-@app.route('/scatterchart', methods = ['GET', 'POST'])
-def scatterchart():
-  originDf = pd.read_csv(filePath)
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+@app.route('/scatterChart', methods = ['GET', 'POST'])
+def scatterChart():
+  global originDf
+  scatterDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  scatterDf = scatterDf.dropna().reset_index(drop = True)
 
-  df = originDf.dropna().reset_index(drop = True)
-  if className == 'None':
-    dataDf = df
+  from sklearn.manifold import TSNE
+  dataMatrix = scatterDf.values
+  tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+  tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2'])
 
-    from sklearn.manifold import TSNE
-    dataMatrix = dataDf.values
-    tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-    tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2'])
-
-    from sklearn.decomposition import PCA
-    pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-    pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2'])
-
-  else:
-    classDf = df[[className]]
-    dataDf = df.drop([className], axis = 1)
-
-    from sklearn.manifold import TSNE
-    dataMatrix = dataDf.values
-    tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-    tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2']).assign(className = classDf)
-
-    from sklearn.decomposition import PCA
-    pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
-    pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2']).assign(className = classDf)
+  from sklearn.decomposition import PCA
+  pcaDf = PCA(n_components = 2, random_state = 0).fit_transform(dataMatrix)
+  pcaDf = pd.DataFrame(pcaDf, columns = ['value1', 'value2'])
 
   response = {}
   response['tsneDict'] = list(tsneDf.transpose().to_dict().values())
@@ -424,12 +334,12 @@ def scatterchart():
 
 @app.route('/action', methods=['GET', 'POST'])
 def action():
-  reqList = request.get_data().decode('utf-8')
-  reqList = ast.literal_eval(reqList)
+  req = request.get_data().decode('utf-8')
+  req = ast.literal_eval(req)
 
-  targetIndex = int(reqList[0])
-  columnIndex = int(reqList[1])
-  actionIndex = int(reqList[2])
+  targetIndex = int(req[0])
+  columnIndex = int(req[1])
+  actionIndex = int(req[2])
 
   originDf = pd.read_csv(filePath)
   targetList = ['missing', 'outlier', 'incons']

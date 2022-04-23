@@ -2,22 +2,22 @@ import React, { useEffect, useRef } from "react"
 import vegaEmbed from "vega-embed"
 
 function NL4DV(props) {
-  const { spec } = props
+  const { data } = props
 
   useEffect(() => {
-    if (!spec) {
+    if (!data) {
       return <></>
     }
 
     async function init() {
-      await vegaEmbed(".vis", spec.nl4dv, { actions: false })
+      await vegaEmbed(".vis", data.nl4dv, { actions: false })
     }
     init()
-  }, [spec])
+  }, [data])
 
   return (
     <>
-      <div className="vis" style={{ width: "270px", height: "150px" }}></div>
+      <div className="visualization" style={{ width: "270px", height: "150px" }}></div>
     </>
   )
 }

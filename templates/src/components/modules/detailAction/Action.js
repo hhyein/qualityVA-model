@@ -1,7 +1,6 @@
 import React from "react"
 import axios from "axios"
 import Select from "react-select"
-import { Box } from "../../Box"
 import { PORT } from "../../../const"
 import Title from "../../Title"
 

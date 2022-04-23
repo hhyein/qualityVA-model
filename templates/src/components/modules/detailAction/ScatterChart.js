@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
 function ScatterChart(props) {
-  const { data, method, dataClassList, dataColorCode } = props
+  const { data, method } = props
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -63,8 +63,6 @@ function ScatterChart(props) {
       .range([height, 0])
     svg.append('g').call(d3.axisLeft(y).ticks(0)).selectAll('text').remove()
 
-    var color = d3.scaleOrdinal().domain(dataClassList).range(dataColorCode)
-
     svg
       .append('g')
       .selectAll('dot')
@@ -78,22 +76,20 @@ function ScatterChart(props) {
         return y(d.value2)
       })
       .attr('r', 3)
-      .style('fill', function (d) {
-        return color(d.className)
-      })
+      .style('fill', 'steelblue')
 
     d3.selectAll('svg').on('click', function () {
       d3.event.preventDefault()
       setClicked(false)
     })
 
-    // d3.selectAll('circle')
-    //   .on('contextmenu', function () {
-    //     d3.event.preventDefault()
-    //     setClicked(true)
-    //     setX(d3.event.layerX)
-    //     setY(d3.event.layerY)
-    // })
+    d3.selectAll('circle')
+      .on('contextmenu', function () {
+        d3.event.preventDefault()
+        setClicked(true)
+        setX(d3.event.layerX)
+        setY(d3.event.layerY)
+    })
   }, [props.data, props.method])
 
   return (

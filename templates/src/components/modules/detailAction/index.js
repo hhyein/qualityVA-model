@@ -31,71 +31,53 @@ const dataColorInfo = {
   incons: 'darkgreen',
 }
 
-export default function DetailAction({ columnList }) {
-  const [barChartData, setBarChartData] = useState()
-  const [heatmapChartData, setHeatmapChartData] = useState([])
-  const [heatmapChartYList, setHeatmapChartYList] = useState([])
-  const [heatmapColor, setHeatmapColor] = useState(dataColorInfo.missing)
-
-  const [dataHistogramChart1, setHistogramChart1] = useState([])
-  const [dataClassList, setClassList] = useState([])
-  const [dataColorCode, setColorCode] = useState([])
+export default function DetailAction({ dataColumnList }) {
+  const [dataBarChart, setBarChart] = useState()
+  const [dataHeatmapChart, setHeatmapChart] = useState([])
+  const [dataHeatmapChartYList, setHeatmapChartYList] = useState([])
+  const [dataHeatmapColor, setHeatmapColor] = useState(dataColorInfo.missing)
+  const [dataHistogramChart, setHistogramChart] = useState([])
   const [dataScatterChart, setScatterChart] = useState([])
   const [selectedButton, setSelectedButton] = useState('column data')
 
   useEffect(() => {
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/barchart1?` + Math.random()
+        `http://${window.location.hostname}:${PORT}/actionDetailBarchart?` + Math.random()
       )
       .then(response => {
-        setBarChartData(response.data)
+        setBarChart(response.data)
       })
       .catch(error => {
         console.log(`ERROR - ${error.message}`)
       })
-
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/heatmapchart?` +
+        `http://${window.location.hostname}:${PORT}/heatmapChart?` +
           Math.random()
       )
       .then(response => {
-        setHeatmapChartData(response.data.heatmapList)
-        setHeatmapChartYList(response.data.yList)
+        setHeatmapChart(response.data.heatmapList)
+        setHeatmapChartYList(response.data.heatmapYList)
       })
       .catch(error => {
         console.log(`ERROR - ${error.message}`)
       })
     axios
       .post(
-        `http://${window.location.hostname}:${PORT}/histogramchart1?` +
+        `http://${window.location.hostname}:${PORT}/histogramChart?` +
           Math.random(),
         { row: 1, col: 1 }
       )
       .then(response => {
-        setHistogramChart1(response.data)
-      })
-      .catch(error => {
-        console.log(`ERROR - ${error.message}`)
-      })
-    axios
-      .get(`http://${window.location.hostname}:${PORT}/?` + Math.random())
-      .then(response => {
-        setClassList(response.data.classList)
-        setColorCode(
-          Array.from(
-            { length: Object(response.data.classList).length },
-            () => '#' + Math.round(Math.random() * 0xffffff).toString(16)
-          )
-        )
+        setHistogramChart(response.data)
       })
       .catch(error => {
         console.log(`ERROR - ${error.message}`)
       })
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/scatterchart?` +
+        `http://${window.location.hostname}:${PORT}/scatterChart?` +
           Math.random()
       )
       .then(response => {
@@ -104,35 +86,33 @@ export default function DetailAction({ columnList }) {
       .catch(error => {
         alert(`ERROR - ${error.message}`)
       })
-  }, [columnList])
+  }, [dataColumnList])
   return (
     <Box title="detail-action" style={{ backgroundColor: 'var(--grey-050)' }}>
       <Legend dataColorInfo={dataColorInfo} />
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {Object.entries(dataColorInfo).map(([k, v]) => (
           <HorizontalBarChart
-            data={[barChartData?.[k]]}
+            data={[dataBarChart?.[k]]}
             colorCode={v}
             onClick={() => setHeatmapColor(v)}
           />
         ))}
       </div>
       <HeatmapChart
-        data={heatmapChartData}
-        yList={heatmapChartYList}
-        columnList={columnList}
-        colorCode={heatmapColor}
+        data={dataHeatmapChart}
+        dataHeatmapChartYList={dataHeatmapChartYList}
+        dataColumnList={dataColumnList}
+        colorCode={dataHeatmapColor}
       />
       <IndexingButtonBox
         style={{ margin: '5px 0', height: '47%' }}
         componentInfo={{
-          'column data': <HistogramChart data={dataHistogramChart1} />,
+          'column data': <HistogramChart data={dataHistogramChart} />,
           'specific data': (
             <ScatterChart
               data={dataScatterChart}
               method={1}
-              dataClassList={dataClassList}
-              dataColorCode={dataColorCode}
             />
           ),
         }}

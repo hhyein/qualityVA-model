@@ -15,8 +15,7 @@ export default function ModelOverviewTable(props) {
       <tbody>
         {data.map(({ key, ...others }, rowIdx) => (
           <tr>
-            {Object.values(others).map((chart, colIdx) => (
-              // onClick={() => onClick(rowIdx, colIdx)}
+            {Object.values(others).map((chart) => (
               <td>{chart}</td>
             ))}
           </tr>
