@@ -65,10 +65,9 @@ export default function DetailAction({ dataColumnList }) {
         console.log(`ERROR - ${error.message}`)
       })
     axios
-      .post(
+      .get(
         `http://${window.location.hostname}:${PORT}/histogramChart?` +
           Math.random(),
-        { row: 1, col: 1 }
       )
       .then(response => {
         setHistogramChart(response.data)

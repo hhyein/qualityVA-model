@@ -6,7 +6,7 @@ export default function HistogramChart(props) {
   const d3 = window.d3v4
 
   var df = {}
-  Object.assign(df, data.dfList)
+  Object.assign(df, data.histogramChartList)
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)

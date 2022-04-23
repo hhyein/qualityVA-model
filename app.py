@@ -337,7 +337,7 @@ def histogramChart():
   maxValue = histogramDf.iloc[len(histogramDf) - 1][0]
   size = (maxValue - minValue)/20
 
-  histogramList = []
+  histogramChartList = []
   for i in range(20):
     minRange = minValue + (size * (i))
     maxRange = minValue + (size * (i + 1))
@@ -345,10 +345,10 @@ def histogramChart():
     for j in range(len(histogramDf)):
       if histogramDf.iloc[j][0] >= minRange and histogramDf.iloc[j][0] < maxRange:
         cnt = cnt + 1
-    histogramList.append(cnt)
+    histogramChartList.append(cnt)
 
     response = {}
-    response['histogramList'] = histogramList
+    response['histogramChartList'] = histogramChartList
     
   return json.dumps(response)
 
