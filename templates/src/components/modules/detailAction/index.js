@@ -33,7 +33,7 @@ const dataColorInfo = {
 
 export default function DetailAction({ dataColumnList }) {
   const [dataBarChart, setBarChart] = useState()
-  const [dataHeatmapChart, setHeatmapChart] = useState([])
+  const [dataHeatmapChart, setHeatmapChart] = useState()
   const [dataHeatmapChartYList, setHeatmapChartYList] = useState([])
   const [dataHeatmapColor, setHeatmapColor] = useState(dataColorInfo.missing)
   const [dataHistogramChart, setHistogramChart] = useState([])
@@ -43,7 +43,8 @@ export default function DetailAction({ dataColumnList }) {
   useEffect(() => {
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/actionDetailBarchart?` + Math.random()
+        `http://${window.location.hostname}:${PORT}/actionDetailBarchart?` +
+          Math.random()
       )
       .then(response => {
         setBarChart(response.data)
@@ -109,12 +110,7 @@ export default function DetailAction({ dataColumnList }) {
         style={{ margin: '5px 0', height: '47%' }}
         componentInfo={{
           'column data': <HistogramChart data={dataHistogramChart} />,
-          'specific data': (
-            <ScatterChart
-              data={dataScatterChart}
-              method={1}
-            />
-          ),
+          'specific data': <ScatterChart data={dataScatterChart} method={1} />,
         }}
       />
       <Action />

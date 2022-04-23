@@ -1,2 +1,3 @@
 node_modules
 ../static/wine.json
+module/__pycache__/*

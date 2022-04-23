@@ -1,22 +1,27 @@
 import React from 'react'
 
 export default function ModelOverviewTable(props) {
-  const { data = [] } = props
+  const { data = [], thead, theadColSpan } = props
 
   return data.length > 0 ? (
-    <table style={{ minWidth: '100%', margin: 0 }}>
+    <table style={{ margin: 0 }}>
       <thead>
-        <tr>
-          {Object.keys(data[0]).map(key => (
-            <th key={key}>{key}</th>
-          ))}
-        </tr>
+        {thead && (
+          <tr>
+            <th
+              colSpan={theadColSpan ?? 6}
+              style={{ height: '40px', background: 'white', padding: 0 }}
+            >
+              {thead}
+            </th>
+          </tr>
+        )}
       </thead>
       <tbody>
         {data.map(({ key, ...others }, rowIdx) => (
           <tr>
-            {Object.values(others).map((chart) => (
-              <td>{chart}</td>
+            {Object.values(others).map(chart => (
+              <td style={{ width: '70px' }}>{chart}</td>
             ))}
           </tr>
         ))}

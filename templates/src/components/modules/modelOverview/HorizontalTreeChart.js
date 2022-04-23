@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef } from 'react'
 
 function HorizontalTreeChart(props) {
   const { data } = props
@@ -6,7 +6,7 @@ function HorizontalTreeChart(props) {
   const d3 = window.d3v3
 
   useEffect(() => {
-    d3.select(svgRef.current).selectAll("*").remove()
+    d3.select(svgRef.current).selectAll('*').remove()
 
     var margin = { top: 0, right: 0, bottom: 0, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
@@ -15,13 +15,14 @@ function HorizontalTreeChart(props) {
     var i = 0
     var svg = d3
       .select(svgRef.current)
-      .append("svg")
-      .attr("width", width + margin.right + margin.left)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .append('svg')
+      .attr('width', width + margin.right + margin.left)
+      .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     var tree = d3.layout.tree().size([height, width])
+
     var diagonal = d3.svg.diagonal().projection(function (d) {
       return [d.y, d.x]
     })
@@ -38,49 +39,47 @@ function HorizontalTreeChart(props) {
         d.y = d.depth * 74
       })
 
-      var node = svg.selectAll("g.node").data(nodes, function (d) {
+      var node = svg.selectAll('g.node').data(nodes, function (d) {
         return d.id || (d.id = ++i)
       })
 
       var nodeEnter = node
         .enter()
-        .append("g")
-        .attr("class", "node")
-        .attr("transform", function (d) {
-          return "translate(" + d.y + "," + d.x + ")"
+        .append('g')
+        .attr('class', 'node')
+        .attr('transform', function (d) {
+          return 'translate(' + d.y + ',' + d.x + ')'
         })
 
       nodeEnter
-        .append("circle")
-        .attr("r", 10)
-        .style("fill", function (d) {
-          if (d.state == "current") {
-            return "#999999"
+        .append('circle')
+        .attr('r', 10)
+        .style('fill', function (d) {
+          if (d.state == 'current') {
+            return '#999999'
           } else {
-            return "#cccccc"
+            return '#cccccc'
           }
         })
 
       nodeEnter
-        .append("text")
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
+        .append('text')
+        .attr('text-anchor', 'middle')
+        .attr('alignment-baseline', 'middle')
         .text(function (d) {
           return d.index
         })
 
       var link = svg
-        .selectAll("path.link")
+        .selectAll('path.link')
         .data(links)
         .enter()
-        .insert("path", "g")
-        .attr("class", "link")
-        .attr("d", diagonal)
+        .insert('path', 'g')
+        .attr('class', 'link')
+        .attr('d', diagonal)
     }
   }, [data])
 
-  return (
-    <svg ref={svgRef} style={{ width: "100%", height: '100%' }}></svg>
-  )
+  return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
 }
 export default HorizontalTreeChart

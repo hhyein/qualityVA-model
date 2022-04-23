@@ -32,8 +32,7 @@ export default function ModelOverview() {
       })
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/treeChart?` +
-          Math.random()
+        `http://${window.location.hostname}:${PORT}/treeChart?` + Math.random()
       )
       .then(response => {
         setTreeChart(response.data.treeData)
@@ -49,44 +48,55 @@ export default function ModelOverview() {
       title="model-overview"
       style={{
         display: 'grid',
-        gridTemplateRows: 'auto 1fr 40px 160px',
+        gridTemplateRows: 'auto 1fr 200px',
       }}
     >
       <Legend dataColorInfo={dataColorInfo} />
       <LineChart data={dataLineChart} />
-      <HorizontalTreeChart data={[dataTreeChart]} />
       <div style={{ overflow: 'auto' }}>
         <ModelOverviewTable
+          thead={<HorizontalTreeChart data={[dataTreeChart]} />}
+          theadColSpan={dataTreeLength}
           data={[
             {
               chart1: 'eee',
               chart2: 'eee',
               chart3: 'eee',
+              chart4: 'eee',
+              chart5: 'eee',
+              chart6: 'eee',
             },
             {
               chart1: 'eee',
               chart2: 'eee',
               chart3: 'eee',
+              chart4: 'eee',
+              chart5: 'eee',
+              chart6: 'eee',
             },
             {
               chart1: 'eee',
               chart2: 'eee',
               chart3: 'eee',
+              chart4: 'eee',
+              chart5: 'eee',
+              chart6: 'eee',
             },
             {
               chart1: 'eee',
               chart2: 'eee',
               chart3: 'eee',
+              chart4: 'eee',
+              chart5: 'eee',
+              chart6: 'eee',
             },
             {
               chart1: 'eee',
               chart2: 'eee',
               chart3: 'eee',
-            },
-            {
-              chart1: 'eee',
-              chart2: 'eee',
-              chart3: 'eee',
+              chart4: 'eee',
+              chart5: 'eee',
+              chart6: 'eee',
             },
           ]}
         />
