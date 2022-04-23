@@ -16,6 +16,7 @@ const dataColorInfo = {
 export default function ModelOverview() {
   const [dataLineChart, setLineChart] = useState()
   const [dataTreeChart, setTreeChart] = useState([])
+  const [dataTreeLength, setTreeLength] = useState([])
 
   useEffect(() => {
     axios
@@ -31,11 +32,12 @@ export default function ModelOverview() {
       })
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/static/treeData.json?` +
+        `http://${window.location.hostname}:${PORT}/treeChart?` +
           Math.random()
       )
       .then(response => {
-        setTreeChart(response.data)
+        setTreeChart(response.data.treeData)
+        setTreeLength(response.data.treeLength)
       })
       .catch(error => {
         alert(`ERROR - ${error.message}`)
