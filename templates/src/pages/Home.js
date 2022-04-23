@@ -8,14 +8,39 @@ import ModelOverview from '../components/modules/modelOverview'
 import Visualization from '../components/modules/visualization'
 import ModelDetail from '../components/modules/modelDetail'
 import DetailAction from '../components/modules/detailAction'
+import useFileData from '../hooks/useFileData'
 
 const PORT = 5000
 
 const Home = () => {
+  const [file, setFile] = useState()
+  const { modelOverviewData } = useFileData(file)
   const [dataColumnList, setColumnList] = useState([])
   const [dataSettingColumnList, setSettingColumnList] = useState([])
   const [dataSettingModelList, setSettingModelList] = useState([])
   const [dataSettingEvalList, setSettingEvalList] = useState([])
+  console.log(modelOverviewData)
+  const handleDrop = files => {
+    setFile(files[0])
+    var formData = new FormData()
+    const config = {
+      header: { 'content-type': 'multipart/form-data' },
+    }
+    formData.append('file', files[0])
+    axios
+      .post(
+        `http://${window.location.hostname}:${PORT}/fileUpload?` +
+          Math.random(),
+        formData,
+        config
+      )
+      .then(response => {
+        console.log(response.data)
+      })
+      .catch(error => {
+        console.log(`ERROR - ${error.message}`)
+      })
+  }
 
   useEffect(() => {
     axios
@@ -44,14 +69,14 @@ const Home = () => {
   return (
     <div>
       <div className="main" style={mainLayout2Style}>
-        <FileUpload />
+        <FileUpload fileName={file?.name} handleDrop={handleDrop} />
         <Setting
           dataSettingColumnList={dataSettingColumnList}
           dataSettingModelList={dataSettingModelList}
           dataSettingEvalList={dataSettingEvalList}
         />
         <Visualization />
-        <ModelOverview />
+        <ModelOverview data={modelOverviewData} />
         <ModelDetail />
         <DetailAction dataColumnList={dataColumnList} />
       </div>
