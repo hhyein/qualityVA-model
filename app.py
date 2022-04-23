@@ -208,7 +208,7 @@ def modelOverviewTable():
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
-  actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
+  actionList = ["start", "missing", "outlier", "inconsistent", "normalization", "transformation"]
   actionDetailList = ["start", "EM", "LOCF", "normalization", "remove", "remove"]
   barChartList = ["barchart0", "barchart1", "barchart2", "barchart3", "barchart4", "barchart5"]
   histogramChartList = ["histogramchart0", "histogramchart1", "histogramchart2", "histogramchart3", "histogramchart4", "histogramchart5"]
