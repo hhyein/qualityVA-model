@@ -23,7 +23,7 @@ fileName = 'wine'
 filePath = 'static/' + fileName + '.csv'
 originDf = pd.read_csv(filePath, sep = ',')
 
-currentCnt = 0
+currentCnt = 6
 predictName = 'hue'
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
@@ -186,6 +186,17 @@ def actionDetailBarchart():
 def modelDetailBarchart():
 
   return json.dumps({'state': 'success'})
+
+@app.route('/treeChart', methods = ['GET', 'POST'])
+def treeChart():
+  with open('static/treeData.json') as jsonData:
+    treeData = json.load(jsonData)
+
+  response = {}
+  response['treeData'] = treeData
+  response['treeLength'] = currentCnt
+
+  return jsonify(response)
 
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
