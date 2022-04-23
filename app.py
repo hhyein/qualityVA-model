@@ -211,29 +211,7 @@ def modelOverviewTable():
   actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
   actionDetailList = ["start", "EM", "LOCF", "normalization", "remove", "remove"]
   barChartList = ["barchart0", "barchart1", "barchart2", "barchart3", "barchart4", "barchart5"]
-
-  histogramChartList = []
-  for i in range(currentCnt):
-    # histogram
-    # example - column index 0
-    histogramDf = pd.DataFrame(originDf.iloc[:, 0])
-    histogramDf = histogramDf.dropna()
-
-    minValue = histogramDf.iloc[0][0]
-    maxValue = histogramDf.iloc[len(histogramDf) - 1][0]
-    size = (maxValue - minValue)/20
-
-    tmpList = []
-    for i in range(20):
-      minRange = minValue + (size * (i))
-      maxRange = minValue + (size * (i + 1))
-      cnt = 0
-      for j in range(len(histogramDf)):
-        if histogramDf.iloc[j][0] >= minRange and histogramDf.iloc[j][0] < maxRange:
-          cnt = cnt + 1
-      tmpList.append(cnt)
-
-    histogramChartList.append(tmpList)
+  histogramChartList = ["histogramchart0", "histogramchart1", "histogramchart2", "histogramchart3", "histogramchart4", "histogramchart5"]
 
   response = {}
   response['actionList'] = actionList
