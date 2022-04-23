@@ -1,5 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import HorizontalBarChart from '../components/charts/HorizontalBarChart'
+import HistogramChart from '../components/modules/detailAction/HistogramChart'
 import { PORT } from '../const'
 
 export default function useFileData(file) {
@@ -49,8 +51,16 @@ export default function useFileData(file) {
       .then(response => {
         setActionList(response.data.actionList)
         setActionDetailList(response.data.actionDetailList)
-        setBarChartList(response.data.barChartList)
-        setHistogramChartList(response.data.histogramChartList)
+        setBarChartList(
+          response.data.barChartList.map(data => (
+            <HorizontalBarChart data={[data]} colorCode={'steelblue'} />
+          ))
+        )
+        setHistogramChartList(
+          response.data.histogramChartList.map(data => (
+            <HistogramChart data={[data]} />
+          ))
+        )
       })
       .catch(error => {
         alert(`ERROR - ${error.message}`)
