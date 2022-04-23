@@ -37,7 +37,7 @@ def fileUpload():
       fileUploadList.append(row)
 
   fileUploadDf = pd.DataFrame(fileUploadList)
-  fileUploadDf = fileUploadDf.rename(columns = fileUploadDf.iloc[0])
+  fileUploadDf = fileUploadDf.rename(columns = df.iloc[0])
   fileUploadDf = fileUploadDf.drop(df.index[0])
 
   global originDf
@@ -204,6 +204,7 @@ def modelOverviewTable():
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
+  # to fix
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
@@ -212,7 +213,7 @@ def modelOverviewTable():
   barChartList = ["barchart0", "barchart1", "barchart2", "barchart3", "barchart4", "barchart5"]
 
   histogramChartList = []
-  for i in range(len(currentCnt)):
+  for i in range(currentCnt):
     # histogram
     # example - column index 0
     histogramDf = pd.DataFrame(originDf.iloc[:, 0])
@@ -239,6 +240,88 @@ def modelOverviewTable():
   response['actionDetailList'] = actionDetailList
   response['barChartList'] = barChartList
   response['histogramChartList'] = histogramChartList
+
+  return json.dumps(response)
+
+@app.route('/chartTable', methods = ['GET', 'POST'])
+def chartTable():
+  originDf = pd.read_csv(filePath)
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  columnList = originDf.columns.tolist()
+
+  for column in originDf:
+    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
+      originDf = originDf.drop([column], axis = 1)
+
+  # missing
+  missingList = []
+  tmpList = originDf.isnull().sum().values.tolist()
+
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    missingList.append(tmpDict)
+
+  # outlier
+  tmpList = []
+  for column in originDf:
+    lower, upper = imputation.LowerUpper(originDf[column])
+    data1 = originDf[originDf[column] > upper]
+    data2 = originDf[originDf[column] < lower]
+    tmpList.append(data1.shape[0] + data2.shape[0])
+
+  outlierList = []
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    outlierList.append(tmpDict)
+
+  # incons
+  tmpList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    tmpList.append(df.isnull().sum().values[0].tolist())
+
+  inconsList = []
+  for i in range(len(tmpList)):
+    tmpDict = {}
+    tmpDict['data'] = tmpList[i]
+    tmpDict['originData'] = len(originDf) - tmpList[i]
+
+    inconsList.append(tmpDict)
+
+  # quantile
+  quantileList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    quantileList.append(df.tolist())
+
+  # descriptive
+  descriptiveList = []
+  for column in originDf:
+    df = originDf[[column]].dropna()
+
+    # normal distribution
+    mu = df.mean()
+    std = df.std()
+    rv = stats.norm(loc = mu, scale = std)
+    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+
+    densityDf = imputation.densityDf(normalDf, df)
+    descriptiveList.append(densityDf.to_dict('records'))
+
+  response = {}
+  response['columnList'] = columnList
+  response['missingList'] = missingList
+  response['outlierList'] = outlierList
+  response['inconsList'] = inconsList
+  response['quantileList'] = quantileList
+  response['descriptiveList'] = descriptiveList
 
   return json.dumps(response)
 
