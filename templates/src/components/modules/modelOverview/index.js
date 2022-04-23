@@ -17,6 +17,10 @@ export default function ModelOverview() {
   const [dataLineChart, setLineChart] = useState()
   const [dataTreeChart, setTreeChart] = useState([])
   const [dataTreeLength, setTreeLength] = useState([])
+  const [dataActionList, setActionList] = useState([])
+  const [dataActionDetailList, setActionDetailList] = useState([])
+  const [dataBarChartList, setbarChartList] = useState([])
+  const [dataHistogramChartList, setHistogramChartList] = useState([])
 
   useEffect(() => {
     axios
@@ -37,6 +41,19 @@ export default function ModelOverview() {
       .then(response => {
         setTreeChart(response.data.treeData)
         setTreeLength(response.data.treeLength)
+      })
+      .catch(error => {
+        alert(`ERROR - ${error.message}`)
+      })
+    axios
+      .get(
+        `http://${window.location.hostname}:${PORT}/modelOverviewTable?` + Math.random()
+      )
+      .then(response => {
+        setActionList(response.data.actionList)
+        setActionDetailList(response.data.actionDetailList)
+        setbarChartList(response.data.barChartList)
+        setHistogramChartList(response.data.histogramChartList)
       })
       .catch(error => {
         alert(`ERROR - ${error.message}`)

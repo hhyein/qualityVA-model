@@ -37,7 +37,7 @@ def fileUpload():
       fileUploadList.append(row)
 
   fileUploadDf = pd.DataFrame(fileUploadList)
-  fileUploadDf = fileUploadDf.rename(columns = df.iloc[0])
+  fileUploadDf = fileUploadDf.rename(columns = fileUploadDf.iloc[0])
   fileUploadDf = fileUploadDf.drop(df.index[0])
 
   global originDf
@@ -198,85 +198,47 @@ def treeChart():
 
   return jsonify(response)
 
-@app.route('/chartTable', methods = ['GET', 'POST'])
-def chartTable():
-  originDf = pd.read_csv(filePath)
+@app.route('/modelOverviewTable', methods = ['GET', 'POST'])
+def modelOverviewTable():
+  global originDf, currentCnt
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
-  for column in originDf:
-    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
-      originDf = originDf.drop([column], axis = 1)
+  with open('static/treeData.json') as jsonData:
+    treeData = json.load(jsonData)
 
-  # missing
-  missingList = []
-  tmpList = originDf.isnull().sum().values.tolist()
+  actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
+  actionDetailList = ["start", "EM", "LOCF", "normalization", "remove", "remove"]
+  barChartList = ["barchart0", "barchart1", "barchart2", "barchart3", "barchart4", "barchart5"]
 
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
+  histogramChartList = []
+  for i in range(len(currentCnt)):
+    # histogram
+    # example - column index 0
+    histogramDf = pd.DataFrame(originDf.iloc[:, 0])
+    histogramDf = histogramDf.dropna()
 
-    missingList.append(tmpDict)
+    minValue = histogramDf.iloc[0][0]
+    maxValue = histogramDf.iloc[len(histogramDf) - 1][0]
+    size = (maxValue - minValue)/20
 
-  # outlier
-  tmpList = []
-  for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
-    tmpList.append(data1.shape[0] + data2.shape[0])
+    tmpList = []
+    for i in range(20):
+      minRange = minValue + (size * (i))
+      maxRange = minValue + (size * (i + 1))
+      cnt = 0
+      for j in range(len(histogramDf)):
+        if histogramDf.iloc[j][0] >= minRange and histogramDf.iloc[j][0] < maxRange:
+          cnt = cnt + 1
+      tmpList.append(cnt)
 
-  outlierList = []
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
-
-    outlierList.append(tmpDict)
-
-  # incons
-  tmpList = []
-  for column in originDf:
-    df = originDf[column].dropna()
-    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-    tmpList.append(df.isnull().sum().values[0].tolist())
-
-  inconsList = []
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
-
-    inconsList.append(tmpDict)
-
-  # quantile
-  quantileList = []
-  for column in originDf:
-    df = originDf[column].dropna()
-    quantileList.append(df.tolist())
-
-  # descriptive
-  descriptiveList = []
-  for column in originDf:
-    df = originDf[[column]].dropna()
-
-    # normal distribution
-    mu = df.mean()
-    std = df.std()
-    rv = stats.norm(loc = mu, scale = std)
-    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
-
-    densityDf = imputation.densityDf(normalDf, df)
-    descriptiveList.append(densityDf.to_dict('records'))
+    histogramChartList.append(tmpList)
 
   response = {}
-  response['columnList'] = columnList
-  response['missingList'] = missingList
-  response['outlierList'] = outlierList
-  response['inconsList'] = inconsList
-  response['quantileList'] = quantileList
-  response['descriptiveList'] = descriptiveList
+  response['actionList'] = actionList
+  response['actionDetailList'] = actionDetailList
+  response['barChartList'] = barChartList
+  response['histogramChartList'] = histogramChartList
 
   return json.dumps(response)
 
