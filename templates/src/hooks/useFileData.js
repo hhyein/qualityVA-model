@@ -16,7 +16,6 @@ export default function useFileData(file) {
     if (!file) {
       return
     }
-
     axios
       .get(
         `http://${window.location.hostname}:${PORT}/static/linechart.json?` +
@@ -51,7 +50,9 @@ export default function useFileData(file) {
       .then(response => {
         setActionList(response.data.actionList)
         setActionDetailList(response.data.actionDetailList)
-        setBarChartList(
+        setBarChartList(response.data.barChartList)
+        setHistogramChartList(response.data.histogramChartList)
+        /*setBarChartList(
           response.data.barChartList.map(data => (
             <HorizontalBarChart data={[data]} colorCode={'steelblue'} />
           ))
@@ -60,7 +61,7 @@ export default function useFileData(file) {
           response.data.histogramChartList.map(data => (
             <HistogramChart data={[data]} />
           ))
-        )
+        )*/
       })
       .catch(error => {
         alert(`ERROR - ${error.message}`)

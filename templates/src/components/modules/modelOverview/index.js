@@ -36,16 +36,16 @@ export default function ModelOverview({ data }) {
             <ModelOverviewTable
               thead={<HorizontalTreeChart data={[treeChart]} />}
               theadColSpan={treeChart.treeLength}
-              data={{
+              data={[
                 actionList,
                 actionDetailList,
                 barChartList,
                 histogramChartList,
-              }.map((list, i) =>
+              ].map(list =>
                 list.reduce(
-                  (acc, cur, j) => ({
+                  (acc, cur, i) => ({
                     ...acc,
-                    [j]: cur,
+                    [i]: cur,
                   }),
                   {}
                 )

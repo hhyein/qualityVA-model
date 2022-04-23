@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react'
 export default function HorizontalBarChart({ data, colorCode, onClick }) {
   const svgRef = useRef()
   const d3 = window.d3v4
-  console.log(data)
+
   var subgroups = {}
   Object.assign(subgroups, data[0])
   subgroups = Object.keys(subgroups)
