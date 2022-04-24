@@ -5,22 +5,10 @@ import { Box } from "../../Box"
 import ChartTable from "./ChartTable"
 import HorizontalBarChart from "../../charts/HorizontalBarChart"
 
-export default function ModelDetail() {
-  const [dataChartTable, setChartTable] = useState([])
-
-  useEffect(() => {
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/chartTable?` +
-          Math.random()
-      )
-      .then((response) => {
-        setChartTable(response.data)
-      })
-      .catch((error) => {
-        alert(`ERROR - ${error.message}`)
-      })
-  }, [])
+export default function ModelDetail({ data }) {
+  const {
+    dataChartTable
+  } = data
 
   return (
     <Box

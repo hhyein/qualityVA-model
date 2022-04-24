@@ -11,6 +11,7 @@ export default function useFileData(file) {
   const [actionDetailList, setActionDetailList] = useState()
   const [barChartList, setBarChartList] = useState()
   const [histogramChartList, setHistogramChartList] = useState()
+  const [dataChartTable, setChartTable] = useState([])
 
   useEffect(() => {
     if (!file) {
@@ -66,6 +67,18 @@ export default function useFileData(file) {
       .catch(error => {
         alert(`ERROR - ${error.message}`)
       })
+
+    axios
+      .get(
+        `http://${window.location.hostname}:${PORT}/chartTable?` +
+          Math.random()
+      )
+      .then((response) => {
+        setChartTable(response.data)
+      })
+      .catch((error) => {
+        alert(`ERROR - ${error.message}`)
+      })      
   }, [file])
 
   return {
@@ -77,5 +90,8 @@ export default function useFileData(file) {
       barChartList,
       histogramChartList,
     },
+    modelDetailData: {
+      dataChartTable
+    }
   }
 }

@@ -7,14 +7,14 @@ import Setting from '../components/modules/setting'
 import ModelOverview from '../components/modules/modelOverview'
 import Visualization from '../components/modules/visualization'
 import ModelDetail from '../components/modules/modelDetail'
-import DetailAction from '../components/modules/detailAction'
+import ActionDetail from '../components/modules/actionDetail'
 import useFileData from '../hooks/useFileData'
 
 const PORT = 5000
 
 const Home = () => {
   const [file, setFile] = useState()
-  const { modelOverviewData } = useFileData(file)
+  const { modelOverviewData, modelDetailData } = useFileData(file)
   const [dataColumnList, setColumnList] = useState([])
   const [dataSettingColumnList, setSettingColumnList] = useState([])
   const [dataSettingModelList, setSettingModelList] = useState([])
@@ -77,8 +77,8 @@ const Home = () => {
         />
         <Visualization />
         <ModelOverview data={modelOverviewData} />
-        <ModelDetail />
-        <DetailAction dataColumnList={dataColumnList} />
+        <ModelDetail data={modelDetailData} />
+        <ActionDetail dataColumnList={dataColumnList} />
       </div>
     </div>
   )

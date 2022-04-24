@@ -5,25 +5,10 @@ import { Box } from '../../Box'
 import HistogramChart from './HistogramChart'
 import ScatterChart from './ScatterChart'
 import Action from './Action'
-import Button from '../../Button'
 import Legend from '../../Legend'
 import HorizontalBarChart from '../../charts/HorizontalBarChart'
 import HeatmapChart from '../../charts/HeatmapChart'
 import IndexingButtonBox from '../../IndexingButtonBox'
-
-const selectedButtonStyle = {
-  borderRadius: '4px 4px 0 0',
-  backgroundColor: 'white',
-  borderWidth: '1px 1px 0 1px',
-}
-
-const unSelectedButtonStyle = {
-  borderRadius: '4px 4px 0 0',
-  backgroundColor: 'transparent',
-  borderWidth: '0 0 1px 0',
-}
-
-const buttonLabels = ['column data', 'specific data']
 
 const dataColorInfo = {
   missing: 'steelblue',
@@ -31,7 +16,7 @@ const dataColorInfo = {
   incons: 'darkgreen',
 }
 
-export default function DetailAction({ dataColumnList }) {
+export default function ActionDetail({ dataColumnList }) {
   const [dataBarChart, setBarChart] = useState()
   const [dataHeatmapChart, setHeatmapChart] = useState()
   const [dataHeatmapChartYList, setHeatmapChartYList] = useState([])
@@ -88,7 +73,7 @@ export default function DetailAction({ dataColumnList }) {
       })
   }, [dataColumnList])
   return (
-    <Box title="detail-action" style={{ backgroundColor: 'var(--grey-050)' }}>
+    <Box title="action-detail" style={{ backgroundColor: 'var(--grey-050)' }}>
       <Legend dataColorInfo={dataColorInfo} />
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         {Object.entries(dataColorInfo).map(([k, v]) => (
