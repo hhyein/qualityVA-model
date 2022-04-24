@@ -1,8 +1,8 @@
-import axios from 'axios'
-import { useEffect, useState } from 'react'
-import HorizontalBarChart from '../components/charts/HorizontalBarChart'
-import HistogramChart from '../components/modules/detailAction/HistogramChart'
-import { PORT } from '../const'
+import axios from "axios"
+import { useEffect, useState } from "react"
+import HorizontalBarChart from "../components/charts/HorizontalBarChart"
+//import HistogramChart from '../components/modules/detailAction/HistogramChart'
+import { PORT } from "../const"
 
 export default function useFileData(file) {
   const [lineChart, setLineChart] = useState()
@@ -22,10 +22,10 @@ export default function useFileData(file) {
         `http://${window.location.hostname}:${PORT}/static/linechart.json?` +
           Math.random()
       )
-      .then(response => {
+      .then((response) => {
         setLineChart(response.data)
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(`ERROR - ${error.message}`)
       })
 
@@ -33,13 +33,13 @@ export default function useFileData(file) {
       .get(
         `http://${window.location.hostname}:${PORT}/treeChart?` + Math.random()
       )
-      .then(response => {
+      .then((response) => {
         setTreeChart({
           ...response.data.treeData,
           treeLength: response.data.treeLength,
         })
       })
-      .catch(error => {
+      .catch((error) => {
         alert(`ERROR - ${error.message}`)
       })
 
@@ -48,7 +48,7 @@ export default function useFileData(file) {
         `http://${window.location.hostname}:${PORT}/modelOverviewTable?` +
           Math.random()
       )
-      .then(response => {
+      .then((response) => {
         setActionList(response.data.actionList)
         setActionDetailList(response.data.actionDetailList)
         setBarChartList(response.data.barChartList)
@@ -64,21 +64,20 @@ export default function useFileData(file) {
           ))
         )*/
       })
-      .catch(error => {
+      .catch((error) => {
         alert(`ERROR - ${error.message}`)
       })
 
     axios
       .get(
-        `http://${window.location.hostname}:${PORT}/chartTable?` +
-          Math.random()
+        `http://${window.location.hostname}:${PORT}/chartTable?` + Math.random()
       )
       .then((response) => {
         setChartTable(response.data)
       })
       .catch((error) => {
         alert(`ERROR - ${error.message}`)
-      })      
+      })
   }, [file])
 
   return {
@@ -91,7 +90,7 @@ export default function useFileData(file) {
       histogramChartList,
     },
     modelDetailData: {
-      dataChartTable
-    }
+      dataChartTable,
+    },
   }
 }
