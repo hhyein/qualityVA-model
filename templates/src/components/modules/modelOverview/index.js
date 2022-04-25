@@ -18,7 +18,6 @@ export default function ModelOverview() {
   const {
     lineChart,
     treeChart,
-    treeLength,
     actionList,
     actionDetailList,
     barChartList,
@@ -36,7 +35,6 @@ export default function ModelOverview() {
       {!isEmptyData({
         lineChart,
         treeChart,
-        treeLength,
         actionList,
         actionDetailList,
         barChartList,
@@ -48,7 +46,7 @@ export default function ModelOverview() {
           <div style={{ overflow: 'auto' }}>
             <ModelOverviewTable
               thead={<HorizontalTreeChart data={[treeChart]} />}
-              theadColSpan={treeLength}
+              theadColSpan={treeChart.treeLength}
               data={[
                 actionList,
                 actionDetailList,
