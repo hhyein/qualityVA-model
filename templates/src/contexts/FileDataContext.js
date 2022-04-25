@@ -1,10 +1,10 @@
-import axios from 'axios'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import BarChart from '../components/charts/BarChart'
-import DensityChart from '../components/charts/DensityChart'
-import { PORT } from '../const'
+import axios from "axios"
+import React, { useCallback, useContext, useEffect, useState } from "react"
+import BarChart from "../components/charts/BarChart"
+import DensityChart from "../components/charts/DensityChart"
+import { PORT } from "../const"
 
-const fetchData = async route => {
+const fetchData = async (route) => {
   try {
     const res = await axios.get(
       `http://${window.location.hostname}:${PORT}${route}?${Math.random()}`
@@ -48,13 +48,13 @@ export const FileDataProvider = ({ children }) => {
   const [
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
-  ] = useState('')
+  ] = useState("")
 
   const init = useCallback(async () => {
-    const data = await fetchData('/')
-    setColumnList(data?.columnList)
+    const data = await fetchData("/")
+    setColumnList(data?.columnList ?? [])
 
-    const settingData = await fetchData('/setting')
+    const settingData = await fetchData("/setting")
     setSettingColumnList(settingData?.columnList ?? [])
     setSettingModelList(settingData?.modelList ?? [])
     setSettingEvalList(settingData?.evalList ?? [])
@@ -65,30 +65,34 @@ export const FileDataProvider = ({ children }) => {
   }, [init])
 
   const updateModelOverview = useCallback(async () => {
-    const lineChart = await fetchData('/static/linechart.json')
-    const { treeData, treeLength } = await fetchData('/treeChart')
+    const lineChart = await fetchData("/static/linechart.json")
+    const { treeData, treeLength } = await fetchData("/treeChart")
     const { actionList, actionDetailList, barChartList, histogramChartList } =
-      await fetchData('/modelOverviewTable')
+      await fetchData("/modelOverviewTable")
     setModelOverviewData({
       lineChart,
       treeChart: { ...treeData, treeLength },
       actionList,
       actionDetailList,
-      barChartList: barChartList.map(data => <BarChart />),
-      histogramChartList: histogramChartList.map(data => <DensityChart />),
+      barChartList: barChartList.map((data) => <BarChart />),
+      histogramChartList: histogramChartList.map((data) => <DensityChart />),
     })
   }, [])
 
   const updateModelDetail = useCallback(async () => {
-    const chartTable = await fetchData('/chartTable')
+    const chartTable = await fetchData("/chartTable")
     setModelDetailData({ chartTable })
   }, [])
 
   const updateActionDetail = useCallback(async () => {
-    const barChart = await fetchData('/actionDetailBarchart')
-    const { heatmapList, heatmapYList } = await fetchData('/heatmapChart')
-    const histogramChart = await fetchData('/histogramChart')
-    const scatterChart = await fetchData('/scatterChart')
+    const barChart = await fetchData("/actionDetailBarchart")
+    const { heatmapList, heatmapYList } = await fetchData("/heatmapChart")
+    const histogramChart = await postData(
+      "/histogramChart",
+      selectedActionDetailHeatmapIndex
+    )
+    console.log(selectedActionDetailHeatmapIndex)
+    const scatterChart = await fetchData("/scatterChart")
     setActionDetailData({
       barChart,
       heatmapChart: heatmapList,
@@ -96,7 +100,7 @@ export const FileDataProvider = ({ children }) => {
       histogramChart,
       scatterChart,
     })
-  }, [])
+  }, [selectedActionDetailHeatmapIndex])
 
   useEffect(() => {
     if (!file) {
@@ -107,14 +111,16 @@ export const FileDataProvider = ({ children }) => {
     updateActionDetail()
   }, [file, updateModelOverview, updateModelDetail, updateActionDetail])
 
-  const isEmptyData = data => {
-    return Object.values(data).some(value => value === undefined)
+  const isEmptyData = (data) => {
+    return Object.values(data).some((value) => value === undefined)
   }
 
   // -------------- interaction -------------------
-  useEffect(() => {
-    postData('/heatmapChart', selectedActionDetailHeatmapIndex)
-  }, [selectedActionDetailHeatmapIndex])
+  /*useEffect(() => {
+    if (!file) {
+    }
+    updateActionDetail()
+  }, [file, updateActionDetail])*/
 
   return (
     <FileDataContext.Provider
