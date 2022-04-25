@@ -1,10 +1,10 @@
 import React from 'react'
 
 export default function ChartTable(props) {
-  const { data = [], onClick } = props
+  const { data = [], onTableCellClick } = props
 
   return data.length > 0 ? (
-    <table style = {{ minWidth: '100%' }}>
+    <table style={{ minWidth: '100%', margin: 0 }}>
       <thead>
         <tr>
           <th />
@@ -17,11 +17,16 @@ export default function ChartTable(props) {
       </thead>
       <tbody>
         {data.map(({ key, ...others }, rowIdx) => (
-          <tr>
+          <tr key={rowIdx}>
             <th>{key}</th>
             {Object.values(others).map((chart, colIdx) => (
               // onClick={() => onClick(rowIdx, colIdx)}
-              <td>{chart}</td>
+              <td
+                key={`${rowIdx}${colIdx}`}
+                onClick={() => onTableCellClick(rowIdx)}
+              >
+                {chart}
+              </td>
             ))}
           </tr>
         ))}

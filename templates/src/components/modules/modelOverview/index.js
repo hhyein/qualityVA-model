@@ -4,6 +4,7 @@ import Legend from '../../Legend'
 import LineChart from './LineChart'
 import HorizontalTreeChart from './HorizontalTreeChart'
 import ModelOverviewTable from './ModelOverviewTable'
+import { useFileData } from '../../../contexts/FileDataContext'
 
 const dataColorInfo = {
   lr: '#eb3477',
@@ -11,31 +12,43 @@ const dataColorInfo = {
   nb: '#4ceb34',
 }
 
-export default function ModelOverview({ data }) {
+export default function ModelOverview() {
+  const { modelOverviewData, isEmptyData } = useFileData()
+
   const {
     lineChart,
     treeChart,
+    treeLength,
     actionList,
     actionDetailList,
     barChartList,
     histogramChartList,
-  } = data
+  } = modelOverviewData
+
   return (
     <Box
       title="model-overview"
       style={{
         display: 'grid',
-        gridTemplateRows: 'auto 1fr 200px',
+        gridTemplateRows: 'auto 1fr 1fr',
       }}
     >
-      {!Object.values(data).some(value => value === undefined) && (
+      {!isEmptyData({
+        lineChart,
+        treeChart,
+        treeLength,
+        actionList,
+        actionDetailList,
+        barChartList,
+        histogramChartList,
+      }) && (
         <>
           <Legend dataColorInfo={dataColorInfo} />
           <LineChart data={lineChart} />
           <div style={{ overflow: 'auto' }}>
             <ModelOverviewTable
               thead={<HorizontalTreeChart data={[treeChart]} />}
-              theadColSpan={treeChart.treeLength}
+              theadColSpan={treeLength}
               data={[
                 actionList,
                 actionDetailList,

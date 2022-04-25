@@ -4,13 +4,14 @@ import Select from "react-select"
 import Title from "../../Title"
 import { PORT } from "../../../const"
 import { Box } from "../../Box"
+import { useFileData } from "../../../contexts/FileDataContext"
 
-export default function Setting(props) {
-  const { dataSettingColumnList, dataSettingModelList, dataSettingEvalList } = props
-
-  const columnList = dataSettingColumnList
-  const modelList = dataSettingModelList
-  const evaluationList = dataSettingEvalList
+export default function Setting() {
+  const {
+    dataSettingColumnList: columnList,
+    dataSettingModelList: modelList,
+    dataSettingEvalList: evaluationList,
+  } = useFileData()
 
   const value = []
 
@@ -53,7 +54,7 @@ export default function Setting(props) {
         onChange={(e) => {
           value[1] = e.value
         }}
-      />    
+      />
       <Title title="evaluation method to use" />
       <Select
         isMulti

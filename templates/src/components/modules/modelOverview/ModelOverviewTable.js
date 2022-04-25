@@ -19,9 +19,11 @@ export default function ModelOverviewTable(props) {
       </thead>
       <tbody>
         {data.map(({ key, ...others }, rowIdx) => (
-          <tr>
-            {Object.values(others).map(chart => (
-              <td style={{ width: '70px' }}>{chart}</td>
+          <tr key={rowIdx}>
+            {Object.values(others).map((chart, colIdx) => (
+              <td key={`${rowIdx}${colIdx}`} style={{ width: '70px' }}>
+                {chart}
+              </td>
             ))}
           </tr>
         ))}
