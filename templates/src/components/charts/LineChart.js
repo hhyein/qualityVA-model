@@ -104,7 +104,7 @@ export default function LineChart(props) {
 
   return (
     <>
-      <svg ref={svgRef} style={{ width: '95%' }}></svg>
+      <svg ref={svgRef} style={{ width: '90%' }}></svg>
     </>
   )
 }

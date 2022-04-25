@@ -159,9 +159,9 @@ export const FileDataProvider = ({ children }) => {
         console.log(`ERROR - ${error.message}`)
       })
     axios
-      .get(
+      .post(
         `http://${window.location.hostname}:${PORT}/histogramChart?` +
-          Math.random()
+          Math.random(), selectedActionDetailHeatmapIndex
       )
       .then(response => {
         setActionDetailData(prev => ({
@@ -172,6 +172,20 @@ export const FileDataProvider = ({ children }) => {
       .catch(error => {
         console.log(`ERROR - ${error.message}`)
       })
+    // axios
+    //   .get(
+    //     `http://${window.location.hostname}:${PORT}/histogramChart?` +
+    //       Math.random()
+    //   )
+    //   .then(response => {
+    //     setActionDetailData(prev => ({
+    //       ...prev,
+    //       histogramChart: response.data,
+    //     }))
+    //   })
+    //   .catch(error => {
+    //     console.log(`ERROR - ${error.message}`)
+    //   })
     axios
       .get(
         `http://${window.location.hostname}:${PORT}/scatterChart?` +
@@ -186,7 +200,7 @@ export const FileDataProvider = ({ children }) => {
       .catch(error => {
         alert(`ERROR - ${error.message}`)
       })
-  }, [file])
+  }, [file, selectedActionDetailHeatmapIndex])
 
   const isEmptyData = data => {
     return Object.values(data).some(value => value === undefined)

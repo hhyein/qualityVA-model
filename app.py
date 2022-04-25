@@ -306,10 +306,23 @@ def chartTable():
 
 @app.route('/histogramChart', methods = ['GET', 'POST'])
 def histogramChart():
+  req = request.get_data().decode('utf-8')
+
   global originDf
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  # example - column index 0
-  histogramDf = pd.DataFrame(originDf.iloc[:, 0])
+  histogramDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  columnList = list(histogramDf.columns)
+
+  if req == '':
+    histogramDf = pd.DataFrame(histogramDf.iloc[:, 0])
+  else:
+    req = ast.literal_eval(req)
+
+    for i in range(len(columnList)):
+      if req['index'] == columnList[i]:
+        selectedIndex = i
+
+    histogramDf = pd.DataFrame(histogramDf.iloc[:, selectedIndex])
+
   histogramDf = histogramDf.dropna()
 
   minValue = histogramDf.iloc[0][0]

@@ -141,7 +141,7 @@ export default function HistogramChart(props) {
 
       focus.selectAll('rect').style('fill', (d, i) => {
         if (i >= x.invert(s[0]) && i <= x.invert(s[1])) {
-          return 'steelblue'
+          return '#555'
         } else {
           return '#cccccc'
         }

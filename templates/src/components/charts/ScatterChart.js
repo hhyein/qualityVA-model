@@ -76,7 +76,7 @@ function ScatterChart(props) {
         return y(d.value2)
       })
       .attr('r', 3)
-      .style('fill', 'steelblue')
+      .style('fill', '#555')
 
     d3.selectAll('svg').on('click', function () {
       d3.event.preventDefault()

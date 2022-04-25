@@ -1,9 +1,7 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { PORT } from '../../../const'
+import React, { useState } from 'react'
 import { Box } from '../../Box'
 import HistogramChart from '../../charts/HistogramChart'
-import ScatterChart from './ScatterChart'
+import ScatterChart from '../../charts/ScatterChart'
 import Action from './Action'
 import Legend from '../../Legend'
 import HorizontalBarChart from '../../charts/HorizontalBarChart'
@@ -59,7 +57,7 @@ export default function ActionDetail() {
             dataHeatmapChartYList={heatmapChartY}
             dataColumnList={dataColumnList}
             colorCode={dataHeatmapColor}
-            onHeatmapCellClick={index =>
+            onHeatmapCellClick={index => 
               setSelectedActionDetailHeatmapIndex(index)
             }
           />
