@@ -12,7 +12,7 @@ export default function LineChart(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 0, right: 0, bottom: 20, left: 0 },
+    var margin = { top: 0, right: 20, bottom: 20, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom
 
@@ -38,7 +38,7 @@ export default function LineChart(props) {
       .domain(allGroup)
       .range(['#eb3477', '#8934eb', '#4ceb34'])
 
-    var x = d3.scaleLinear().domain([0, 10]).range([0, width])
+    var x = d3.scaleLinear().domain([0, 8]).range([0, width])
     svg
       .append('g')
       .attr('transform', 'translate(20,' + height + ')')
@@ -104,7 +104,7 @@ export default function LineChart(props) {
 
   return (
     <>
-      <svg ref={svgRef} style={{ width: '90%' }}></svg>
+      <svg ref={svgRef} style={{ width: '100%' }}></svg>
     </>
   )
 }

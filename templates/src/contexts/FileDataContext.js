@@ -67,15 +67,15 @@ export const FileDataProvider = ({ children }) => {
   const updateModelOverview = useCallback(async () => {
     const lineChart = await fetchData("/static/linechart.json")
     const { treeData, treeLength } = await fetchData("/treeChart")
-    const { actionList, actionDetailList, barChartList, histogramChartList } =
+    const { actionList, actionDetailList, barChartList, densityChartList } =
       await fetchData("/modelOverviewTable")
     setModelOverviewData({
       lineChart,
       treeChart: { ...treeData, treeLength },
       actionList,
       actionDetailList,
-      barChartList: barChartList.map((data) => <BarChart />),
-      histogramChartList: histogramChartList.map((data) => <DensityChart />),
+      barChartList: barChartList.map((data) => <BarChart data={[data]} />),
+      densityChartList: densityChartList.map((data) => <DensityChart data={data} />),
     })
   }, [])
 
@@ -91,7 +91,6 @@ export const FileDataProvider = ({ children }) => {
       "/histogramChart",
       selectedActionDetailHeatmapIndex
     )
-    console.log(selectedActionDetailHeatmapIndex)
     const scatterChart = await fetchData("/scatterChart")
     setActionDetailData({
       barChart,
@@ -114,13 +113,6 @@ export const FileDataProvider = ({ children }) => {
   const isEmptyData = (data) => {
     return Object.values(data).some((value) => value === undefined)
   }
-
-  // -------------- interaction -------------------
-  /*useEffect(() => {
-    if (!file) {
-    }
-    updateActionDetail()
-  }, [file, updateActionDetail])*/
 
   return (
     <FileDataContext.Provider

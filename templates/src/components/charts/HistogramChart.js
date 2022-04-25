@@ -28,7 +28,9 @@ export default function HistogramChart(props) {
       height = svgRef.current.clientHeight - margin.top - margin.bottom,
       height2 = 40
 
-    svg.attr('width', width).attr('height', height)
+    svg
+      .attr('width', width)
+      .attr('height', height)
 
     var focus = svg
       .append('g')

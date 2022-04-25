@@ -36,7 +36,7 @@ function HorizontalTreeChart(props) {
 
       nodes.forEach(function (d) {
         d.x = 20
-        d.y = d.depth * 74
+        d.y = d.depth * 92
       })
 
       var node = svg.selectAll('g.node').data(nodes, function (d) {

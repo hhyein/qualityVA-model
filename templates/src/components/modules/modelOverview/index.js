@@ -21,7 +21,7 @@ export default function ModelOverview() {
     actionList,
     actionDetailList,
     barChartList,
-    histogramChartList,
+    densityChartList,
   } = modelOverviewData
 
   return (
@@ -29,7 +29,7 @@ export default function ModelOverview() {
       title="model-overview"
       style={{
         display: 'grid',
-        gridTemplateRows: 'auto 1fr 1fr',
+        gridTemplateRows: 'auto auto 1fr',
       }}
     >
       {!isEmptyData({
@@ -38,7 +38,7 @@ export default function ModelOverview() {
         actionList,
         actionDetailList,
         barChartList,
-        histogramChartList,
+        densityChartList,
       }) && (
         <>
           <Legend dataColorInfo={dataColorInfo} />
@@ -51,7 +51,7 @@ export default function ModelOverview() {
                 actionList,
                 actionDetailList,
                 barChartList,
-                histogramChartList,
+                densityChartList,
               ].map(list =>
                 list.reduce(
                   (acc, cur, i) => ({

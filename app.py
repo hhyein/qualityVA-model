@@ -182,12 +182,6 @@ def actionDetailBarchart():
 
   return jsonify(response)
 
-##### to do
-@app.route('/modelDetailBarchart', methods = ['GET', 'POST'])
-def modelDetailBarchart():
-
-  return json.dumps({'state': 'success'})
-
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
   with open('static/treeData.json') as jsonData:
@@ -205,26 +199,63 @@ def modelOverviewTable():
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
-  # to fix
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
-  actionList = ["start", "missing", "outlier", "inconsistent", "normalization", "transformation"]
-  actionDetailList = ["start", "EM", "LOCF", "normalization", "remove", "remove"]
-  barChartList = ["barchart0", "barchart1", "barchart2", "barchart3", "barchart4", "barchart5"]
-  histogramChartList = ["histogramchart0", "histogramchart1", "histogramchart2", "histogramchart3", "histogramchart4", "histogramchart5"]
+  # to fix
+  actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
+  actionDetailList = ["start", "EM", "LOCF", "normalization", "remove"]
+  
+  # barChart
+  barChartList = []
+  missing = sum(originDf.isnull().sum().values.tolist())
+
+  tmpList = []
+  for column in originDf:
+    lower, upper = imputation.LowerUpper(originDf[column])
+    data1 = originDf[originDf[column] > upper]
+    data2 = originDf[originDf[column] < lower]
+    tmpList.append(data1.shape[0] + data2.shape[0])
+  outlier = sum(tmpList)
+
+  tmpList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    tmpList.append(df.isnull().sum().values[0].tolist())
+  incons = sum(tmpList)
+
+  for i in range(0, 5):
+    barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
+
+  # densityChart
+  densityChartList = []
+  from sklearn.manifold import TSNE
+
+  dataMatrix = originDf.dropna().reset_index(drop = True).values
+  tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
+  tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
+
+  mu = tsneDf.mean()
+  std = tsneDf.std()
+  rv = stats.norm(loc = mu, scale = std)
+  normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+  densityDf = imputation.densityDf(normalDf, tsneDf)
+
+  for i in range(0, 5):
+    densityChartList.append(densityDf.to_dict('records'))
 
   response = {}
   response['actionList'] = actionList
   response['actionDetailList'] = actionDetailList
   response['barChartList'] = barChartList
-  response['histogramChartList'] = histogramChartList
+  response['densityChartList'] = densityChartList
 
   return json.dumps(response)
 
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
-  originDf = pd.read_csv(filePath)
+  global originDf
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
