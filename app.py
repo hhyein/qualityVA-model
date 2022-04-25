@@ -39,9 +39,10 @@ def fileUpload():
   fileUploadDf = pd.DataFrame(fileUploadList)
   fileUploadDf = fileUploadDf.rename(columns = fileUploadDf.iloc[0])
   fileUploadDf = fileUploadDf.drop(fileUploadDf.index[0])
+  fileUploadDf = fileUploadDf.reset_index(drop = True)
 
-  global originDf
-  originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
+  # global originDf
+  # originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
 
   return json.dumps({'state': 'success'})
 

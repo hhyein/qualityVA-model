@@ -5,6 +5,7 @@ export default function HeatmapChart({
   dataHeatmapChartYList,
   dataColumnList,
   colorCode = 'steelblue',
+  onHeatmapCellClick,
 }) {
   const svgRef = useRef()
   const d3 = window.d3v4
@@ -74,9 +75,16 @@ export default function HeatmapChart({
       .on('mouseover', mouseover)
       .on('mouseleave', mouseleave)
       .on('click', function (d) {
-
+        onHeatmapCellClick(d)
       })
-  }, [data, dataHeatmapChartYList, dataColumnList, colorCode, d3])
+  }, [
+    data,
+    dataHeatmapChartYList,
+    dataColumnList,
+    colorCode,
+    d3,
+    onHeatmapCellClick,
+  ])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '30%' }}></svg>
 }

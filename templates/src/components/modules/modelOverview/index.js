@@ -1,8 +1,8 @@
 import React from 'react'
 import { Box } from '../../Box'
 import Legend from '../../Legend'
-import LineChart from './LineChart'
-import HorizontalTreeChart from './HorizontalTreeChart'
+import LineChart from '../../charts/LineChart'
+import HorizontalTreeChart from '../../charts/HorizontalTreeChart'
 import ModelOverviewTable from './ModelOverviewTable'
 import { useFileData } from '../../../contexts/FileDataContext'
 

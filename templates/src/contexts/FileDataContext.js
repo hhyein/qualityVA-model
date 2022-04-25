@@ -1,8 +1,20 @@
 import axios from 'axios'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import BarChart from '../components/charts/BarChart'
 import DensityChart from '../components/charts/DensityChart'
 import { PORT } from '../const'
+
+const fetchData = async (route, params = Math.random()) => {
+  try {
+    const res = await axios.get(
+      `http://${window.location.hostname}:${PORT}${route}?${params}`
+    )
+    return res.data
+  } catch (e) {
+    console.log(`ERROR - ${e.message}`)
+    return undefined
+  }
+}
 
 const FileDataContext = React.createContext()
 
@@ -20,30 +32,24 @@ export const FileDataProvider = ({ children }) => {
 
   const [selectedModelDetailTableRow, setSelectedModelDetailTableRow] =
     useState(0)
+  const [
+    selectedActionDetailHeatmapIndex,
+    setSelectedActionDetailHeatmapIndex,
+  ] = useState('')
+
+  const init = useCallback(async () => {
+    const data = await fetchData('/')
+    setColumnList(data?.columnList)
+
+    const settingData = await fetchData('/setting')
+    setSettingColumnList(settingData?.columnList)
+    setSettingModelList(settingData?.modelList)
+    setSettingEvalList(settingData?.evalList)
+  }, [])
 
   useEffect(() => {
-    axios
-      .get(`http://${window.location.hostname}:${PORT}/?` + Math.random())
-      .then(response => {
-        setColumnList(response.data.columnList)
-      })
-      .catch(error => {
-        console.log(`ERROR - ${error.message}`)
-      })
-
-    axios
-      .get(
-        `http://${window.location.hostname}:${PORT}/setting?` + Math.random()
-      )
-      .then(response => {
-        setSettingColumnList(response.data.columnList)
-        setSettingModelList(response.data.modelList)
-        setSettingEvalList(response.data.evalList)
-      })
-      .catch(error => {
-        console.log(`ERROR - ${error.message}`)
-      })
-  }, [])
+    init()
+  }, [init])
 
   useEffect(() => {
     if (!file) {
@@ -199,6 +205,8 @@ export const FileDataProvider = ({ children }) => {
         modelDetailData,
         selectedModelDetailTableRow,
         setSelectedModelDetailTableRow,
+        selectedActionDetailHeatmapIndex,
+        setSelectedActionDetailHeatmapIndex,
         actionDetailData,
         isEmptyData,
       }}

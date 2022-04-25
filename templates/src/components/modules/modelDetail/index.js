@@ -5,13 +5,15 @@ import HorizontalBarChart from '../../charts/HorizontalBarChart'
 import { useFileData } from '../../../contexts/FileDataContext'
 
 export default function ModelDetail() {
-  const { modelDetailData, isEmptyData } = useFileData()
+  const { modelDetailData, isEmptyData, setSelectedModelDetailTableRow } =
+    useFileData()
   const { chartTable } = modelDetailData
 
   return (
     <Box title="model-detail" style={{ overflow: 'auto' }}>
       {!isEmptyData({ chartTable }) && (
         <ChartTable
+          onTableCellClick={rowIdx => setSelectedModelDetailTableRow(rowIdx)}
           data={Array.from(
             { length: Object(chartTable.columnList).length },
             (_, i) => ({

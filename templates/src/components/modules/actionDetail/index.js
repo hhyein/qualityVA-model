@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { PORT } from '../../../const'
 import { Box } from '../../Box'
-import HistogramChart from './HistogramChart'
+import HistogramChart from '../../charts/HistogramChart'
 import ScatterChart from './ScatterChart'
 import Action from './Action'
 import Legend from '../../Legend'
@@ -18,7 +18,12 @@ const dataColorInfo = {
 }
 
 export default function ActionDetail() {
-  const { dataColumnList, actionDetailData, isEmptyData } = useFileData()
+  const {
+    dataColumnList,
+    actionDetailData,
+    isEmptyData,
+    setSelectedActionDetailHeatmapIndex,
+  } = useFileData()
   const {
     barChart,
     heatmapChart,
@@ -54,6 +59,9 @@ export default function ActionDetail() {
             dataHeatmapChartYList={heatmapChartY}
             dataColumnList={dataColumnList}
             colorCode={dataHeatmapColor}
+            onHeatmapCellClick={index =>
+              setSelectedActionDetailHeatmapIndex(index)
+            }
           />
           <IndexingButtonBox
             style={{ margin: '5px 0', height: '47%' }}
