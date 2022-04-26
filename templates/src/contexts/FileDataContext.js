@@ -36,6 +36,7 @@ export const FileDataProvider = ({ children }) => {
   const [dataSettingColumnList, setSettingColumnList] = useState([])
   const [dataSettingModelList, setSettingModelList] = useState([])
   const [dataSettingEvalList, setSettingEvalList] = useState([])
+  const [dataSettingDimensionList, setSettingDimensionList] = useState([])
 
   const [file, setFile] = useState()
 
@@ -43,8 +44,10 @@ export const FileDataProvider = ({ children }) => {
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
-  const [selectedModelDetailTableRow, setSelectedModelDetailTableRow] =
-    useState(0)
+  const [
+    selectedModelDetailTableRow,
+    setSelectedModelDetailTableRow,
+  ] = useState(0)
   const [
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
@@ -58,6 +61,7 @@ export const FileDataProvider = ({ children }) => {
     setSettingColumnList(settingData?.columnList ?? [])
     setSettingModelList(settingData?.modelList ?? [])
     setSettingEvalList(settingData?.evalList ?? [])
+    setSettingDimensionList(settingData?.dimensionList ?? [])
   }, [])
 
   useEffect(() => {
@@ -69,6 +73,13 @@ export const FileDataProvider = ({ children }) => {
     const { treeData, treeLength } = await fetchData("/treeChart")
     const { actionList, actionDetailList, barChartList, densityChartList } =
       await fetchData("/modelOverviewTable")
+
+    // have to develop
+    const selectedModelDetailTable = await postData(
+      "/selectedModelDetailTable",
+      selectedModelDetailTableRow
+    )
+
     setModelOverviewData({
       lineChart,
       treeChart: { ...treeData, treeLength },
@@ -121,6 +132,7 @@ export const FileDataProvider = ({ children }) => {
         dataSettingColumnList,
         dataSettingModelList,
         dataSettingEvalList,
+        dataSettingDimensionList,
         file,
         setFile,
         modelOverviewData,

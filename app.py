@@ -26,6 +26,17 @@ originDf = pd.read_csv(filePath, sep = ',')
 currentCnt = 6
 predictName = 'hue'
 
+@app.route('/', methods=['GET', 'POST'])
+def home():
+  global originDf
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
+
+  response = {}
+  response['columnList'] = list(originDf.columns)
+
+  return json.dumps(response)
+
 @app.route('/fileUpload', methods=['GET', 'POST'])
 def fileUpload():
   req = request.files['file']
@@ -44,7 +55,7 @@ def fileUpload():
   # global originDf
   # originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
 
-  return json.dumps({'state': 'success'})
+  return json.dumps({'fileUpload': 'success'})
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
@@ -64,32 +75,18 @@ def setting():
   for i in range(len(tmpList)):
     evalList.append({'label': tmpList[i], 'value': i})
 
+  dimensionList = []
+  tmpList = ['TSNE', 'PCA']
+  for i in range(len(tmpList)):
+    dimensionList.append({'label': tmpList[i], 'value': i})
+
   response = {}
   response['columnList'] = columnList  
   response['modelList'] = modelList
   response['evalList'] = evalList
+  response['dimensionList'] = dimensionList
 
   return json.dumps(response)
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-  global originDf
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  originDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
-
-  response = {}
-  response['columnList'] = list(originDf.columns)
-
-  return json.dumps(response)
-
-@app.route('/autoML', methods=['GET', 'POST'])
-def autoML():
-  # clf = setup(data = originDf.dropna(), target = predictName, preprocess = False, session_id = 42, silent = True)
-  # models = compare_models()
-  # results = pull()
-  # results.to_json('static/modelData.json', orient = 'records', indent = 4)
-
-  return json.dumps({'state': 'success'})
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
@@ -149,38 +146,16 @@ def query():
 
   # return jsonify({'nl4dv': vlSpec})
 
-  return json.dumps({'state': 'success'})
+  return json.dumps({'query': 'success'})
 
-@app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
-def actionDetailBarchart():
-  global originDf
-  for column in originDf:
-    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
-      originDf = originDf.drop([column], axis = 1)
+@app.route('/lineChart', methods=['GET', 'POST'])
+def lineChart():
+  # clf = setup(data = originDf.dropna(), target = predictName, preprocess = False, session_id = 42, silent = True)
+  # models = compare_models()
+  # results = pull()
+  # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
-  missing = sum(originDf.isnull().sum().values.tolist())
-
-  tmpList = []
-  for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
-    tmpList.append(data1.shape[0] + data2.shape[0])
-  outlier = sum(tmpList)
-
-  tmpList = []
-  for column in originDf:
-    df = originDf[column].dropna()
-    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-    tmpList.append(df.isnull().sum().values[0].tolist())
-  incons = sum(tmpList)
-
-  response = {}
-  response['missing'] = {'data': missing, 'originData': len(originDf) - missing}
-  response['outlier'] = {'data': outlier, 'originData': len(originDf) - outlier}
-  response['incons'] = {'data': incons, 'originData': len(originDf) - incons}
-
-  return jsonify(response)
+  return json.dumps({'lineChart': 'success'})
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
@@ -335,6 +310,59 @@ def chartTable():
 
   return json.dumps(response)
 
+@app.route('/selectedModelDetailTable', methods=['GET', 'POST'])
+def selectedModelDetailTable():
+  req = request.get_data().decode('utf-8')
+  print(req)  
+
+  return json.dumps({'selectedModelDetailTable': 'success'})
+
+@app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
+def actionDetailBarchart():
+  global originDf
+  for column in originDf:
+    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
+      originDf = originDf.drop([column], axis = 1)
+
+  missing = sum(originDf.isnull().sum().values.tolist())
+
+  tmpList = []
+  for column in originDf:
+    lower, upper = imputation.LowerUpper(originDf[column])
+    data1 = originDf[originDf[column] > upper]
+    data2 = originDf[originDf[column] < lower]
+    tmpList.append(data1.shape[0] + data2.shape[0])
+  outlier = sum(tmpList)
+
+  tmpList = []
+  for column in originDf:
+    df = originDf[column].dropna()
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    tmpList.append(df.isnull().sum().values[0].tolist())
+  incons = sum(tmpList)
+
+  response = {}
+  response['missing'] = {'data': missing, 'originData': len(originDf) - missing}
+  response['outlier'] = {'data': outlier, 'originData': len(originDf) - outlier}
+  response['incons'] = {'data': incons, 'originData': len(originDf) - incons}
+
+  return jsonify(response)
+
+@app.route('/heatmapChart', methods = ['GET', 'POST'])
+def heatmapChart():
+  global originDf
+  heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+
+  columnList = list(heatmapDf.columns)
+  heatmapDf, heatmapYList = imputation.heatmapDf(columnList, heatmapDf)
+  heatmapList = list(heatmapDf.transpose().to_dict().values())
+
+  response = {}
+  response['heatmapList'] = heatmapList
+  response['heatmapYList'] = heatmapYList 
+
+  return json.dumps(response)  
+
 @app.route('/histogramChart', methods = ['GET', 'POST'])
 def histogramChart():
   req = request.get_data().decode('utf-8')
@@ -374,21 +402,6 @@ def histogramChart():
     response['histogramChartList'] = histogramChartList
     
   return json.dumps(response)
-
-@app.route('/heatmapChart', methods = ['GET', 'POST'])
-def heatmapChart():
-  global originDf
-  heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-
-  columnList = list(heatmapDf.columns)
-  heatmapDf, heatmapYList = imputation.heatmapDf(columnList, heatmapDf)
-  heatmapList = list(heatmapDf.transpose().to_dict().values())
-
-  response = {}
-  response['heatmapList'] = heatmapList
-  response['heatmapYList'] = heatmapYList 
-
-  return json.dumps(response)  
 
 @app.route('/scatterChart', methods = ['GET', 'POST'])
 def scatterChart():
@@ -530,7 +543,7 @@ def action():
   with open('static/treeData.json', 'w') as f:
       json.dump(treeData, f, indent = 4)  
 
-  return json.dumps({'state': 'success'})
+  return json.dumps({'action': 'success'})
 
 if __name__ == '__main__':
   app.jinja_env.auto_reload = True

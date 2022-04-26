@@ -23,13 +23,6 @@
                                     "state": "none",
                                     "name": "remove",
                                     "children": [
-                                        {
-                                            "index": "5",
-                                            "state": "current",
-                                            "name": "remove",
-                                            "children": [
-                                            ]
-                                        }
                                     ]
                                 }
                             ]

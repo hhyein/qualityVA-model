@@ -5,8 +5,11 @@ import HorizontalBarChart from '../../charts/HorizontalBarChart'
 import { useFileData } from '../../../contexts/FileDataContext'
 
 export default function ModelDetail() {
-  const { modelDetailData, isEmptyData, setSelectedModelDetailTableRow } =
-    useFileData()
+  const {
+    modelDetailData,
+    isEmptyData,
+    setSelectedModelDetailTableRow
+  } = useFileData()
   const { chartTable } = modelDetailData
 
   return (
@@ -19,35 +22,74 @@ export default function ModelDetail() {
             (_, i) => ({
               key: i,
               combination: (
-                <img
-                  src={require('../../icons/sample.jpg')}
+                <div style={{ display: 'flex' }}>
+                  <img
+                    src={require('../../icons/missing.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                    src={require('../../icons/outlier.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                    src={require('../../icons/inconsistent.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                  src={require('../../icons/transformation.png')}
                   alt={''}
                   style={{ height: '20px', width: '20px' }}
                 ></img>
+                </div>
               ),
               combinationDetail: (
-                <img
-                  src={require('../../icons/sample.jpg')}
+                <div style={{ display: 'flex' }}>
+                  <img
+                    src={require('../../icons/missing.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                    src={require('../../icons/outlier.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                    src={require('../../icons/inconsistent.png')}
+                    alt={''}
+                    style={{ height: '20px', width: '20px' }}
+                  ></img>
+                  <img
+                  src={require('../../icons/transformation.png')}
                   alt={''}
                   style={{ height: '20px', width: '20px' }}
                 ></img>
+                </div>
               ),
               accuracy: (
-                <HorizontalBarChart
-                  data={[Object.values(chartTable)[1][i]]}
-                  colorCode={'steelblue'}
-                ></HorizontalBarChart>
+                <div style={{ height: '100%' }}>
+                  <HorizontalBarChart
+                    data={[Object.values(chartTable)[1][i]]}
+                    colorCode={'steelblue'}
+                    type={'modelDetail'}
+                  ></HorizontalBarChart>
+                </div>
               ),
               AUC: (
                 <HorizontalBarChart
                   data={[Object.values(chartTable)[2][i]]}
                   colorCode={'orange'}
+                  type={'modelDetail'}
                 ></HorizontalBarChart>
               ),
               recall: (
                 <HorizontalBarChart
                   data={[Object.values(chartTable)[3][i]]}
                   colorCode={'darkgreen'}
+                  type={'modelDetail'}
                 ></HorizontalBarChart>
               ),
             })

@@ -20,8 +20,7 @@ export default function ChartTable(props) {
           <tr key={rowIdx}>
             <th>{key}</th>
             {Object.values(others).map((chart, colIdx) => (
-              // onClick={() => onClick(rowIdx, colIdx)}
-              <td
+              <td style={{height: 0}}
                 key={`${rowIdx}${colIdx}`}
                 onClick={() => onTableCellClick(rowIdx)}
               >

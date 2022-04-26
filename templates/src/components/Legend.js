@@ -10,7 +10,7 @@ export default function Legend(props) {
     d3.select(svgRef.current).selectAll("*").remove()
 
     var margin = { top: 0, right: 0, bottom: 10, left: 0 },
-      width = 275 - margin.left - margin.right,
+      width = svgRef.current.clientWidth - margin.left - margin.right,
       height = 30 - margin.top - margin.bottom
 
     svg
@@ -38,7 +38,7 @@ export default function Legend(props) {
 
   return (
     <>
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef} style={{ width: '100%' }}></svg>
     </>
   )
 }

@@ -8,14 +8,13 @@ function HorizontalTreeChart(props) {
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 0, right: 0, bottom: 0, left: 20 },
+    var margin = { top: 0, right: 20, bottom: 10, left: 20 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
-      height = svgRef.current.clientHeight - margin.top - margin.bottom
+      height = 50 - margin.top - margin.bottom
 
     var i = 0
     var svg = d3
       .select(svgRef.current)
-      .append('svg')
       .attr('width', width + margin.right + margin.left)
       .attr('height', height + margin.top + margin.bottom)
       .append('g')
@@ -36,7 +35,7 @@ function HorizontalTreeChart(props) {
 
       nodes.forEach(function (d) {
         d.x = 20
-        d.y = d.depth * 92
+        d.y = d.depth * 90
       })
 
       var node = svg.selectAll('g.node').data(nodes, function (d) {

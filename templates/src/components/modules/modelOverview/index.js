@@ -29,7 +29,7 @@ export default function ModelOverview() {
       title="model-overview"
       style={{
         display: 'grid',
-        gridTemplateRows: 'auto auto 1fr',
+        gridTemplateRows: 'auto auto auto 1fr',
       }}
     >
       {!isEmptyData({
@@ -42,11 +42,10 @@ export default function ModelOverview() {
       }) && (
         <>
           <Legend dataColorInfo={dataColorInfo} />
-          <LineChart data={lineChart} />
-          <div style={{ overflow: 'auto' }}>
+          <LineChart data={lineChart} dataLenght={treeChart.treeLength} />
+          <HorizontalTreeChart data={[treeChart]} />
+          <div>
             <ModelOverviewTable
-              thead={<HorizontalTreeChart data={[treeChart]} />}
-              theadColSpan={treeChart.treeLength}
               data={[
                 actionList,
                 actionDetailList,

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-export default function HorizontalBarChart({ data, colorCode, type, onClick }) {
+export default function HorizontalBarChart({ data, colorCode, onClick }) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -18,17 +18,9 @@ export default function HorizontalBarChart({ data, colorCode, type, onClick }) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    if (type == 'modelDetail') {
-      var margin = { top: 0, right: 0, bottom: 0, left: 0 },
+    var margin = { top: 0, right: 0, bottom: 0, left: 0 },
       width = 85 - margin.left - margin.right,
-      height = 20 - margin.top - margin.bottom      
-    }
-    
-    else {
-      var margin = { top: 0, right: 0, bottom: 10, left: 0 },
-      width = 85 - margin.left - margin.right,
-      height = 30 - margin.top - margin.bottom
-    }
+      height = 20 - margin.top - margin.bottom
 
     svg
       .attr('width', width + margin.left + margin.right)
@@ -56,9 +48,7 @@ export default function HorizontalBarChart({ data, colorCode, type, onClick }) {
       }
     })
 
-    var stackedData = d3
-      .stack()
-      .keys(subgroups)(data)
+    var stackedData = d3.stack().keys(subgroups)(data)
 
     svg
       .append('g')

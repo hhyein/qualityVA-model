@@ -43,7 +43,9 @@ export default function HeatmapChart({
         .style('opacity', 1)
     }
     var mouseleave = function (d) {
-      d3.select(this).style('stroke', 'none').style('opacity', 0.8)
+      d3.select(this)
+        .style('stroke', 'none')
+        .style('opacity', 0.8)
     }
 
     svg

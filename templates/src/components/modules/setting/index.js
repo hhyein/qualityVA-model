@@ -11,6 +11,7 @@ export default function Setting() {
     dataSettingColumnList: columnList,
     dataSettingModelList: modelList,
     dataSettingEvalList: evaluationList,
+    dataSettingDimensionList: dimensionList,
   } = useFileData()
 
   const value = []
@@ -19,7 +20,7 @@ export default function Setting() {
     new Promise((resolve) => {
       setTimeout(() => {
         resolve(
-          evaluationList.filter((item) =>
+          dimensionList.filter((item) =>
             item.label.toLowerCase().includes(inputValue.toLowerCase())
           )
         )
@@ -45,7 +46,7 @@ export default function Setting() {
           value[0] = e.value
         }}
       />
-      <Title title="model to use" />
+      <Title title="machine learning model" />
       <Select
         isMulti
         options={modelList}
@@ -55,14 +56,23 @@ export default function Setting() {
           value[1] = e.value
         }}
       />
-      <Title title="evaluation method to use" />
+      <Title title="evaluation method" />
       <Select
         isMulti
         options={evaluationList}
         loadOptions={loadOptions}
-        placeholder={<div>select evaluation method</div>}
+        placeholder={<div>select method</div>}
         onChange={(e) => {
           value[2] = e.value
+        }}
+      />
+      <Title title="dimension reduction method" />
+      <Select
+        options={dimensionList}
+        loadOptions={loadOptions}
+        placeholder={<div>select method</div>}
+        onChange={(e) => {
+          value[3] = e.value
           // axios
           //   .post(`http://${window.location.hostname}:${PORT}/?` + Math.random(), value)
           //   .then(response => {

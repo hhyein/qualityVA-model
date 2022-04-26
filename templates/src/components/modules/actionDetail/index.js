@@ -62,7 +62,7 @@ export default function ActionDetail() {
             }
           />
           <IndexingButtonBox
-            style={{ margin: '5px 0', height: '47%' }}
+            style={{ margin: '5px 0', height: '45%' }}
             componentInfo={{
               'column data': <HistogramChart data={histogramChart} />,
               'specific data': <ScatterChart data={scatterChart} method={1} />,

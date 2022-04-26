@@ -13,8 +13,8 @@ function DensityChart(props) {
     var svg = d3.select(svgRef.current)
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 10, right: 10, bottom: 10, left: 10 },
-      width = 100 - margin.left - margin.right,
+    var margin = { top: 0, right: 0, bottom: 10, left: 0 },
+      width = svgRef.current.clientWidth - margin.left - margin.right,
       height = 50 - margin.top - margin.bottom
 
     svg
@@ -91,10 +91,6 @@ function DensityChart(props) {
     }
   }, [data])
 
-  return (
-    <>
-      <svg ref={svgRef}></svg>
-    </>
-  )
+  return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
 }
 export default DensityChart
