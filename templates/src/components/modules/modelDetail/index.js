@@ -18,7 +18,7 @@ export default function ModelDetail() {
         <ChartTable
           onTableCellClick={rowIdx => setSelectedModelDetailTableRow(rowIdx)}
           data={Array.from(
-            { length: Object(chartTable.columnList).length },
+            { length: Object(chartTable.combinationList).length },
             (_, i) => ({
               key: i,
               combination: (
@@ -72,7 +72,7 @@ export default function ModelDetail() {
               accuracy: (
                 <div style={{ height: '100%' }}>
                   <HorizontalBarChart
-                    data={[Object.values(chartTable)[1][i]]}
+                    data={[Object.values(chartTable)[3][i]]}
                     colorCode={'steelblue'}
                     type={'modelDetail'}
                   ></HorizontalBarChart>
@@ -80,14 +80,14 @@ export default function ModelDetail() {
               ),
               AUC: (
                 <HorizontalBarChart
-                  data={[Object.values(chartTable)[2][i]]}
+                  data={[Object.values(chartTable)[4][i]]}
                   colorCode={'orange'}
                   type={'modelDetail'}
                 ></HorizontalBarChart>
               ),
               recall: (
                 <HorizontalBarChart
-                  data={[Object.values(chartTable)[3][i]]}
+                  data={[Object.values(chartTable)[5][i]]}
                   colorCode={'darkgreen'}
                   type={'modelDetail'}
                 ></HorizontalBarChart>

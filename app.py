@@ -25,6 +25,8 @@ originDf = pd.read_csv(filePath, sep = ',')
 
 currentCnt = 6
 predictName = 'hue'
+inputModelList = ['Logistic Regression']
+inputEvalList = ['Accuracy', 'AUC', 'Recall']
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -228,85 +230,54 @@ def modelOverviewTable():
 
   return json.dumps(response)
 
+# autoML
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
-  global originDf
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  columnList = originDf.columns.tolist()
+  combinationList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  inputModelList = ['Logistic Regression']
+  inputEvalList = ['Accuracy', 'AUC', 'Recall']
 
-  for column in originDf:
-    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
-      originDf = originDf.drop([column], axis = 1)
+  # global originDf, predictName
+  # automlDf = originDf.dropna()
+  # clf = setup(data = automlDf, target = predictName, preprocess = False, session_id = 42, silent = True)
+  # models = compare_models()
+  # results = pull()
+  # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
-  # missing
-  missingList = []
-  tmpList = originDf.isnull().sum().values.tolist()
+  with open('static/modelData.json') as data:
+    data = json.load(data)
+  autoMLDf = pd.DataFrame.from_dict(data)
 
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
+  modelList = autoMLDf['Model'].values.tolist()
+  modelIndex = []
+  for i in inputModelList:
+    modelIndex.append(modelList.index(i))
 
-    missingList.append(tmpDict)
+  evalList = ['Accuracy', 'AUC', 'Recall', 'Prec.', 'F1', 'Kappa', 'MCC', 'TT (Sec)']
+  evalIndex = []
+  for i in inputEvalList:
+    evalIndex.append(evalList.index(i) + 1)
 
-  # outlier
-  tmpList = []
-  for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
-    tmpList.append(data1.shape[0] + data2.shape[0])
-
-  outlierList = []
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
-
-    outlierList.append(tmpDict)
-
-  # incons
-  tmpList = []
-  for column in originDf:
-    df = originDf[column].dropna()
-    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-    tmpList.append(df.isnull().sum().values[0].tolist())
-
-  inconsList = []
-  for i in range(len(tmpList)):
-    tmpDict = {}
-    tmpDict['data'] = tmpList[i]
-    tmpDict['originData'] = len(originDf) - tmpList[i]
-
-    inconsList.append(tmpDict)
-
-  # quantile
-  quantileList = []
-  for column in originDf:
-    df = originDf[column].dropna()
-    quantileList.append(df.tolist())
-
-  # descriptive
-  descriptiveList = []
-  for column in originDf:
-    df = originDf[[column]].dropna()
-
-    # normal distribution
-    mu = df.mean()
-    std = df.std()
-    rv = stats.norm(loc = mu, scale = std)
-    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
-
-    densityDf = imputation.densityDf(normalDf, df)
-    descriptiveList.append(densityDf.to_dict('records'))
+  resultList = []
+  for i in evalIndex:
+    tmpList = []
+    for j in modelIndex:
+      tmpList.append(autoMLDf.iloc[j][i])
+    resultList.append(tmpList[0])
 
   response = {}
-  response['columnList'] = columnList
-  response['missingList'] = missingList
-  response['outlierList'] = outlierList
-  response['inconsList'] = inconsList
-  response['quantileList'] = quantileList
-  response['descriptiveList'] = descriptiveList
+  response['combinationList'] = combinationList
+  response['inputModelList'] = inputModelList
+  response['inputEvalList'] = inputEvalList
+
+  for i in range(len(inputEvalList)):
+    tmpList = []
+    for j in range(len(combinationList)):
+      data = resultList[i]
+      originData = 1.0 - resultList[i]
+
+      tmpList.append({'data': data, 'originData': originData})
+    response[inputEvalList[i]] = tmpList
 
   return json.dumps(response)
 
