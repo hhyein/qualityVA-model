@@ -68,7 +68,7 @@ function DensityChart(props) {
       .attr("class", "mypath")
       .datum(density2)
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
+      .attr("stroke", "#555")
       .attr("stroke-width", 1.5)
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()

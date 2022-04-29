@@ -11,7 +11,7 @@ import { useFileData } from "../../../contexts/FileDataContext"
 
 const dataColorInfo = {
   missing: "steelblue",
-  outlier: "orange",
+  outlier: "darkorange",
   incons: "darkgreen",
 }
 

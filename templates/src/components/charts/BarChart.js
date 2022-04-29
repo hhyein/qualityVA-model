@@ -50,7 +50,7 @@ function BarChart(props) {
 
     var color = d3.scaleOrdinal()
       .domain(subgroups)
-      .range(['steelblue','orange','darkgreen'])
+      .range(['steelblue','darkorange','darkgreen'])
 
     svg.append("g")
       .selectAll("g")

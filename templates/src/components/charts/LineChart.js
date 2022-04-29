@@ -38,7 +38,7 @@ export default function LineChart(props) {
     var myColor = d3
       .scaleOrdinal()
       .domain(allGroup)
-      .range(['#eb3477', '#8934eb', '#4ceb34'])
+      .range(['crimson', 'mediumpurple', 'yellowgreen'])
 
     var x = d3.scaleLinear().domain([0, dataLenght]).range([0, width])
     svg

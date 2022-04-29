@@ -72,7 +72,7 @@ export default function ModelOverview() {
                   [cur]: (
                     <HorizontalBarChart
                       data={[Object.values(chartTable)[j + 3][i]]}
-                      colorCode={["steelblue", "orange", "darkgreen"][j]}
+                      colorCode={["lightcoral", "mediumturquoise", "sienna"][j]}
                     />
                   ),
                 }),
