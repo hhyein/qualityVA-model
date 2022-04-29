@@ -57,7 +57,9 @@ table {
 }
 
 table th,
-table td {
+table td,
+.grid-th,
+.grid-td {
   font-size: 12px;
   padding: 6px;
   border-bottom: 1px solid #cccccc;
@@ -74,7 +76,8 @@ tr:last-child > td {
   border-bottom: none;
 }
 
-table th {
+table th,
+.grid-th {
   background-color: var(--grey-070);
 }
 
@@ -124,8 +127,4 @@ table th {
     background: #cccccc;
     margin: 0 0 0 0;
   }
-}
-
-.model-overview-table .svg-wrapper {
-  width: 100px;
 }
