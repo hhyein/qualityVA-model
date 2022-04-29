@@ -23,46 +23,46 @@ export default function ModelOverview() {
                   <img
                     src={require("../../icons/missing.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
                     src={require("../../icons/outlier.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
                     src={require("../../icons/inconsistent.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
                     src={require("../../icons/transformation.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                 </div>
               ),
               combinationDetail: (
                 <div style={{ display: "flex" }}>
                   <img
-                    src={require("../../icons/missing.png")}
+                    src={require("../../icons/lof.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
-                    src={require("../../icons/outlier.png")}
+                    src={require("../../icons/em.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
-                    src={require("../../icons/inconsistent.png")}
+                    src={require("../../icons/rem.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                   <img
-                    src={require("../../icons/transformation.png")}
+                    src={require("../../icons/std.png")}
                     alt={""}
-                    style={{ height: "20px", width: "20px" }}
+                    style={{ height: "25px", width: "25px" }}
                   ></img>
                 </div>
               ),

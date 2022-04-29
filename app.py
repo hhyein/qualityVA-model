@@ -227,7 +227,7 @@ def modelDetailTable():
 
   # to fix
   actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
-  actionDetailList = ["start", "EM", "LOCF", "normalization", "remove"]
+  actionDetailList = ["start", "locf", "em", "remove", "standard"]
   
   # barChart
   barChartList = []
