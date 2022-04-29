@@ -5,6 +5,8 @@ export default function LineChart(props) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
+  const leftMove = 25
+
   useEffect(() => {
     if (!data) {
       return
@@ -22,7 +24,7 @@ export default function LineChart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var allGroup = ['valueA', 'valueB', 'valueC']
+    var allGroup = ['lr', 'knn', 'nb']
 
     var dataReady = allGroup.map(function (grpName) {
       return {
@@ -41,24 +43,24 @@ export default function LineChart(props) {
     var x = d3.scaleLinear().domain([0, dataLenght]).range([0, width])
     svg
       .append('g')
-      .attr('transform', 'translate(20,' + height + ')')
+      .attr('transform', 'translate(' + leftMove + ',' + height + ')')
       .call(d3.axisBottom(x))
       .selectAll('text')
       .remove()
 
     var y = d3
       .scaleLinear()
-      .domain([0, 20])
+      .domain([0, 1])
       .range([height - 10, 0])
     svg
       .append('g')
-      .attr('transform', 'translate(' + 20 + ', 10)')
+      .attr('transform', 'translate(' + leftMove + ', 10)')
       .call(d3.axisLeft(y))
 
     var line = d3
       .line()
       .x(function (d) {
-        return x(+d.time) + 20
+        return x(+d.time) + leftMove
       })
       .y(function (d) {
         return y(+d.value)
@@ -93,7 +95,7 @@ export default function LineChart(props) {
       .enter()
       .append('circle')
       .attr('cx', function (d) {
-        return x(d.time) + 20
+        return x(d.time) + leftMove
       })
       .attr('cy', function (d) {
         return y(d.value)

@@ -20,7 +20,7 @@
                             "children": [
                                 {
                                     "index": "4",
-                                    "state": "none",
+                                    "state": "current",
                                     "name": "remove",
                                     "children": [
                                     ]

@@ -28,26 +28,6 @@ export default function HistogramChart(props) {
       height = svgRef.current.clientHeight - margin.top - margin.bottom,
       height2 = 40
 
-    svg
-      .attr('width', width)
-      .attr('height', height)
-
-    var focus = svg
-      .append('g')
-      .attr('class', 'focus')
-      .attr(
-        'transform',
-        'translate(' + margin.left + ',' + (margin.top - height2 * 2) + ')'
-      )
-
-    var context = svg
-      .append('g')
-      .attr('class', 'context')
-      .attr(
-        'transform',
-        'translate(' + margin.left + ',' + (margin.top + height - height2) + ')'
-      )
-
     var x = d3.scaleLinear().range([0, width])
     var x2 = d3.scaleLinear().range([0, width])
     var y = d3.scaleLinear().range([height, 0])
@@ -60,6 +40,18 @@ export default function HistogramChart(props) {
 
     var xAxis = d3.axisBottom(x).tickFormat((d, e) => ordinals[d])
     var yAxis = d3.axisLeft(y)
+
+    svg
+      .attr('width', width)
+      .attr('height', height)
+
+    var focus = svg
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top - height2 * 2) + ')')
+
+    var context = svg
+      .append('g')
+      .attr('transform', 'translate(' + margin.left + ',' + (margin.top + height - height2) + ')')
 
     var brush = d3
       .brushX()
@@ -81,7 +73,6 @@ export default function HistogramChart(props) {
       .data(data)
       .enter()
       .append('rect')
-      .attr('class', 'bar')
       .attr('x', (d, i) => {
         return x(i) - (xBand.bandwidth() * 0.9) / 2
       })
@@ -96,11 +87,12 @@ export default function HistogramChart(props) {
 
     focus
       .append('g')
-      .attr('class', 'axis')
       .attr('transform', 'translate(' + 0 + ',' + height + ')')
       .call(xAxis)
 
-    focus.append('g').attr('class', 'axis axis--y').call(yAxis)
+    focus
+      .append('g')
+      .call(yAxis)
 
     focus
       .append('defs')
@@ -115,7 +107,6 @@ export default function HistogramChart(props) {
       .data(data)
       .enter()
       .append('rect')
-      .attr('class', 'bar')
       .attr('x', (d, i) => {
         return x2(i) - (xBand.bandwidth() * 0.9) / 2
       })
@@ -128,13 +119,11 @@ export default function HistogramChart(props) {
 
     context
       .append('g')
-      .attr('class', 'axis2')
       .attr('transform', 'translate(' + 0 + ',' + height2 + ')')
       .call(xAxis)
 
     context
       .append('g')
-      .attr('class', 'brush')
       .call(brush)
       .call(brush.move, x.range())
 
@@ -151,5 +140,5 @@ export default function HistogramChart(props) {
     }
   }, [data, d3, df])
 
-  return <svg ref={svgRef} style={{ width: '100%', height: '95%' }}></svg>
+  return <svg ref={svgRef} style={{ width: '100%', height: '98%' }}></svg>
 }

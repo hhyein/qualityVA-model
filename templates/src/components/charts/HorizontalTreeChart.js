@@ -5,10 +5,12 @@ function HorizontalTreeChart(props) {
   const svgRef = useRef()
   const d3 = window.d3v3
 
+  const leftMove = 25
+
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
 
-    var margin = { top: 0, right: 20, bottom: 10, left: 20 },
+    var margin = { top: 0, right: 20, bottom: 10, left: leftMove },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = 50 - margin.top - margin.bottom
 

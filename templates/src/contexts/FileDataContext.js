@@ -45,8 +45,8 @@ export const FileDataProvider = ({ children }) => {
   const [actionDetailData, setActionDetailData] = useState({})
 
   const [
-    selectedModelDetailTableRow,
-    setSelectedModelDetailTableRow,
+    selectedModelOverviewTableRow,
+    setSelectedModelOverviewTableRow,
   ] = useState(0)
   const [
     selectedActionDetailHeatmapIndex,
@@ -68,19 +68,19 @@ export const FileDataProvider = ({ children }) => {
     init()
   }, [init])
 
-  const updateModelOverview = useCallback(async () => {
+  const updateModelDetail = useCallback(async () => {
     const lineChart = await fetchData("/static/linechart.json")
     const { treeData, treeLength } = await fetchData("/treeChart")
     const { actionList, actionDetailList, barChartList, densityChartList } =
-      await fetchData("/modelOverviewTable")
+      await fetchData("/modelDetailTable")
 
     // have to develop
-    const selectedModelDetailTable = await postData(
-      "/selectedModelDetailTable",
-      selectedModelDetailTableRow
+    const selectedModelOverviewTable = await postData(
+      "/selectedModelOverviewTable",
+      selectedModelOverviewTableRow
     )
 
-    setModelOverviewData({
+    setModelDetailData({
       lineChart,
       treeChart: { ...treeData, treeLength },
       actionList,
@@ -90,9 +90,9 @@ export const FileDataProvider = ({ children }) => {
     })
   }, [])
 
-  const updateModelDetail = useCallback(async () => {
+  const updateModelOverview = useCallback(async () => {
     const chartTable = await fetchData("/chartTable")
-    setModelDetailData({ chartTable })
+    setModelOverviewData({ chartTable })
   }, [])
 
   const updateActionDetail = useCallback(async () => {
@@ -137,8 +137,8 @@ export const FileDataProvider = ({ children }) => {
         setFile,
         modelOverviewData,
         modelDetailData,
-        selectedModelDetailTableRow,
-        setSelectedModelDetailTableRow,
+        selectedModelOverviewTableRow,
+        setSelectedModelOverviewTableRow,
         selectedActionDetailHeatmapIndex,
         setSelectedActionDetailHeatmapIndex,
         actionDetailData,

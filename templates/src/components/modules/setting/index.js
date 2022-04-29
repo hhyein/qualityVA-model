@@ -2,7 +2,6 @@ import React from "react"
 import axios from "axios"
 import Select from "react-select"
 import Title from "../../Title"
-import { PORT } from "../../../const"
 import { Box } from "../../Box"
 import { useFileData } from "../../../contexts/FileDataContext"
 
@@ -38,7 +37,6 @@ export default function Setting() {
     >
       <Title title="column to predict" />
       <Select
-        isMulti
         options={columnList}
         loadOptions={loadOptions}
         placeholder={<div>select column</div>}

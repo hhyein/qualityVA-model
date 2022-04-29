@@ -61,7 +61,12 @@ function ScatterChart(props) {
         }) + 1,
       ])
       .range([height, 0])
-    svg.append('g').call(d3.axisLeft(y).ticks(0)).selectAll('text').remove()
+    
+      svg
+      .append('g')
+      .call(d3.axisLeft(y).ticks(0))
+      .selectAll('text')
+      .remove()
 
     svg
       .append('g')

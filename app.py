@@ -9,6 +9,7 @@ import json
 import codecs
 import numpy as np
 import pandas as pd
+from nl4dv import NL4DV
 from io import StringIO
 from scipy import stats
 from collections import Counter
@@ -92,63 +93,61 @@ def setting():
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
-  # query = request.get_data().decode('utf-8')
+  query = request.get_data().decode('utf-8')
 
-  # global originDf
-  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  global originDf
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  # nl4dvDict = originDf.dropna().to_dict('records')
-  # nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
-  # nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
-  # nl4dvOutput = nl4dvInstance.analyze_query(query)
+  nl4dvDict = originDf.dropna().to_dict('records')
+  nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
+  nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
+  nl4dvOutput = nl4dvInstance.analyze_query(query)
 
-  # # extraction attribute, task, vistype
-  # try:
-  #   attributes = nl4dvOutput['visList'][0]['attributes']
-  #   tasks = nl4dvOutput['visList'][0]['tasks']
-  #   visType = nl4dvOutput['visList'][0]['visType']
-  # except:
-  #   return jsonify({'nl4dv': 'please writing valid query'})
+  # extraction attribute, task, vistype
+  try:
+    attributes = nl4dvOutput['visList'][0]['attributes']
+    tasks = nl4dvOutput['visList'][0]['tasks']
+    visType = nl4dvOutput['visList'][0]['visType']
+  except:
+    return jsonify({'nl4dv': 'please writing valid query'})
 
-  # if type(attributes) == list:
-  #   attributes = ",".join(attributes)
-  # if type(tasks) == list:
-  #   tasks = ",".join(tasks)
-  # if type(visType) == list:
-  #   visType = ",".join(visType)
+  if type(attributes) == list:
+    attributes = ",".join(attributes)
+  if type(tasks) == list:
+    tasks = ",".join(tasks)
+  if type(visType) == list:
+    visType = ",".join(visType)
 
-  # # extraction vlspec
-  # vlSpec = nl4dvOutput['visList'][0]['vlSpec']
-  # vlSpec['data']['values'] = nl4dvDict
+  # extraction vlspec
+  vlSpec = nl4dvOutput['visList'][0]['vlSpec']
+  vlSpec['data']['values'] = nl4dvDict
 
-  # vlSpec['width'] = "container"
-  # vlSpec['height'] = "container"
+  vlSpec['width'] = "container"
+  vlSpec['height'] = "container"
 
-  # # preprocessing vlspec
-  # if 'encoding' in vlSpec:
-  #     if 'x' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['x']:
-  #             del vlSpec['encoding']['x']['aggregate']
-  # if 'encoding' in vlSpec:
-  #     if 'y' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['y']:
-  #             del vlSpec['encoding']['y']['aggregate']
-  # if 'encoding' in vlSpec:
-  #     if 'x' in vlSpec['encoding']:
-  #         if 'bin' in vlSpec['encoding']['x']:
-  #             del vlSpec['encoding']['x']['bin']
-  # if 'encoding' in vlSpec:
-  #     if 'color' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['color']:
-  #             del vlSpec['encoding']['color']['aggregate']
+  # preprocessing vlspec
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'y' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['y']:
+              del vlSpec['encoding']['y']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'bin' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['bin']
+  if 'encoding' in vlSpec:
+      if 'color' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['color']:
+              del vlSpec['encoding']['color']['aggregate']
 
-  # del vlSpec['mark']['tooltip']
-  # del vlSpec['data']['format']
-  # del vlSpec['data']['url']
+  del vlSpec['mark']['tooltip']
+  del vlSpec['data']['format']
+  del vlSpec['data']['url']
 
-  # return jsonify({'nl4dv': vlSpec})
-
-  return json.dumps({'query': 'success'})
+  return jsonify({'nl4dv': vlSpec})
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
@@ -170,8 +169,8 @@ def treeChart():
 
   return jsonify(response)
 
-@app.route('/modelOverviewTable', methods = ['GET', 'POST'])
-def modelOverviewTable():
+@app.route('/modelDetailTable', methods = ['GET', 'POST'])
+def modelDetailTable():
   global originDf, currentCnt
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
@@ -281,12 +280,12 @@ def chartTable():
 
   return json.dumps(response)
 
-@app.route('/selectedModelDetailTable', methods=['GET', 'POST'])
-def selectedModelDetailTable():
+@app.route('/selectedModelOverviewTable', methods=['GET', 'POST'])
+def selectedModelOverviewTable():
   req = request.get_data().decode('utf-8')
   print(req)  
 
-  return json.dumps({'selectedModelDetailTable': 'success'})
+  return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
 def actionDetailBarchart():

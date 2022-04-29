@@ -1,32 +1,32 @@
 [
     {
         "time":0,
-        "valueA":2,
-        "valueB":5,
-        "valueC":13
+        "lr":0.8,
+        "knn":0.75,
+        "nb":0.7
     },
     {
         "time":1,
-        "valueA":3,
-        "valueB":4,
-        "valueC":14
+        "lr":0.8,
+        "knn":0.8,
+        "nb":0.73
     },
     {
         "time":2,
-        "valueA":1,
-        "valueB":4,
-        "valueC":16
+        "lr":0.9,
+        "knn":0.83,
+        "nb":0.75
     },
     {
         "time":3,
-        "valueA":7,
-        "valueB":4,
-        "valueC":12
+        "lr":0.95,
+        "knn":0.85,
+        "nb":0.8
     },
     {
         "time":4,
-        "valueA":8,
-        "valueB":8,
-        "valueC":7
+        "lr":0.95,
+        "knn":0.9,
+        "nb":0.8
     }
 ]

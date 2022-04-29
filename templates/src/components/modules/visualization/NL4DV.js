@@ -10,7 +10,7 @@ function NL4DV(props) {
     }
 
     async function init() {
-      await vegaEmbed(".vis", data.nl4dv, { actions: false })
+      await vegaEmbed(".visualization", data.nl4dv, { actions: false })
     }
     init()
   }, [data])
