@@ -66,6 +66,12 @@ table td,
   border-right: 1px solid #cccccc;
 }
 
+.grid-td {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 table th:last-child,
 table td:last-child {
   border-right: none;

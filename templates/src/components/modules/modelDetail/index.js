@@ -1,15 +1,15 @@
-import React from 'react'
-import { Box } from '../../Box'
-import Legend from '../../Legend'
-import LineChart from '../../charts/LineChart'
-import HorizontalTreeChart from '../../charts/HorizontalTreeChart'
-import ModelDetailTable from './ModelDetailTable'
-import { useFileData } from '../../../contexts/FileDataContext'
+import React from "react"
+import { Box } from "../../Box"
+import Legend from "../../Legend"
+import LineChart from "../../charts/LineChart"
+import HorizontalTreeChart from "../../charts/HorizontalTreeChart"
+import ModelDetailTable from "./ModelDetailTable"
+import { useFileData } from "../../../contexts/FileDataContext"
 
 const dataColorInfo = {
-  lr: 'crimson',
-  knn: 'mediumpurple',
-  nb: 'yellowgreen',
+  lr: "crimson",
+  knn: "mediumpurple",
+  nb: "yellowgreen",
 }
 
 export default function ModelDetail() {
@@ -28,8 +28,8 @@ export default function ModelDetail() {
     <Box
       title="model-detail"
       style={{
-        display: 'grid',
-        gridTemplateRows: 'auto auto auto 1fr',
+        display: "grid",
+        gridTemplateRows: "auto auto 40px 1fr",
       }}
     >
       {!isEmptyData({
@@ -51,7 +51,7 @@ export default function ModelDetail() {
                 actionDetailList,
                 barChartList,
                 densityChartList,
-              ].map(list =>
+              ].map((list) =>
                 list.reduce(
                   (acc, cur, i) => ({
                     ...acc,

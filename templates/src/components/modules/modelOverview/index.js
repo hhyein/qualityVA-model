@@ -19,6 +19,7 @@ export default function ModelOverview() {
     setData(
       chartTable.combinationList.map((combination, i) => ({
         key: combination,
+        model: combination, //chartTable.modelNames[i]
         combination: ["missing", "outlier", "inconsistent", "transformation"], // chartTable.combinationIconList[i]
         combinationDetail: ["lof", "em", "rem", "std"], // chartTable.combinationDetailIconList[i]
         ...chartTable.inputEvalList.reduce(
@@ -51,6 +52,15 @@ export default function ModelOverview() {
           }
           data={data.map((d) => ({
             key: d.key,
+            // normal text
+            ...["model"].reduce(
+              (acc, cur) => ({
+                ...acc,
+                [cur]: d[cur],
+              }),
+              {}
+            ),
+            // icon
             ...["combination", "combinationDetail"].reduce(
               (acc, cur) => ({
                 ...acc,
@@ -68,6 +78,7 @@ export default function ModelOverview() {
               }),
               {}
             ),
+            // horizontal bar chart
             ...chartTable.inputEvalList.reduce(
               (acc, cur, j) => ({
                 ...acc,

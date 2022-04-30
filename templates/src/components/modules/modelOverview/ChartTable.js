@@ -7,14 +7,13 @@ export default function ChartTable({
   canSortColumns,
   selectedColumn,
 }) {
-  console.log(data)
   const columnKeys = Object.keys(data[0]).slice(1)
 
   return data.length > 0 ? (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: `auto auto auto repeat(${canSortColumns.length}, 1fr)`,
+        gridTemplateColumns: `auto auto auto auto repeat(${canSortColumns.length}, 1fr)`,
       }}
     >
       <div className="grid-th" />
