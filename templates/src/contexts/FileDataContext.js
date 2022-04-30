@@ -33,21 +33,16 @@ const FileDataContext = React.createContext()
 
 export const FileDataProvider = ({ children }) => {
   const [dataColumnList, setColumnList] = useState([])
-  const [dataSettingColumnList, setSettingColumnList] = useState([])
-  const [dataSettingModelList, setSettingModelList] = useState([])
-  const [dataSettingEvalList, setSettingEvalList] = useState([])
-  const [dataSettingDimensionList, setSettingDimensionList] = useState([])
 
   const [file, setFile] = useState()
 
+  const [settingData, setSettingData] = useState({})
   const [modelOverviewData, setModelOverviewData] = useState({})
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
-  const [
-    selectedModelOverviewTableRow,
-    setSelectedModelOverviewTableRow,
-  ] = useState(0)
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
+    useState(0)
   const [
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
@@ -56,17 +51,24 @@ export const FileDataProvider = ({ children }) => {
   const init = useCallback(async () => {
     const data = await fetchData("/")
     setColumnList(data?.columnList ?? [])
-
-    const settingData = await fetchData("/setting")
-    setSettingColumnList(settingData?.columnList ?? [])
-    setSettingModelList(settingData?.modelList ?? [])
-    setSettingEvalList(settingData?.evalList ?? [])
-    setSettingDimensionList(settingData?.dimensionList ?? [])
   }, [])
 
   useEffect(() => {
     init()
   }, [init])
+
+  const updateSetting = useCallback(async () => {
+    const { columnList, modelList, evalList, dimensionList } = await fetchData(
+      "/setting"
+    )
+
+    setSettingData({
+      columnList,
+      modelList,
+      evalList,
+      dimensionList,
+    })
+  }, [])
 
   const updateModelDetail = useCallback(async () => {
     const lineChart = await fetchData("/static/linechart.json")
@@ -86,7 +88,9 @@ export const FileDataProvider = ({ children }) => {
       actionList,
       actionDetailList,
       barChartList: barChartList.map((data) => <BarChart data={[data]} />),
-      densityChartList: densityChartList.map((data) => <DensityChart data={data} />),
+      densityChartList: densityChartList.map((data) => (
+        <DensityChart data={data} />
+      )),
     })
   }, [])
 
@@ -116,10 +120,17 @@ export const FileDataProvider = ({ children }) => {
     if (!file) {
       return
     }
+    updateSetting()
     updateModelOverview()
     updateModelDetail()
     updateActionDetail()
-  }, [file, updateModelOverview, updateModelDetail, updateActionDetail])
+  }, [
+    file,
+    updateSetting,
+    updateModelOverview,
+    updateModelDetail,
+    updateActionDetail,
+  ])
 
   const isEmptyData = (data) => {
     return Object.values(data).some((value) => value === undefined)
@@ -129,12 +140,9 @@ export const FileDataProvider = ({ children }) => {
     <FileDataContext.Provider
       value={{
         dataColumnList,
-        dataSettingColumnList,
-        dataSettingModelList,
-        dataSettingEvalList,
-        dataSettingDimensionList,
         file,
         setFile,
+        settingData,
         modelOverviewData,
         modelDetailData,
         selectedModelOverviewTableRow,
