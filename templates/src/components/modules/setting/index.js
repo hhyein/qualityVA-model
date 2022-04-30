@@ -8,20 +8,17 @@ export default function Setting() {
   const {
     isEmptyData,
     settingData: { columnList, modelList, evalList, dimensionList },
+    settingValues,
+    setSettingValues,
   } = useFileData()
 
-  const value = []
-  const loadOptions = (inputValue) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(
-          dimensionList.filter((item) =>
-            item.label.toLowerCase().includes(inputValue.toLowerCase())
-          )
-        )
-      }, 1000)
-    })
-
+  const handleChange = (key, value) => {
+    setSettingValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }))
+  }
+  console.log(columnList)
   return (
     <Box
       title="setting"
@@ -41,39 +38,32 @@ export default function Setting() {
           <Title title="column to predict" />
           <Select
             options={columnList}
-            loadOptions={loadOptions}
+            value={settingValues.column}
             placeholder={<div>select column</div>}
-            onChange={(e) => {
-              value[0] = e.value
+            onChange={(v) => {
+              handleChange("column", v)
             }}
           />
           <Title title="machine learning model" />
           <Select
             isMulti
             options={modelList}
-            loadOptions={loadOptions}
             placeholder={<div>select model</div>}
-            onChange={(e) => {
-              value[1] = e.value
-            }}
+            onChange={(v) => handleChange("model", v)}
           />
           <Title title="evaluation method" />
           <Select
             isMulti
             options={evalList}
-            loadOptions={loadOptions}
             placeholder={<div>select method</div>}
-            onChange={(e) => {
-              value[2] = e.value
-            }}
+            onChange={(v) => handleChange("eval", v)}
           />
           <Title title="dimension reduction method" />
           <Select
             options={dimensionList}
-            loadOptions={loadOptions}
             placeholder={<div>select method</div>}
-            onChange={(e) => {
-              value[3] = e.value
+            onChange={(v) => {
+              handleChange("dimension", v)
               // axios
               //   .post(`http://${window.location.hostname}:${PORT}/?` + Math.random(), value)
               //   .then(response => {

@@ -35,6 +35,12 @@ export const FileDataProvider = ({ children }) => {
   const [dataColumnList, setColumnList] = useState([])
 
   const [file, setFile] = useState()
+  const [settingValues, setSettingValues] = useState({
+    column: undefined,
+    model: undefined,
+    eval: undefined,
+    dimension: undefined,
+  })
 
   const [settingData, setSettingData] = useState({})
   const [modelOverviewData, setModelOverviewData] = useState({})
@@ -48,14 +54,14 @@ export const FileDataProvider = ({ children }) => {
     setSelectedActionDetailHeatmapIndex,
   ] = useState("")
 
+  const isEmptyData = (data) => {
+    return Object.values(data).some((value) => value === undefined)
+  }
+
   const init = useCallback(async () => {
     const data = await fetchData("/")
     setColumnList(data?.columnList ?? [])
   }, [])
-
-  useEffect(() => {
-    init()
-  }, [init])
 
   const updateSetting = useCallback(async () => {
     const { columnList, modelList, evalList, dimensionList } = await fetchData(
@@ -69,6 +75,11 @@ export const FileDataProvider = ({ children }) => {
       dimensionList,
     })
   }, [])
+
+  useEffect(() => {
+    init()
+    updateSetting()
+  }, [init, updateSetting])
 
   const updateModelDetail = useCallback(async () => {
     const lineChart = await fetchData("/static/linechart.json")
@@ -117,24 +128,19 @@ export const FileDataProvider = ({ children }) => {
   }, [selectedActionDetailHeatmapIndex])
 
   useEffect(() => {
-    if (!file) {
+    if (!file || isEmptyData(settingValues)) {
       return
     }
-    updateSetting()
     updateModelOverview()
     updateModelDetail()
     updateActionDetail()
   }, [
     file,
-    updateSetting,
     updateModelOverview,
     updateModelDetail,
     updateActionDetail,
+    settingValues,
   ])
-
-  const isEmptyData = (data) => {
-    return Object.values(data).some((value) => value === undefined)
-  }
 
   return (
     <FileDataContext.Provider
@@ -142,6 +148,8 @@ export const FileDataProvider = ({ children }) => {
         dataColumnList,
         file,
         setFile,
+        settingValues,
+        setSettingValues,
         settingData,
         modelOverviewData,
         modelDetailData,
