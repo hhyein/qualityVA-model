@@ -20,10 +20,8 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-fileName = 'wine'
-filePath = 'static/' + fileName + '.csv'
-originDf = pd.read_csv(filePath, sep = ',')
-
+originDf = pd.DataFrame()
+fileUploadState = False
 currentCnt = 6
 predictName = 'hue'
 inputModelList = ['Logistic Regression']
@@ -32,8 +30,6 @@ inputEvalList = ['Accuracy', 'AUC', 'Recall']
 @app.route('/', methods=['GET', 'POST'])
 def home():
   global originDf
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  originDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
 
   response = {}
   response['columnList'] = list(originDf.columns)
@@ -55,39 +51,54 @@ def fileUpload():
   fileUploadDf = fileUploadDf.drop(fileUploadDf.index[0])
   fileUploadDf = fileUploadDf.reset_index(drop = True)
 
-  # global originDf
-  # originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
+  global originDf, fileUploadState
+  originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
+  originDf.to_json('static/file.json', orient = 'records', indent = 4)
+  fileUploadState = True
 
   return json.dumps({'fileUpload': 'success'})
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-  columnList = []
-  tmpList = list(originDf.columns)
-  for i in range(len(tmpList)):
-    columnList.append({'label': tmpList[i], 'value': i})
+  if fileUploadState == True:
+    with open('static/file.json', 'r', encoding = 'utf-8') as f:
+      data = json.load(f) 
 
-  modelList = []
-  tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
-              'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-  for i in range(len(tmpList)):
-    modelList.append({'label': tmpList[i], 'value': i})
+    originDf = pd.DataFrame(data)
 
-  evalList = []
-  tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
-  for i in range(len(tmpList)):
-    evalList.append({'label': tmpList[i], 'value': i})
+    columnList = []
+    tmpList = list(originDf.columns)
+    for i in range(len(tmpList)):
+      columnList.append({'label': tmpList[i], 'value': i})
 
-  dimensionList = []
-  tmpList = ['TSNE', 'PCA']
-  for i in range(len(tmpList)):
-    dimensionList.append({'label': tmpList[i], 'value': i})
+    modelList = []
+    tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
+                'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+    for i in range(len(tmpList)):
+      modelList.append({'label': tmpList[i], 'value': i})
 
-  response = {}
-  response['columnList'] = columnList  
-  response['modelList'] = modelList
-  response['evalList'] = evalList
-  response['dimensionList'] = dimensionList
+    evalList = []
+    tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+    for i in range(len(tmpList)):
+      evalList.append({'label': tmpList[i], 'value': i})
+
+    dimensionList = []
+    tmpList = ['TSNE', 'PCA']
+    for i in range(len(tmpList)):
+      dimensionList.append({'label': tmpList[i], 'value': i})
+
+    response = {}
+    response['columnList'] = columnList  
+    response['modelList'] = modelList
+    response['evalList'] = evalList
+    response['dimensionList'] = dimensionList
+
+  else:
+    response = {}
+    response['columnList'] = []
+    response['modelList'] = []
+    response['evalList'] = []
+    response['dimensionList'] = []
 
   return json.dumps(response)
 
@@ -491,7 +502,7 @@ def action():
   changeDf = changeDf.reindex(sorted(changeDf.columns), axis = 1)
   
   changeDf.to_csv(filePath, index = False)
-  changeDf.to_json('static/' + fileName + '.json', orient = 'records', indent = 4)
+  changeDf.to_json('static/file.json', orient = 'records', indent = 4)
 
   with open('static/treeData.json') as jsonData:
       treeData = json.load(jsonData)
