@@ -20,21 +20,13 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-originDf = pd.DataFrame()
 fileUploadState = False
 currentCnt = 6
-predictName = 'hue'
-inputModelList = ['Logistic Regression']
-inputEvalList = ['Accuracy', 'AUC', 'Recall']
 
-@app.route('/', methods=['GET', 'POST'])
-def home():
-  global originDf
-
-  response = {}
-  response['columnList'] = list(originDf.columns)
-
-  return json.dumps(response)
+predictName = ''
+dimension = ''
+inputModelList = []
+inputEvalList = []
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
 def fileUpload():
@@ -51,62 +43,112 @@ def fileUpload():
   fileUploadDf = fileUploadDf.drop(fileUploadDf.index[0])
   fileUploadDf = fileUploadDf.reset_index(drop = True)
 
-  global originDf, fileUploadState
+  global fileUploadState
   originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
   originDf.to_json('static/file.json', orient = 'records', indent = 4)
   fileUploadState = True
 
   return json.dumps({'fileUpload': 'success'})
 
-@app.route('/setting', methods=['GET', 'POST'])
-def setting():
+@app.route('/', methods=['GET', 'POST'])
+def home():
+  global fileUploadState
+
   if fileUploadState == True:
     with open('static/file.json', 'r', encoding = 'utf-8') as f:
       data = json.load(f) 
 
-    originDf = pd.DataFrame(data)
-
-    columnList = []
-    tmpList = list(originDf.columns)
-    for i in range(len(tmpList)):
-      columnList.append({'label': tmpList[i], 'value': i})
-
-    modelList = []
-    tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
-                'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-    for i in range(len(tmpList)):
-      modelList.append({'label': tmpList[i], 'value': i})
-
-    evalList = []
-    tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
-    for i in range(len(tmpList)):
-      evalList.append({'label': tmpList[i], 'value': i})
-
-    dimensionList = []
-    tmpList = ['TSNE', 'PCA']
-    for i in range(len(tmpList)):
-      dimensionList.append({'label': tmpList[i], 'value': i})
+    originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
 
     response = {}
-    response['columnList'] = columnList  
-    response['modelList'] = modelList
-    response['evalList'] = evalList
-    response['dimensionList'] = dimensionList
+    response['columnList'] = list(originDf.columns)
 
   else:
     response = {}
     response['columnList'] = []
-    response['modelList'] = []
-    response['evalList'] = []
-    response['dimensionList'] = []
 
   return json.dumps(response)
+
+@app.route('/setting', methods=['GET', 'POST'])
+def setting():
+  if request.method == 'GET':
+    global fileUploadState
+
+    if fileUploadState == True:
+      with open('static/file.json', 'r', encoding = 'utf-8') as f:
+        data = json.load(f) 
+
+      originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
+      columnList = []
+      tmpList = list(originDf.columns)
+      for i in range(len(tmpList)):
+        columnList.append({'label': tmpList[i], 'value': i})
+
+      modelList = []
+      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
+                  'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+      for i in range(len(tmpList)):
+        modelList.append({'label': tmpList[i], 'value': i})
+
+      evalList = []
+      tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+      for i in range(len(tmpList)):
+        evalList.append({'label': tmpList[i], 'value': i})
+
+      dimensionList = []
+      tmpList = ['TSNE', 'PCA']
+      for i in range(len(tmpList)):
+        dimensionList.append({'label': tmpList[i], 'value': i})
+
+      response = {}
+      response['columnList'] = columnList  
+      response['modelList'] = modelList
+      response['evalList'] = evalList
+      response['dimensionList'] = dimensionList
+
+    else:
+      response = {}
+      response['columnList'] = []
+      response['modelList'] = []
+      response['evalList'] = []
+      response['dimensionList'] = []
+    
+    return json.dumps(response)
+
+  if request.method == 'POST':
+    req = request.get_data().decode('utf-8')
+    req = eval(req)
+
+    global predictName, dimension, inputModelList, inputEvalList
+
+    if len(req) == 4:
+      predictName = req["column"]["label"]
+      dimension = req["dimension"]["label"]
+      modelList = req["model"]
+      evalList = req["eval"]
+
+      inputModelList = []
+      for i in range(len(modelList)):
+          inputModelList.append(modelList[i]["label"])
+
+      inputEvalList = []
+      for i in range(len(evalList)):
+          inputEvalList.append(evalList[i]["label"])
+
+      return json.dumps({'setting': 'success'})
+
+    else:
+      return json.dumps({'setting': 'failure'})
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
   query = request.get_data().decode('utf-8')
 
-  # global originDf
+  # with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  #   data = json.load(f) 
+
+  # originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   # nl4dvDict = originDf.dropna().to_dict('records')
@@ -229,7 +271,10 @@ def chartTable():
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
-  global originDf, currentCnt
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
@@ -296,7 +341,11 @@ def selectedModelOverviewTable():
 
 @app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
 def actionDetailBarchart():
-  global originDf
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
       originDf = originDf.drop([column], axis = 1)
@@ -327,7 +376,11 @@ def actionDetailBarchart():
 
 @app.route('/heatmapChart', methods = ['GET', 'POST'])
 def heatmapChart():
-  global originDf
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
   heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   columnList = list(heatmapDf.columns)
@@ -344,7 +397,11 @@ def heatmapChart():
 def histogramChart():
   req = request.get_data().decode('utf-8')
 
-  global originDf
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
   histogramDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = list(histogramDf.columns)
 
@@ -382,12 +439,17 @@ def histogramChart():
 
 @app.route('/scatterChart', methods = ['GET', 'POST'])
 def scatterChart():
-  global originDf
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
   scatterDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   scatterDf = scatterDf.dropna().reset_index(drop = True)
 
   from sklearn.manifold import TSNE
   dataMatrix = scatterDf.values
+
   tsneDf = TSNE(n_components = 2, random_state = 0).fit_transform(dataMatrix)
   tsneDf = pd.DataFrame(tsneDf, columns = ['value1', 'value2'])
 
@@ -410,7 +472,10 @@ def action():
   columnIndex = int(req[1])
   actionIndex = int(req[2])
 
-  originDf = pd.read_csv(filePath)
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   targetList = ['missing', 'outlier', 'incons']
   columnList = list(originDf.columns)
   actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
@@ -501,8 +566,8 @@ def action():
   changeDf = pd.concat([actionDf, remainDf], axis = 1, join = 'inner').reset_index(drop = True)
   changeDf = changeDf.reindex(sorted(changeDf.columns), axis = 1)
   
-  changeDf.to_csv(filePath, index = False)
-  changeDf.to_json('static/file.json', orient = 'records', indent = 4)
+  originDf = changeDf
+  originDf.to_json('static/file.json', orient = 'records', indent = 4)
 
   with open('static/treeData.json') as jsonData:
       treeData = json.load(jsonData)

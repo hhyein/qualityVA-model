@@ -47,12 +47,8 @@ export const FileDataProvider = ({ children }) => {
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
-  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
-    useState(0)
-  const [
-    selectedActionDetailHeatmapIndex,
-    setSelectedActionDetailHeatmapIndex,
-  ] = useState("")
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] = useState(0)
+  const [selectedActionDetailHeatmapIndex, setSelectedActionDetailHeatmapIndex] = useState("")
 
   const isEmptyData = (data) => {
     return Object.values(data).some((value) => value === undefined)
@@ -64,9 +60,9 @@ export const FileDataProvider = ({ children }) => {
   }, [])
 
   const updateSetting = useCallback(async () => {
-    const { columnList, modelList, evalList, dimensionList } = await fetchData(
-      "/setting"
-    )
+    const { columnList, modelList, evalList, dimensionList } = await fetchData("/setting")
+    const postSettingValues = await postData("/setting", settingValues)
+    console.log(postSettingValues)
 
     setSettingData({
       columnList,
@@ -74,7 +70,7 @@ export const FileDataProvider = ({ children }) => {
       evalList,
       dimensionList,
     })
-  }, [])
+  }, [settingValues])
 
   useEffect(() => {
     init()
@@ -84,14 +80,9 @@ export const FileDataProvider = ({ children }) => {
   const updateModelDetail = useCallback(async () => {
     const lineChart = await fetchData("/static/linechart.json")
     const { treeData, treeLength } = await fetchData("/treeChart")
-    const { actionList, actionDetailList, barChartList, densityChartList } =
-      await fetchData("/modelDetailTable")
-
+    const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData("/modelDetailTable")
     // have to develop
-    const selectedModelOverviewTable = await postData(
-      "/selectedModelOverviewTable",
-      selectedModelOverviewTableRow
-    )
+    const selectedModelOverviewTable = await postData("/selectedModelOverviewTable", selectedModelOverviewTableRow)
 
     setModelDetailData({
       lineChart,
@@ -113,10 +104,7 @@ export const FileDataProvider = ({ children }) => {
   const updateActionDetail = useCallback(async () => {
     const barChart = await fetchData("/actionDetailBarchart")
     const { heatmapList, heatmapYList } = await fetchData("/heatmapChart")
-    const histogramChart = await postData(
-      "/histogramChart",
-      selectedActionDetailHeatmapIndex
-    )
+    const histogramChart = await postData("/histogramChart", selectedActionDetailHeatmapIndex)
     const scatterChart = await fetchData("/scatterChart")
     setActionDetailData({
       barChart,

@@ -18,7 +18,7 @@ export default function Setting() {
       [key]: value,
     }))
   }
-  console.log(columnList)
+  
   return (
     <Box
       title="setting"
@@ -64,13 +64,6 @@ export default function Setting() {
             placeholder={<div>select method</div>}
             onChange={(v) => {
               handleChange("dimension", v)
-              // axios
-              //   .post(`http://${window.location.hostname}:${PORT}/?` + Math.random(), value)
-              //   .then(response => {
-              //     console.log(response.data);
-              //     window.location.reload()
-              //   })
-              //   .catch(error => { alert(`ERROR - ${error.message}`) })
             }}
           />
         </>
