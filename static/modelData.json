@@ -1,156 +1,80 @@
 [
     {
-        "Model":"Quadratic Discriminant Analysis",
-        "Accuracy":1.0,
-        "AUC":1.0,
-        "Recall":1.0,
-        "Prec.":1.0,
-        "F1":1.0,
-        "Kappa":1.0,
-        "MCC":1.0,
-        "TT (Sec)":0.003
+        "Model": {
+            "dummy": "Dummy Regressor"
+        },
+        "MAE": {
+            "dummy": 0.1795
+        },
+        "MSE": {
+            "dummy": 0.0504
+        },
+        "RMSE": {
+            "dummy": 0.2179
+        },
+        "R2": {
+            "dummy": -0.1636
+        },
+        "RMSLE": {
+            "dummy": 0.1121
+        },
+        "MAPE": {
+            "dummy": 0.2085
+        },
+        "TT (Sec)": {
+            "dummy": 0.003
+        }
     },
     {
-        "Model":"Extra Trees Classifier",
-        "Accuracy":1.0,
-        "AUC":1.0,
-        "Recall":1.0,
-        "Prec.":1.0,
-        "F1":1.0,
-        "Kappa":1.0,
-        "MCC":1.0,
-        "TT (Sec)":0.023
+        "Model": {
+            "dummy": "Dummy Regressor"
+        },
+        "MAE": {
+            "dummy": 0.1795
+        },
+        "MSE": {
+            "dummy": 0.0504
+        },
+        "RMSE": {
+            "dummy": 0.2179
+        },
+        "R2": {
+            "dummy": -0.1636
+        },
+        "RMSLE": {
+            "dummy": 0.1121
+        },
+        "MAPE": {
+            "dummy": 0.2085
+        },
+        "TT (Sec)": {
+            "dummy": 0.003
+        }
     },
     {
-        "Model":"Random Forest Classifier",
-        "Accuracy":0.9917,
-        "AUC":1.0,
-        "Recall":0.9889,
-        "Prec.":0.9931,
-        "F1":0.9912,
-        "Kappa":0.987,
-        "MCC":0.988,
-        "TT (Sec)":0.028
-    },
-    {
-        "Model":"Light Gradient Boosting Machine",
-        "Accuracy":0.9917,
-        "AUC":1.0,
-        "Recall":0.9933,
-        "Prec.":0.9938,
-        "F1":0.9918,
-        "Kappa":0.9875,
-        "MCC":0.9884,
-        "TT (Sec)":0.008
-    },
-    {
-        "Model":"Naive Bayes",
-        "Accuracy":0.9909,
-        "AUC":1.0,
-        "Recall":0.9933,
-        "Prec.":0.9932,
-        "F1":0.9911,
-        "Kappa":0.9862,
-        "MCC":0.9873,
-        "TT (Sec)":0.003
-    },
-    {
-        "Model":"Ridge Classifier",
-        "Accuracy":0.9909,
-        "AUC":0.0,
-        "Recall":0.9889,
-        "Prec.":0.9927,
-        "F1":0.9905,
-        "Kappa":0.9861,
-        "MCC":0.9872,
-        "TT (Sec)":0.002
-    },
-    {
-        "Model":"Linear Discriminant Analysis",
-        "Accuracy":0.9818,
-        "AUC":1.0,
-        "Recall":0.9822,
-        "Prec.":0.9859,
-        "F1":0.9816,
-        "Kappa":0.9723,
-        "MCC":0.9746,
-        "TT (Sec)":0.003
-    },
-    {
-        "Model":"Logistic Regression",
-        "Accuracy":0.9553,
-        "AUC":0.9987,
-        "Recall":0.9544,
-        "Prec.":0.9668,
-        "F1":0.9551,
-        "Kappa":0.9316,
-        "MCC":0.9378,
-        "TT (Sec)":0.816
-    },
-    {
-        "Model":"Decision Tree Classifier",
-        "Accuracy":0.9114,
-        "AUC":0.931,
-        "Recall":0.9117,
-        "Prec.":0.9345,
-        "F1":0.9097,
-        "Kappa":0.8641,
-        "MCC":0.877,
-        "TT (Sec)":0.002
-    },
-    {
-        "Model":"Gradient Boosting Classifier",
-        "Accuracy":0.9045,
-        "AUC":0.9903,
-        "Recall":0.8933,
-        "Prec.":0.9044,
-        "F1":0.894,
-        "Kappa":0.8485,
-        "MCC":0.8655,
-        "TT (Sec)":0.027
-    },
-    {
-        "Model":"Ada Boost Classifier",
-        "Accuracy":0.8568,
-        "AUC":0.9282,
-        "Recall":0.8467,
-        "Prec.":0.8621,
-        "F1":0.8435,
-        "Kappa":0.7735,
-        "MCC":0.7898,
-        "TT (Sec)":0.011
-    },
-    {
-        "Model":"K Neighbors Classifier",
-        "Accuracy":0.5992,
-        "AUC":0.8322,
-        "Recall":0.6067,
-        "Prec.":0.5784,
-        "F1":0.5597,
-        "Kappa":0.3857,
-        "MCC":0.4111,
-        "TT (Sec)":0.193
-    },
-    {
-        "Model":"SVM - Linear Kernel",
-        "Accuracy":0.5265,
-        "AUC":0.0,
-        "Recall":0.5267,
-        "Prec.":0.4598,
-        "F1":0.4347,
-        "Kappa":0.2724,
-        "MCC":0.3428,
-        "TT (Sec)":0.006
-    },
-    {
-        "Model":"Dummy Classifier",
-        "Accuracy":0.4106,
-        "AUC":0.5,
-        "Recall":0.3333,
-        "Prec.":0.1703,
-        "F1":0.2402,
-        "Kappa":0.0,
-        "MCC":0.0,
-        "TT (Sec)":0.003
+        "Model": {
+            "dummy": "Dummy Regressor"
+        },
+        "MAE": {
+            "dummy": 0.1795
+        },
+        "MSE": {
+            "dummy": 0.0504
+        },
+        "RMSE": {
+            "dummy": 0.2179
+        },
+        "R2": {
+            "dummy": -0.1636
+        },
+        "RMSLE": {
+            "dummy": 0.1121
+        },
+        "MAPE": {
+            "dummy": 0.2085
+        },
+        "TT (Sec)": {
+            "dummy": 0.003
+        }
     }
 ]

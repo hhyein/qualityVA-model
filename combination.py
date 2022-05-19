@@ -8,21 +8,26 @@ fileName = 'test'
 filePath = 'static/' + fileName + '.csv'
 originDf = pd.read_csv(filePath, sep = ',')
 
+print(originDf)
+
 # missing, outlier, incons check
 checkList = []
 missing = sum(originDf.isnull().sum().values.tolist())
 
 tmpList = []
 for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
+    df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+    df = df.dropna()
+
+    lower, upper = imputation.LowerUpper(df[column])
+    data1 = df[df[column] > upper]
+    data2 = df[df[column] < lower]
     tmpList.append(data1.shape[0] + data2.shape[0])
     outlier = sum(tmpList)
 
 tmpList = []
 for column in originDf:
-    df = originDf[column].dropna()
+    df = originDf[column].dropna()    
     df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
     tmpList.append(df.isnull().sum().values[0].tolist())
     incons = sum(tmpList)
@@ -52,6 +57,7 @@ transDetailList = ['minmax', 'standard', 'maxabs', 'robust', 'log', 'sqrt']
 
 actionTotalDfList = []
 for permutation in permutationList:
+    print(permutation)
     permutationAlphabet = []
 
     for i in range(len(permutation)):
@@ -118,6 +124,11 @@ for permutation in permutationList:
                         tmpDf = columnDf.to_frame(name = columnList[k])
                         missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
 
+                        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+                        tmpDf = columnDf.to_frame(name = columnList[k])
+                        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+                        inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
+
                         lower, upper = imputation.LowerUpper(columnDf)
                         outlierDf = columnDf[(columnDf < lower) | (columnDf > upper)]
                         outlierIndex = list(outlierDf.index)
@@ -148,6 +159,9 @@ for permutation in permutationList:
 
                                 for m in missingIndex:
                                     columnDf.loc[m, columnList[k]] = np.nan
+
+                                for m in inconsIndex:
+                                    columnDf.loc[m, columnList[k]] = 'incons'
                         
                         else:
                             columnDf = columnDf
@@ -179,7 +193,7 @@ for permutation in permutationList:
                         tmpDf = columnDf.to_frame(name = columnList[k])
                         missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
 
-                        if len(missingAndInconsIndex - missingIndex) > 0:
+                        if len(list(set(missingAndInconsIndex) - set(missingIndex))) > 0:
                             if actionDetail == "remove":
                                 columnDf = columnDf.dropna()
                                 columnDf = columnDf.to_frame(name = columnList[k])
@@ -201,7 +215,7 @@ for permutation in permutationList:
                                     columnDf = imputation.custom_imp_locf(columnDf, columnList[k])
                         
                                 for m in missingIndex:
-                                    actionDf.loc[m, columnList[k]] = np.nan
+                                    columnDf.loc[m, columnList[k]] = np.nan
                         
                         else:
                             columnDf = columnDf
@@ -217,9 +231,31 @@ for permutation in permutationList:
 
         if alphabet == 't':
             resultDfList = []
+            inconsIndex = {}
 
             for j in range(len(combinationDfList)):
                 df = combinationDfList[j]
+                coerceDfList = []
+
+                for k in range(len(columnList)):
+                    columnDf = df.iloc[:, k]
+                    tmpDf = columnDf.to_frame(name = columnList[k])
+                    missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+                    columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+                    tmpDf = columnDf.to_frame(name = columnList[k])
+                    missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+                    coerceDfList.append(tmpDf)
+
+                    if len(list(set(missingAndInconsIndex) - set(missingIndex))) > 0:
+                        inconsIndex[k] = list(set(missingAndInconsIndex) - set(missingIndex))
+
+                coerceDf = coerceDfList[0]
+                for k in range(len(coerceDfList) - 1):
+                    coerceDf = pd.concat([coerceDf, coerceDfList[k + 1]], axis = 1)
+
+                df = coerceDf
 
                 for actionDetail in transDetailList:
                     if actionDetail == "minmax":
@@ -257,6 +293,10 @@ for permutation in permutationList:
                     if actionDetail == "boxcox":
                         print("have to develop")
 
+                    for column in range(len(inconsIndex)):
+                        for row in inconsIndex[column]:
+                            resultDf.iloc[row, column] = 'incons'
+
                     resultDfList.append(resultDf)
 
         combinationDfList = resultDfList
@@ -271,20 +311,15 @@ print(len(actionTotalDfList))
 # autoML
 from pycaret.regression import *
 predictName = 'hue'
-resultList = []
+inputModelList = ['lr', 'knn', 'dt']
+inputEvalList = ['MAE', 'MSE', 'RMSE']
 
-for i in range(0, 3):
-    clf = setup(data = actionTotalDfList[i], target = predictName, preprocess = False, session_id = 42, silent = True)
-    model = compare_models()
+resultList = []
+for i in range(0, len(actionTotalDfList)):
+    clf = setup(data = actionTotalDfList[i], target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+    model = compare_models(include = inputModelList)
     result = pull()
     resultList.append(result)
 
-test = resultList[0]
-with open('static/modelData.json','w') as file:
-    json.dump(test, file, indent = 4)
-
-# for i in range(0, 3):
-#     with open('static/modelData.json', 'r') as file:
-#         fileData = json.load(file)
-#         fileData[i].append(resultList[i])
-#         json.dump(fileData, file, indent = 4)
+with open('static/modelData.json', 'w') as file:
+    file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))
