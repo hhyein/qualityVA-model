@@ -1,80 +1,1646 @@
 [
     {
         "Model": {
-            "dummy": "Dummy Regressor"
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
         },
         "MAE": {
-            "dummy": 0.1795
+            "lr": 0.1597,
+            "knn": 0.1659,
+            "dt": 0.2028
         },
         "MSE": {
-            "dummy": 0.0504
+            "lr": 0.0389,
+            "knn": 0.0435,
+            "dt": 0.0639
         },
         "RMSE": {
-            "dummy": 0.2179
+            "lr": 0.1952,
+            "knn": 0.2061,
+            "dt": 0.2474
         },
         "R2": {
-            "dummy": -0.1636
+            "lr": 0.0496,
+            "knn": -0.0816,
+            "dt": -0.4869
         },
         "RMSLE": {
-            "dummy": 0.1121
+            "lr": 0.1011,
+            "knn": 0.107,
+            "dt": 0.1258
         },
         "MAPE": {
-            "dummy": 0.2085
+            "lr": 0.1796,
+            "knn": 0.1869,
+            "dt": 0.2246
         },
         "TT (Sec)": {
-            "dummy": 0.003
+            "lr": 0.005,
+            "knn": 0.198,
+            "dt": 0.006
         }
     },
     {
         "Model": {
-            "dummy": "Dummy Regressor"
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
         },
         "MAE": {
-            "dummy": 0.1795
+            "lr": 0.1602,
+            "knn": 0.1727,
+            "dt": 0.1913
         },
         "MSE": {
-            "dummy": 0.0504
+            "lr": 0.0417,
+            "knn": 0.0448,
+            "dt": 0.0598
         },
         "RMSE": {
-            "dummy": 0.2179
+            "lr": 0.2015,
+            "knn": 0.2087,
+            "dt": 0.2382
         },
         "R2": {
-            "dummy": -0.1636
+            "lr": 0.0942,
+            "knn": -0.0667,
+            "dt": -0.4773
         },
         "RMSLE": {
-            "dummy": 0.1121
+            "lr": 0.1056,
+            "knn": 0.1097,
+            "dt": 0.1237
         },
         "MAPE": {
-            "dummy": 0.2085
+            "lr": 0.1903,
+            "knn": 0.2021,
+            "dt": 0.2118
         },
         "TT (Sec)": {
-            "dummy": 0.003
+            "lr": 0.005,
+            "knn": 0.013,
+            "dt": 0.006
         }
     },
     {
         "Model": {
-            "dummy": "Dummy Regressor"
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
         },
         "MAE": {
-            "dummy": 0.1795
+            "knn": 0.1671,
+            "lr": 0.1759,
+            "dt": 0.2134
         },
         "MSE": {
-            "dummy": 0.0504
+            "knn": 0.0434,
+            "lr": 0.0449,
+            "dt": 0.0716
         },
         "RMSE": {
-            "dummy": 0.2179
+            "knn": 0.202,
+            "lr": 0.2076,
+            "dt": 0.2598
         },
         "R2": {
-            "dummy": -0.1636
+            "knn": -0.1148,
+            "lr": -0.1225,
+            "dt": -0.7849
         },
         "RMSLE": {
-            "dummy": 0.1121
+            "knn": 0.1057,
+            "lr": 0.1088,
+            "dt": 0.1344
         },
         "MAPE": {
-            "dummy": 0.2085
+            "knn": 0.1878,
+            "lr": 0.2061,
+            "dt": 0.2467
         },
         "TT (Sec)": {
-            "dummy": 0.003
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.171,
+            "knn": 0.1754,
+            "dt": 0.2095
+        },
+        "MSE": {
+            "lr": 0.0442,
+            "knn": 0.0511,
+            "dt": 0.0719
+        },
+        "RMSE": {
+            "lr": 0.206,
+            "knn": 0.2194,
+            "dt": 0.2608
+        },
+        "R2": {
+            "lr": -0.0585,
+            "knn": -0.215,
+            "dt": -0.8522
+        },
+        "RMSLE": {
+            "lr": 0.107,
+            "knn": 0.1134,
+            "dt": 0.1361
+        },
+        "MAPE": {
+            "lr": 0.1984,
+            "knn": 0.1989,
+            "dt": 0.2367
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1781,
+            "knn": 0.1803,
+            "dt": 0.2213
+        },
+        "MSE": {
+            "lr": 0.0461,
+            "knn": 0.0503,
+            "dt": 0.0747
+        },
+        "RMSE": {
+            "lr": 0.2119,
+            "knn": 0.2195,
+            "dt": 0.2709
+        },
+        "R2": {
+            "lr": 0.0278,
+            "knn": -0.0589,
+            "dt": -0.649
+        },
+        "RMSLE": {
+            "lr": 0.1102,
+            "knn": 0.1138,
+            "dt": 0.1414
+        },
+        "MAPE": {
+            "lr": 0.2069,
+            "knn": 0.2027,
+            "dt": 0.2545
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1777,
+            "knn": 0.1802,
+            "dt": 0.2299
+        },
+        "MSE": {
+            "lr": 0.0459,
+            "knn": 0.0501,
+            "dt": 0.0783
+        },
+        "RMSE": {
+            "lr": 0.2116,
+            "knn": 0.219,
+            "dt": 0.2777
+        },
+        "R2": {
+            "lr": 0.0303,
+            "knn": -0.0505,
+            "dt": -0.7321
+        },
+        "RMSLE": {
+            "lr": 0.11,
+            "knn": 0.1134,
+            "dt": 0.1447
+        },
+        "MAPE": {
+            "lr": 0.2064,
+            "knn": 0.2026,
+            "dt": 0.2661
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1774,
+            "knn": 0.177,
+            "dt": 0.2254
+        },
+        "MSE": {
+            "lr": 0.0458,
+            "knn": 0.0489,
+            "dt": 0.0824
+        },
+        "RMSE": {
+            "lr": 0.2113,
+            "knn": 0.2161,
+            "dt": 0.2803
+        },
+        "R2": {
+            "lr": 0.0331,
+            "knn": -0.0198,
+            "dt": -0.8595
+        },
+        "RMSLE": {
+            "lr": 0.1099,
+            "knn": 0.112,
+            "dt": 0.1456
+        },
+        "MAPE": {
+            "lr": 0.206,
+            "knn": 0.1993,
+            "dt": 0.259
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1786,
+            "knn": 0.178,
+            "dt": 0.2292
+        },
+        "MSE": {
+            "lr": 0.0466,
+            "knn": 0.0495,
+            "dt": 0.0779
+        },
+        "RMSE": {
+            "lr": 0.2133,
+            "knn": 0.2177,
+            "dt": 0.2749
+        },
+        "R2": {
+            "lr": 0.0166,
+            "knn": -0.044,
+            "dt": -0.8514
+        },
+        "RMSLE": {
+            "lr": 0.1109,
+            "knn": 0.1128,
+            "dt": 0.1419
+        },
+        "MAPE": {
+            "lr": 0.2078,
+            "knn": 0.2001,
+            "dt": 0.2678
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1561,
+            "lr": 0.1597,
+            "dt": 0.211
+        },
+        "MSE": {
+            "knn": 0.0411,
+            "lr": 0.0392,
+            "dt": 0.0687
+        },
+        "RMSE": {
+            "knn": 0.1981,
+            "lr": 0.1951,
+            "dt": 0.2593
+        },
+        "R2": {
+            "knn": -0.1174,
+            "lr": -0.12,
+            "dt": -1.0779
+        },
+        "RMSLE": {
+            "knn": 0.1024,
+            "lr": 0.1011,
+            "dt": 0.1341
+        },
+        "MAPE": {
+            "knn": 0.1797,
+            "lr": 0.1839,
+            "dt": 0.2435
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1605,
+            "lr": 0.1717,
+            "dt": 0.1956
+        },
+        "MSE": {
+            "knn": 0.0425,
+            "lr": 0.046,
+            "dt": 0.0624
+        },
+        "RMSE": {
+            "knn": 0.1997,
+            "lr": 0.2085,
+            "dt": 0.2425
+        },
+        "R2": {
+            "knn": -0.0789,
+            "lr": -0.1596,
+            "dt": -0.6922
+        },
+        "RMSLE": {
+            "knn": 0.1031,
+            "lr": 0.1086,
+            "dt": 0.1251
+        },
+        "MAPE": {
+            "knn": 0.1797,
+            "lr": 0.1996,
+            "dt": 0.2176
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.16,
+            "lr": 0.1712,
+            "dt": 0.1871
+        },
+        "MSE": {
+            "knn": 0.0426,
+            "lr": 0.0459,
+            "dt": 0.0578
+        },
+        "RMSE": {
+            "knn": 0.1997,
+            "lr": 0.2081,
+            "dt": 0.2333
+        },
+        "R2": {
+            "knn": -0.0792,
+            "lr": -0.1578,
+            "dt": -0.5967
+        },
+        "RMSLE": {
+            "knn": 0.1031,
+            "lr": 0.1085,
+            "dt": 0.1206
+        },
+        "MAPE": {
+            "knn": 0.1791,
+            "lr": 0.1993,
+            "dt": 0.211
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1597,
+            "lr": 0.1704,
+            "dt": 0.194
+        },
+        "MSE": {
+            "knn": 0.0424,
+            "lr": 0.0457,
+            "dt": 0.061
+        },
+        "RMSE": {
+            "knn": 0.1997,
+            "lr": 0.2078,
+            "dt": 0.2405
+        },
+        "R2": {
+            "knn": -0.0804,
+            "lr": -0.1528,
+            "dt": -0.6643
+        },
+        "RMSLE": {
+            "knn": 0.1031,
+            "lr": 0.1083,
+            "dt": 0.1242
+        },
+        "MAPE": {
+            "knn": 0.1789,
+            "lr": 0.1983,
+            "dt": 0.2168
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1605,
+            "lr": 0.1717,
+            "dt": 0.1956
+        },
+        "MSE": {
+            "knn": 0.0425,
+            "lr": 0.046,
+            "dt": 0.0624
+        },
+        "RMSE": {
+            "knn": 0.1997,
+            "lr": 0.2085,
+            "dt": 0.2425
+        },
+        "R2": {
+            "knn": -0.0789,
+            "lr": -0.1596,
+            "dt": -0.6922
+        },
+        "RMSLE": {
+            "knn": 0.1031,
+            "lr": 0.1086,
+            "dt": 0.1251
+        },
+        "MAPE": {
+            "knn": 0.1797,
+            "lr": 0.1996,
+            "dt": 0.2176
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1597,
+            "lr": 0.1704,
+            "dt": 0.194
+        },
+        "MSE": {
+            "knn": 0.0424,
+            "lr": 0.0457,
+            "dt": 0.061
+        },
+        "RMSE": {
+            "knn": 0.1997,
+            "lr": 0.2078,
+            "dt": 0.2405
+        },
+        "R2": {
+            "knn": -0.0804,
+            "lr": -0.1528,
+            "dt": -0.6643
+        },
+        "RMSLE": {
+            "knn": 0.1031,
+            "lr": 0.1083,
+            "dt": 0.1242
+        },
+        "MAPE": {
+            "knn": 0.1789,
+            "lr": 0.1983,
+            "dt": 0.2168
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1605,
+            "lr": 0.1708,
+            "dt": 0.1911
+        },
+        "MSE": {
+            "knn": 0.0426,
+            "lr": 0.0458,
+            "dt": 0.0591
+        },
+        "RMSE": {
+            "knn": 0.1999,
+            "lr": 0.2079,
+            "dt": 0.2359
+        },
+        "R2": {
+            "knn": -0.0809,
+            "lr": -0.1548,
+            "dt": -0.6454
+        },
+        "RMSLE": {
+            "knn": 0.1032,
+            "lr": 0.1084,
+            "dt": 0.1218
+        },
+        "MAPE": {
+            "knn": 0.1796,
+            "lr": 0.1988,
+            "dt": 0.2151
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1605,
+            "lr": 0.1708,
+            "dt": 0.1911
+        },
+        "MSE": {
+            "knn": 0.0426,
+            "lr": 0.0458,
+            "dt": 0.0591
+        },
+        "RMSE": {
+            "knn": 0.1999,
+            "lr": 0.2079,
+            "dt": 0.2359
+        },
+        "R2": {
+            "knn": -0.0809,
+            "lr": -0.1547,
+            "dt": -0.6454
+        },
+        "RMSLE": {
+            "knn": 0.1032,
+            "lr": 0.1084,
+            "dt": 0.1218
+        },
+        "MAPE": {
+            "knn": 0.1796,
+            "lr": 0.1988,
+            "dt": 0.2151
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.167,
+            "lr": 0.1775,
+            "dt": 0.2359
+        },
+        "MSE": {
+            "knn": 0.0427,
+            "lr": 0.0457,
+            "dt": 0.0907
+        },
+        "RMSE": {
+            "knn": 0.1991,
+            "lr": 0.209,
+            "dt": 0.2927
+        },
+        "R2": {
+            "knn": -0.0761,
+            "lr": -0.1897,
+            "dt": -1.8078
+        },
+        "RMSLE": {
+            "knn": 0.1373,
+            "lr": 0.1442,
+            "dt": 0.2018
+        },
+        "MAPE": {
+            "knn": 0.5158,
+            "lr": 0.6088,
+            "dt": 0.6936
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1809,
+            "knn": 0.1869,
+            "dt": 0.2177
+        },
+        "MSE": {
+            "lr": 0.0485,
+            "knn": 0.0524,
+            "dt": 0.0747
+        },
+        "RMSE": {
+            "lr": 0.2175,
+            "knn": 0.2257,
+            "dt": 0.2681
+        },
+        "R2": {
+            "lr": 0.0213,
+            "knn": -0.039,
+            "dt": -0.5408
+        },
+        "RMSLE": {
+            "lr": 0.15,
+            "knn": 0.1564,
+            "dt": 0.1871
+        },
+        "MAPE": {
+            "lr": 0.6469,
+            "knn": 0.6446,
+            "dt": 0.6531
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1923,
+            "knn": 0.1895,
+            "dt": 0.2586
+        },
+        "MSE": {
+            "lr": 0.0533,
+            "knn": 0.0546,
+            "dt": 0.0989
+        },
+        "RMSE": {
+            "lr": 0.2274,
+            "knn": 0.2311,
+            "dt": 0.309
+        },
+        "R2": {
+            "lr": -0.0526,
+            "knn": -0.0932,
+            "dt": -0.9991
+        },
+        "RMSLE": {
+            "lr": 0.1575,
+            "knn": 0.1603,
+            "dt": 0.2131
+        },
+        "MAPE": {
+            "lr": 0.6861,
+            "knn": 0.6563,
+            "dt": 0.8716
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1832,
+            "knn": 0.1845,
+            "dt": 0.2354
+        },
+        "MSE": {
+            "lr": 0.0488,
+            "knn": 0.052,
+            "dt": 0.0825
+        },
+        "RMSE": {
+            "lr": 0.2181,
+            "knn": 0.2251,
+            "dt": 0.285
+        },
+        "R2": {
+            "lr": 0.0303,
+            "knn": -0.0342,
+            "dt": -0.708
+        },
+        "RMSLE": {
+            "lr": 0.1506,
+            "knn": 0.156,
+            "dt": 0.1973
+        },
+        "MAPE": {
+            "lr": 0.6464,
+            "knn": 0.6404,
+            "dt": 0.8006
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1836,
+            "knn": 0.1843,
+            "dt": 0.2261
+        },
+        "MSE": {
+            "lr": 0.049,
+            "knn": 0.0519,
+            "dt": 0.0794
+        },
+        "RMSE": {
+            "lr": 0.2185,
+            "knn": 0.2249,
+            "dt": 0.2792
+        },
+        "R2": {
+            "lr": 0.0278,
+            "knn": -0.0329,
+            "dt": -0.6372
+        },
+        "RMSLE": {
+            "lr": 0.1508,
+            "knn": 0.1559,
+            "dt": 0.1939
+        },
+        "MAPE": {
+            "lr": 0.6478,
+            "knn": 0.6397,
+            "dt": 0.7647
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1832,
+            "knn": 0.1845,
+            "dt": 0.2354
+        },
+        "MSE": {
+            "lr": 0.0488,
+            "knn": 0.052,
+            "dt": 0.0825
+        },
+        "RMSE": {
+            "lr": 0.2181,
+            "knn": 0.2251,
+            "dt": 0.285
+        },
+        "R2": {
+            "lr": 0.0303,
+            "knn": -0.0342,
+            "dt": -0.708
+        },
+        "RMSLE": {
+            "lr": 0.1506,
+            "knn": 0.156,
+            "dt": 0.1973
+        },
+        "MAPE": {
+            "lr": 0.6463,
+            "knn": 0.6404,
+            "dt": 0.8006
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1819,
+            "knn": 0.1848,
+            "dt": 0.2351
+        },
+        "MSE": {
+            "lr": 0.0484,
+            "knn": 0.0517,
+            "dt": 0.0897
+        },
+        "RMSE": {
+            "lr": 0.2172,
+            "knn": 0.2242,
+            "dt": 0.2907
+        },
+        "R2": {
+            "lr": 0.0356,
+            "knn": -0.0304,
+            "dt": -0.8781
+        },
+        "RMSLE": {
+            "lr": 0.15,
+            "knn": 0.1555,
+            "dt": 0.2
+        },
+        "MAPE": {
+            "lr": 0.6428,
+            "knn": 0.6421,
+            "dt": 0.7596
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.1841,
+            "knn": 0.1912,
+            "dt": 0.237
+        },
+        "MSE": {
+            "lr": 0.0496,
+            "knn": 0.0558,
+            "dt": 0.083
+        },
+        "RMSE": {
+            "lr": 0.2198,
+            "knn": 0.2336,
+            "dt": 0.2837
+        },
+        "R2": {
+            "lr": 0.0166,
+            "knn": -0.1112,
+            "dt": -0.8537
+        },
+        "RMSLE": {
+            "lr": 0.1519,
+            "knn": 0.1617,
+            "dt": 0.194
+        },
+        "MAPE": {
+            "lr": 0.6542,
+            "knn": 0.6613,
+            "dt": 0.7864
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.7171,
+            "lr": 0.7776,
+            "dt": 1.0282
+        },
+        "MSE": {
+            "knn": 0.8092,
+            "lr": 0.8764,
+            "dt": 1.7522
+        },
+        "RMSE": {
+            "knn": 0.8632,
+            "lr": 0.9156,
+            "dt": 1.2875
+        },
+        "R2": {
+            "knn": -0.0291,
+            "lr": -0.1897,
+            "dt": -1.8219
+        },
+        "RMSLE": {
+            "knn": 0.3717,
+            "lr": 0.4396,
+            "dt": 0.4262
+        },
+        "MAPE": {
+            "knn": 2.0388,
+            "lr": 2.3361,
+            "dt": 4.5246
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.7924,
+            "knn": 0.8133,
+            "dt": 0.9626
+        },
+        "MSE": {
+            "lr": 0.9303,
+            "knn": 1.005,
+            "dt": 1.4551
+        },
+        "RMSE": {
+            "lr": 0.9529,
+            "knn": 0.9884,
+            "dt": 1.1835
+        },
+        "R2": {
+            "lr": 0.0213,
+            "knn": -0.0465,
+            "dt": -0.5794
+        },
+        "RMSLE": {
+            "lr": 0.4635,
+            "knn": 0.4275,
+            "dt": 0.4012
+        },
+        "MAPE": {
+            "lr": 1.7008,
+            "knn": 1.9606,
+            "dt": 3.6269
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.8425,
+            "knn": 0.8358,
+            "dt": 1.1443
+        },
+        "MSE": {
+            "lr": 1.0223,
+            "knn": 1.0572,
+            "dt": 1.9206
+        },
+        "RMSE": {
+            "lr": 0.996,
+            "knn": 1.0144,
+            "dt": 1.364
+        },
+        "R2": {
+            "lr": -0.0526,
+            "knn": -0.099,
+            "dt": -1.0487
+        },
+        "RMSLE": {
+            "lr": 0.4742,
+            "knn": 0.4178,
+            "dt": 0.4434
+        },
+        "MAPE": {
+            "lr": 1.5487,
+            "knn": 1.9492,
+            "dt": 3.7325
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.8025,
+            "knn": 0.8006,
+            "dt": 1.0549
+        },
+        "MSE": {
+            "lr": 0.9365,
+            "knn": 0.9907,
+            "dt": 1.6542
+        },
+        "RMSE": {
+            "lr": 0.9555,
+            "knn": 0.9814,
+            "dt": 1.2761
+        },
+        "R2": {
+            "lr": 0.0303,
+            "knn": -0.0285,
+            "dt": -0.7955
+        },
+        "RMSLE": {
+            "lr": 0.4514,
+            "knn": 0.4212,
+            "dt": 0.4048
+        },
+        "MAPE": {
+            "lr": 1.7395,
+            "knn": 1.9654,
+            "dt": 3.5334
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.8043,
+            "knn": 0.7999,
+            "dt": 1.0172
+        },
+        "MSE": {
+            "lr": 0.9395,
+            "knn": 0.9903,
+            "dt": 1.6027
+        },
+        "RMSE": {
+            "lr": 0.957,
+            "knn": 0.9811,
+            "dt": 1.2528
+        },
+        "R2": {
+            "lr": 0.0278,
+            "knn": -0.0281,
+            "dt": -0.7305
+        },
+        "RMSLE": {
+            "lr": 0.4522,
+            "knn": 0.4211,
+            "dt": 0.4062
+        },
+        "MAPE": {
+            "lr": 1.7307,
+            "knn": 1.9645,
+            "dt": 3.4307
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.8024,
+            "knn": 0.8006,
+            "dt": 1.0549
+        },
+        "MSE": {
+            "lr": 0.9364,
+            "knn": 0.9907,
+            "dt": 1.6542
+        },
+        "RMSE": {
+            "lr": 0.9555,
+            "knn": 0.9814,
+            "dt": 1.2761
+        },
+        "R2": {
+            "lr": 0.0303,
+            "knn": -0.0285,
+            "dt": -0.7955
+        },
+        "RMSLE": {
+            "lr": 0.4514,
+            "knn": 0.4212,
+            "dt": 0.4048
+        },
+        "MAPE": {
+            "lr": 1.7397,
+            "knn": 1.9654,
+            "dt": 3.5334
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.7974,
+            "knn": 0.8049,
+            "dt": 0.9376
+        },
+        "MSE": {
+            "lr": 0.9282,
+            "knn": 0.9931,
+            "dt": 1.4035
+        },
+        "RMSE": {
+            "lr": 0.9505,
+            "knn": 0.981,
+            "dt": 1.1592
+        },
+        "R2": {
+            "lr": 0.0381,
+            "knn": -0.0322,
+            "dt": -0.4718
+        },
+        "RMSLE": {
+            "lr": 0.4466,
+            "knn": 0.4236,
+            "dt": 0.3854
+        },
+        "MAPE": {
+            "lr": 1.7833,
+            "knn": 1.9804,
+            "dt": 3.3798
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "lr": "Linear Regression",
+            "knn": "K Neighbors Regressor",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "lr": 0.8064,
+            "knn": 0.8236,
+            "dt": 1.0486
+        },
+        "MSE": {
+            "lr": 0.9513,
+            "knn": 1.0475,
+            "dt": 1.6603
+        },
+        "RMSE": {
+            "lr": 0.9631,
+            "knn": 1.0115,
+            "dt": 1.2686
+        },
+        "R2": {
+            "lr": 0.0166,
+            "knn": -0.0893,
+            "dt": -0.8972
+        },
+        "RMSLE": {
+            "lr": 0.453,
+            "knn": 0.4184,
+            "dt": 0.4429
+        },
+        "MAPE": {
+            "lr": 1.671,
+            "knn": 1.9934,
+            "dt": 3.3746
+        },
+        "TT (Sec)": {
+            "lr": 0.005,
+            "knn": 0.012,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1129,
+            "lr": 0.1187,
+            "dt": 0.1586
+        },
+        "MSE": {
+            "knn": 0.0194,
+            "lr": 0.0204,
+            "dt": 0.0407
+        },
+        "RMSE": {
+            "knn": 0.1357,
+            "lr": 0.1398,
+            "dt": 0.1963
+        },
+        "R2": {
+            "knn": -0.1712,
+            "lr": -0.1897,
+            "dt": -1.8117
+        },
+        "RMSLE": {
+            "knn": 0.0826,
+            "lr": 0.0853,
+            "dt": 0.1195
+        },
+        "MAPE": {
+            "knn": 0.1817,
+            "lr": 0.1974,
+            "dt": 0.2531
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1176,
+            "lr": 0.121,
+            "dt": 0.144
+        },
+        "MSE": {
+            "knn": 0.0218,
+            "lr": 0.0217,
+            "dt": 0.0332
+        },
+        "RMSE": {
+            "knn": 0.1447,
+            "lr": 0.1455,
+            "dt": 0.1786
+        },
+        "R2": {
+            "knn": 0.0562,
+            "lr": 0.0213,
+            "dt": -0.5526
+        },
+        "RMSLE": {
+            "knn": 0.0884,
+            "lr": 0.0886,
+            "dt": 0.1095
+        },
+        "MAPE": {
+            "knn": 0.1952,
+            "lr": 0.2043,
+            "dt": 0.2352
+        },
+        "TT (Sec)": {
+            "knn": 0.013,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1217,
+            "lr": 0.1286,
+            "dt": 0.1712
+        },
+        "MSE": {
+            "knn": 0.0234,
+            "lr": 0.0238,
+            "dt": 0.0437
+        },
+        "RMSE": {
+            "knn": 0.1494,
+            "lr": 0.1521,
+            "dt": 0.205
+        },
+        "R2": {
+            "knn": 0.0038,
+            "lr": -0.0526,
+            "dt": -0.984
+        },
+        "RMSLE": {
+            "knn": 0.0912,
+            "lr": 0.0929,
+            "dt": 0.1248
+        },
+        "MAPE": {
+            "knn": 0.2019,
+            "lr": 0.2173,
+            "dt": 0.2841
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1193,
+            "lr": 0.1225,
+            "dt": 0.1577
+        },
+        "MSE": {
+            "knn": 0.0221,
+            "lr": 0.0218,
+            "dt": 0.0375
+        },
+        "RMSE": {
+            "knn": 0.1454,
+            "lr": 0.1459,
+            "dt": 0.1917
+        },
+        "R2": {
+            "knn": 0.0525,
+            "lr": 0.0303,
+            "dt": -0.7307
+        },
+        "RMSLE": {
+            "knn": 0.0887,
+            "lr": 0.089,
+            "dt": 0.1169
+        },
+        "MAPE": {
+            "knn": 0.1973,
+            "lr": 0.2064,
+            "dt": 0.2638
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.006
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1196,
+            "lr": 0.1228,
+            "dt": 0.1517
+        },
+        "MSE": {
+            "knn": 0.0223,
+            "lr": 0.0219,
+            "dt": 0.0357
+        },
+        "RMSE": {
+            "knn": 0.1459,
+            "lr": 0.1461,
+            "dt": 0.187
+        },
+        "R2": {
+            "knn": 0.0531,
+            "lr": 0.0278,
+            "dt": -0.647
+        },
+        "RMSLE": {
+            "knn": 0.089,
+            "lr": 0.0891,
+            "dt": 0.1142
+        },
+        "MAPE": {
+            "knn": 0.1979,
+            "lr": 0.2069,
+            "dt": 0.252
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
+        }
+    },
+    {
+        "Model": {
+            "knn": "K Neighbors Regressor",
+            "lr": "Linear Regression",
+            "dt": "Decision Tree Regressor"
+        },
+        "MAE": {
+            "knn": 0.1193,
+            "lr": 0.1225,
+            "dt": 0.1577
+        },
+        "MSE": {
+            "knn": 0.0221,
+            "lr": 0.0218,
+            "dt": 0.0375
+        },
+        "RMSE": {
+            "knn": 0.1454,
+            "lr": 0.1459,
+            "dt": 0.1917
+        },
+        "R2": {
+            "knn": 0.0525,
+            "lr": 0.0303,
+            "dt": -0.7307
+        },
+        "RMSLE": {
+            "knn": 0.0887,
+            "lr": 0.089,
+            "dt": 0.1169
+        },
+        "MAPE": {
+            "knn": 0.1973,
+            "lr": 0.2064,
+            "dt": 0.2638
+        },
+        "TT (Sec)": {
+            "knn": 0.012,
+            "lr": 0.005,
+            "dt": 0.005
         }
     }
 ]

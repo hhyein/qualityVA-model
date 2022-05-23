@@ -4,14 +4,11 @@ import numpy as np
 import pandas as pd
 import module.imputation as imputation
 
-fileName = 'test'
-filePath = 'static/' + fileName + '.csv'
-originDf = pd.read_csv(filePath, sep = ',')
-
-print(originDf)
+#####
+# input: originDf, predictName, inputModelList
+#####
 
 # missing, outlier, incons check
-checkList = []
 missing = sum(originDf.isnull().sum().values.tolist())
 
 tmpList = []
@@ -310,16 +307,20 @@ print(len(actionTotalDfList))
 
 # autoML
 from pycaret.regression import *
-predictName = 'hue'
-inputModelList = ['lr', 'knn', 'dt']
-inputEvalList = ['MAE', 'MSE', 'RMSE']
+
+print(predictName)
+print(inputModelList)
+
+#####
+# example: len(actionTotalDfList) = 100
+#####
 
 resultList = []
-for i in range(0, len(actionTotalDfList)):
+for i in range(0, 100):
     clf = setup(data = actionTotalDfList[i], target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
     model = compare_models(include = inputModelList)
     result = pull()
     resultList.append(result)
 
-with open('static/modelData.json', 'w') as file:
+with open('../static/modelData.json', 'w') as file:
     file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))

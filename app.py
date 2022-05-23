@@ -7,6 +7,7 @@ import ast
 import csv
 import json
 import codecs
+import itertools
 import numpy as np
 import pandas as pd
 # from nl4dv import NL4DV
@@ -203,8 +204,162 @@ def query():
   # return jsonify({'nl4dv': vlSpec})
   return json.dumps({'nl4dv': 'success'})
 
+@app.route('/chartTable', methods = ['GET', 'POST'])
+def chartTable():
+  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+    data = json.load(f) 
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+
+  # missing, outlier, incons check
+  missing = sum(originDf.isnull().sum().values.tolist())
+
+  tmpList = []
+  for column in originDf:
+      df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+      df = df.dropna()
+
+      lower, upper = imputation.LowerUpper(df[column])
+      data1 = df[df[column] > upper]
+      data2 = df[df[column] < lower]
+      tmpList.append(data1.shape[0] + data2.shape[0])
+      outlier = sum(tmpList)
+
+  tmpList = []
+  for column in originDf:
+      df = originDf[column].dropna()    
+      df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+      tmpList.append(df.isnull().sum().values[0].tolist())
+      incons = sum(tmpList)
+
+  actionList = ['t']
+  if missing > 0:
+      actionList.append('m')
+  if outlier > 0:
+      actionList.append('o')
+  if incons > 0:
+      actionList.append('i')
+
+  # permutation
+  permutationList = []
+  for i in range(len(actionList)):
+      permutationList.append(list(map("".join, itertools.permutations(actionList, i + 1))))
+  permutationList = sum(permutationList, [])
+
+  # combination
+  actionDetailList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
+  transDetailList = ['minmax', 'standard', 'maxabs', 'robust', 'log', 'sqrt']
+
+  with open('static/modelData.json', 'r', encoding = 'utf-8') as f:
+    autoMLList = json.load(f)
+
+  ##### example
+  inputModelList = ['lr', 'knn', 'dt']
+  inputEvalList = ['Accuracy', 'AUC', 'Recall']
+  #####
+
+  # combination - modelNames
+  modelNames = []
+  stopState = False
+  for i in range(len(autoMLList)):
+    if stopState == True:
+      break
+
+    for j in range(len(inputModelList)):
+      modelNames.append(inputModelList[j])
+      if len(modelNames) > len(autoMLList):
+        stopState = True
+        break
+
+  # combination - combinationIconList
+  combinationIconList = []
+  stopState = False
+  for i in range(len(permutationList)):
+    if stopState == True:
+      break
+
+    toCombinationCnt = 1
+    if 'm' in permutationList[i]:
+      toCombinationCnt = toCombinationCnt * len(actionDetailList)
+    if 'o' in permutationList[i]:
+      toCombinationCnt = toCombinationCnt * len(actionDetailList)
+    if 'i' in permutationList[i]:
+      toCombinationCnt = toCombinationCnt * len(actionDetailList)
+    if 't' in permutationList[i]:
+      toCombinationCnt = toCombinationCnt * len(transDetailList)
+
+    for j in range(len(inputModelList)):
+      if stopState == True:
+        break
+
+      for k in range(0, toCombinationCnt):
+        combinationIconList.append(permutationList[i])
+        if len(combinationIconList) > len(autoMLList):
+          stopState = True
+          break
+
+  # combination - combinationDetailIconList
+  combinationDetailIconList = []
+  stopState = False
+  for i in range(len(permutationList)):
+    if stopState == True:
+      break
+
+    toCombinationList = []
+    if 'm' in permutationList[i]:
+      toCombinationList.append(actionDetailList)
+    if 'o' in permutationList[i]:
+      toCombinationList.append(actionDetailList)
+    if 'i' in permutationList[i]:
+      toCombinationList.append(actionDetailList)
+    if 't' in permutationList[i]:
+      toCombinationList.append(transDetailList)
+
+    if len(toCombinationList) == 1:
+      for j in range(len(toCombinationList[0])):
+        combinationDetailIconList.append(toCombinationList[0][j])
+
+    else:
+      combinationList = toCombinationList[0]
+      for j in range(len(toCombinationList) - 1):
+        if stopState == True:
+          break
+
+        tmpList = []
+        for k in itertools.product(combinationList, toCombinationList[j + 1]):
+          tmpList.append(k[1] + k[0])        
+
+        combinationList = tmpList
+
+      if (len(combinationDetailIconList) + len(combinationList)) > len(autoMLList):
+        diff = (len(combinationDetailIconList) + len(combinationList)) - len(autoMLList) - 1
+        combinationList = combinationList[:-diff]
+        combinationDetailIconList.extend(combinationList)
+        
+        stopState = True
+        break
+
+      combinationDetailIconList.extend(combinationList)
+
+  response = {}
+  response['combinationList'] = list(range(len(autoMLList)))
+  response['inputModelList'] = inputModelList
+  response['inputEvalList'] = inputEvalList
+
+  # 정확도 추출
+  # bar chart 변환
+  # modelNames, combinationDetailIconList, combinationDetailIconList 전송
+
+  response = {'combinationList': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'inputModelList': ['Logistic Regression'], 'inputEvalList': ['Accuracy', 'AUC', 'Recall'], 'Accuracy': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'AUC': [{'data': 0.9, 'originData': 0.1}, {'data': 0.6, 'originData': 0.4}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'Recall': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}]}
+
+  return json.dumps(response)
+
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
+  # to fix
+  # client 받아오기
+  # 스텝 별 데이터프레임 생성 필요
+
   # clf = setup(data = originDf.dropna(), target = predictName, preprocess = False, session_id = 42, silent = True)
   # models = compare_models()
   # results = pull()
@@ -214,6 +369,10 @@ def lineChart():
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
+  # to fix
+  # client 받아오기
+  # 스텝 별 데이터프레임 생성 필요
+
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
@@ -222,52 +381,6 @@ def treeChart():
   response['treeLength'] = currentCnt
 
   return jsonify(response)
-
-# autoML
-@app.route('/chartTable', methods = ['GET', 'POST'])
-def chartTable():
-  # global inputModelList, inputEvalList
-  # combinationList = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-  # # have to develop - combination
-  # with open('static/modelData.json') as data:
-  #   data = json.load(data)
-  # autoMLDf = pd.DataFrame.from_dict(data)
-
-  # modelList = autoMLDf['Model'].values.tolist()
-  # modelIndex = []
-  # for i in inputModelList:
-  #   modelIndex.append(modelList.index(i))
-
-  # evalList = ['Accuracy', 'AUC', 'Recall', 'Prec.', 'F1', 'Kappa', 'MCC', 'TT (Sec)']
-  # evalIndex = []
-  # for i in inputEvalList:
-  #   evalIndex.append(evalList.index(i) + 1)
-
-  # resultList = []
-  # for i in evalIndex:
-  #   tmpList = []
-  #   for j in modelIndex:
-  #     tmpList.append(autoMLDf.iloc[j][i])
-  #   resultList.append(tmpList[0])
-
-  # response = {}
-  # response['combinationList'] = combinationList
-  # response['inputModelList'] = inputModelList
-  # response['inputEvalList'] = inputEvalList
-
-  # for i in range(len(inputEvalList)):
-  #   tmpList = []
-  #   for j in range(len(combinationList)):
-  #     data = resultList[i]
-  #     originData = 1.0 - resultList[i]
-
-  #     tmpList.append({'data': data, 'originData': originData})
-  #   response[inputEvalList[i]] = tmpList
-
-  response = {'combinationList': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'inputModelList': ['Logistic Regression'], 'inputEvalList': ['Accuracy', 'AUC', 'Recall'], 'Accuracy': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'AUC': [{'data': 0.9, 'originData': 0.1}, {'data': 0.6, 'originData': 0.4}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'Recall': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}]}
-
-  return json.dumps(response)
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
@@ -282,6 +395,8 @@ def modelDetailTable():
     treeData = json.load(jsonData)
 
   # to fix
+  # client 받아오기
+  # 스텝 별 데이터프레임 생성 필요
   actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
   actionDetailList = ["start", "locf", "em", "remove", "standard"]
   
@@ -304,6 +419,7 @@ def modelDetailTable():
     tmpList.append(df.isnull().sum().values[0].tolist())
   incons = sum(tmpList)
 
+  # to fix
   for i in range(0, 5):
     barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
 
