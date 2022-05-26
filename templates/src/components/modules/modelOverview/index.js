@@ -5,12 +5,13 @@ import HorizontalBarChart from "../../charts/HorizontalBarChart"
 import { useFileData } from "../../../contexts/FileDataContext"
 
 export default function ModelOverview() {
-  const { modelOverviewData, isEmptyData, setSelectedModelOverviewTableRow } =
-    useFileData()
+  const { modelOverviewData, isEmptyData, setSelectedModelOverviewTableRow } = useFileData()
   const { chartTable } = modelOverviewData
 
   const [data, setData] = useState([])
   const [selectedColumn, setSelectedColumn] = useState()
+
+  console.log(chartTable)
 
   useEffect(() => {
     if (!chartTable) {
@@ -52,7 +53,6 @@ export default function ModelOverview() {
           }
           data={data.map((d) => ({
             key: d.key,
-            // normal text
             ...["model"].reduce(
               (acc, cur) => ({
                 ...acc,
@@ -60,7 +60,6 @@ export default function ModelOverview() {
               }),
               {}
             ),
-            // icon
             ...["combination", "combinationDetail"].reduce(
               (acc, cur) => ({
                 ...acc,
@@ -78,7 +77,6 @@ export default function ModelOverview() {
               }),
               {}
             ),
-            // horizontal bar chart
             ...chartTable.inputEvalList.reduce(
               (acc, cur, j) => ({
                 ...acc,

@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 import ast
 import csv
+import math
 import json
 import codecs
 import itertools
@@ -93,7 +94,8 @@ def setting():
         modelList.append({'label': tmpList[i], 'value': i})
 
       evalList = []
-      tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+      # tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+      tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
       for i in range(len(tmpList)):
         evalList.append({'label': tmpList[i], 'value': i})
 
@@ -206,7 +208,7 @@ def query():
 
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -232,13 +234,13 @@ def chartTable():
       tmpList.append(df.isnull().sum().values[0].tolist())
       incons = sum(tmpList)
 
-  actionList = ['t']
+  actionList = ['transformation']
   if missing > 0:
-      actionList.append('m')
+      actionList.append('missing')
   if outlier > 0:
-      actionList.append('o')
+      actionList.append('outlier')
   if incons > 0:
-      actionList.append('i')
+      actionList.append('inconsistent')
 
   # permutation
   permutationList = []
@@ -247,29 +249,27 @@ def chartTable():
   permutationList = sum(permutationList, [])
 
   # combination
-  actionDetailList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
-  transDetailList = ['minmax', 'standard', 'maxabs', 'robust', 'log', 'sqrt']
+  actionDetailList = ["rem", "min", "max", "men", "mod", "med", "em", "lof"]
+  transDetailList = ['mm', 'std', 'maxabs', 'rob', 'log', 'sqt']
 
-  with open('static/modelData.json', 'r', encoding = 'utf-8') as f:
+  with open('static/modelData.json') as f:
     autoMLList = json.load(f)
 
   ##### example
   inputModelList = ['lr', 'knn', 'dt']
-  inputEvalList = ['Accuracy', 'AUC', 'Recall']
+  inputEvalList = ['MAE', 'MSE', 'RMSE']
   #####
+
+  response = {}
+  response['combinationList'] = list(range(len(autoMLList) * len(inputModelList)))
+  response['inputModelList'] = inputModelList
+  response['inputEvalList'] = inputEvalList
 
   # combination - modelNames
   modelNames = []
-  stopState = False
   for i in range(len(autoMLList)):
-    if stopState == True:
-      break
-
     for j in range(len(inputModelList)):
       modelNames.append(inputModelList[j])
-      if len(modelNames) > len(autoMLList):
-        stopState = True
-        break
 
   # combination - combinationIconList
   combinationIconList = []
@@ -279,24 +279,26 @@ def chartTable():
       break
 
     toCombinationCnt = 1
-    if 'm' in permutationList[i]:
+    combinationIcon = []
+    if 'missing' in permutationList[i]:
       toCombinationCnt = toCombinationCnt * len(actionDetailList)
-    if 'o' in permutationList[i]:
+      combinationIcon.append('missing')
+    if 'outlier' in permutationList[i]:
       toCombinationCnt = toCombinationCnt * len(actionDetailList)
-    if 'i' in permutationList[i]:
+      combinationIcon.append('outlier')
+    if 'inconsistent' in permutationList[i]:
       toCombinationCnt = toCombinationCnt * len(actionDetailList)
-    if 't' in permutationList[i]:
+      combinationIcon.append('inconsistent')
+    if 'transformation' in permutationList[i]:
       toCombinationCnt = toCombinationCnt * len(transDetailList)
+      combinationIcon.append('transformation')
 
-    for j in range(len(inputModelList)):
-      if stopState == True:
+    for j in range(len(inputModelList) * toCombinationCnt):
+      combinationIconList.append(combinationIcon)
+
+      if len(combinationIconList) > (len(autoMLList) * len(inputModelList)) - 1:
+        stopState = True
         break
-
-      for k in range(0, toCombinationCnt):
-        combinationIconList.append(permutationList[i])
-        if len(combinationIconList) > len(autoMLList):
-          stopState = True
-          break
 
   # combination - combinationDetailIconList
   combinationDetailIconList = []
@@ -306,18 +308,20 @@ def chartTable():
       break
 
     toCombinationList = []
-    if 'm' in permutationList[i]:
+    if 'missing' in permutationList[i]:
       toCombinationList.append(actionDetailList)
-    if 'o' in permutationList[i]:
+    if 'outlier' in permutationList[i]:
       toCombinationList.append(actionDetailList)
-    if 'i' in permutationList[i]:
+    if 'inconsistent' in permutationList[i]:
       toCombinationList.append(actionDetailList)
-    if 't' in permutationList[i]:
+    if 'transformation' in permutationList[i]:
       toCombinationList.append(transDetailList)
 
     if len(toCombinationList) == 1:
       for j in range(len(toCombinationList[0])):
-        combinationDetailIconList.append(toCombinationList[0][j])
+        combinationDetailIcon = []
+        combinationDetailIcon.append(toCombinationList[0][j])
+      combinationDetailIconList.append(combinationDetailIcon)
 
     else:
       combinationList = toCombinationList[0]
@@ -331,26 +335,89 @@ def chartTable():
 
         combinationList = tmpList
 
-      if (len(combinationDetailIconList) + len(combinationList)) > len(autoMLList):
-        diff = (len(combinationDetailIconList) + len(combinationList)) - len(autoMLList) - 1
-        combinationList = combinationList[:-diff]
-        combinationDetailIconList.extend(combinationList)
-        
-        stopState = True
-        break
+      for j in range(len(combinationList)):
+        if 'rem' in combinationList[j]:
+          combinationDetailIcon.append('rem')
+        if 'min' in combinationList[j]:
+          combinationDetailIcon.append('min')
+        if 'max' in combinationList[j]:
+          combinationDetailIcon.append('max')
+        if 'men' in combinationList[j]:
+          combinationDetailIcon.append('men')
+        if 'mod' in combinationList[j]:
+          combinationDetailIcon.append('mod')
+        if 'med' in combinationList[j]:
+          combinationDetailIcon.append('med')
+        if 'em' in combinationList[j]:
+          combinationDetailIcon.append('em')
+        if 'lof' in combinationList[j]:
+          combinationDetailIcon.append('lof')
+        if 'mm' in combinationList[j]:
+          combinationDetailIcon.append('mm')
+        if 'std' in combinationList[j]:
+          combinationDetailIcon.append('std')
+        if 'mbs' in combinationList[j]:
+          combinationDetailIcon.append('mbs')
+        if 'rob' in combinationList[j]:
+          combinationDetailIcon.append('rob')
+        if 'log' in combinationList[j]:
+          combinationDetailIcon.append('log')
+        if 'sqt' in combinationList[j]:
+          combinationDetailIcon.append('sqt')
 
-      combinationDetailIconList.extend(combinationList)
+        combinationDetailIconList.append(combinationDetailIcon)
+        if len(combinationDetailIconList) > (len(autoMLList) * len(inputModelList)) - 1:
+          stopState = True
+          break
 
-  response = {}
-  response['combinationList'] = list(range(len(autoMLList)))
-  response['inputModelList'] = inputModelList
-  response['inputEvalList'] = inputEvalList
+  # evalDict
+  evalDict = {}
+  maxEvalList = []
 
-  # 정확도 추출
-  # bar chart 변환
-  # modelNames, combinationDetailIconList, combinationDetailIconList 전송
+  for inputEval in inputEvalList:
+    evalDict[inputEval] = []
+    maxEvalList.append(0)
 
-  response = {'combinationList': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], 'inputModelList': ['Logistic Regression'], 'inputEvalList': ['Accuracy', 'AUC', 'Recall'], 'Accuracy': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'AUC': [{'data': 0.9, 'originData': 0.1}, {'data': 0.6, 'originData': 0.4}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}], 'Recall': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}]}
+  for autoML in autoMLList:
+    for i in range(len(inputEvalList)):
+      for j in range(len(inputModelList)):
+        if maxEvalList[i] < autoML[inputEvalList[i]][inputModelList[j]]:
+          maxEvalList[i] = autoML[inputEvalList[i]][inputModelList[j]]
+        evalDict[inputEvalList[i]].append(autoML[inputEvalList[i]][inputModelList[j]])
+
+  # evalDict to make bar chart
+  resultEvalList = []
+  for i in range(len(inputEvalList)):
+    resultEvalList.append([])
+
+  for i in range(len(inputEvalList)):
+    maxEvalList[i] = math.ceil(maxEvalList[i])
+    evalList = evalDict[inputEvalList[i]]
+
+    for j in range(len(evalList)):
+      data = evalList[j]
+      originData = maxEvalList[i] - evalList[j]
+
+      resultEvalList[i].append({'data': data, 'originData': originData})
+
+  for i in range(len(inputEvalList)):
+    response[inputEvalList[i]] = resultEvalList[i]
+
+  response['modelNames'] = modelNames
+  response['combinationIconList'] = combinationIconList
+  response['combinationDetailIconList'] = combinationDetailIconList
+
+  with open('static/combinationData.json', 'w') as f:
+      json.dump(response, f, indent = 4)
+
+  response = {
+    'combinationList': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    'inputModelList': ['Logistic Regression'],
+    'inputEvalList': ['Accuracy', 'AUC', 'Recall'],
+    'Accuracy': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}],
+    'AUC': [{'data': 0.9, 'originData': 0.1}, {'data': 0.6, 'originData': 0.4}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}],
+    'Recall': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}]
+  }
 
   return json.dumps(response)
 
@@ -366,6 +433,13 @@ def lineChart():
   # results.to_json('static/modelData.json', orient = 'records', indent = 4)
 
   return json.dumps({'lineChart': 'success'})
+
+@app.route('/selectedModelOverviewTable', methods=['GET', 'POST'])
+def selectedModelOverviewTable():
+  req = request.get_data().decode('utf-8')
+  print(req)
+
+  return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
@@ -384,7 +458,7 @@ def treeChart():
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -448,16 +522,9 @@ def modelDetailTable():
 
   return json.dumps(response)
 
-@app.route('/selectedModelOverviewTable', methods=['GET', 'POST'])
-def selectedModelOverviewTable():
-  req = request.get_data().decode('utf-8')
-  print(req)  
-
-  return json.dumps({'selectedModelOverviewTable': 'success'})
-
 @app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
 def actionDetailBarchart():
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -492,7 +559,7 @@ def actionDetailBarchart():
 
 @app.route('/heatmapChart', methods = ['GET', 'POST'])
 def heatmapChart():
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -513,7 +580,7 @@ def heatmapChart():
 def histogramChart():
   req = request.get_data().decode('utf-8')
 
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -555,7 +622,7 @@ def histogramChart():
 
 @app.route('/scatterChart', methods = ['GET', 'POST'])
 def scatterChart():
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
@@ -588,7 +655,7 @@ def action():
   columnIndex = int(req[1])
   actionIndex = int(req[2])
 
-  with open('static/file.json', 'r', encoding = 'utf-8') as f:
+  with open('static/file.json') as f:
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')

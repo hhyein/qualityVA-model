@@ -15,8 +15,8 @@ const Home = () => {
         <FileUpload />
         <Setting />
         <Visualization />
-        <ModelDetail />
         <ModelOverview />
+        <ModelDetail />
         <ActionDetail />
       </div>
     </FileDataProvider>
