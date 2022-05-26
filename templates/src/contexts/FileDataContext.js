@@ -82,6 +82,7 @@ export const FileDataProvider = ({ children }) => {
     const { treeData, treeLength } = await fetchData("/treeChart")
     const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData("/modelDetailTable")
     const selectedModelOverviewTable = await postData("/selectedModelOverviewTable", selectedModelOverviewTableRow)
+    console.log(selectedModelOverviewTable)
 
     setModelDetailData({
       lineChart,

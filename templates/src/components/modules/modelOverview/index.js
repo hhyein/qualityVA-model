@@ -11,8 +11,6 @@ export default function ModelOverview() {
   const [data, setData] = useState([])
   const [selectedColumn, setSelectedColumn] = useState()
 
-  console.log(chartTable)
-
   useEffect(() => {
     if (!chartTable) {
       return

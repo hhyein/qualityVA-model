@@ -22,13 +22,14 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-fileUploadState = False
-currentCnt = 6
-
 predictName = ''
 dimension = ''
 inputModelList = []
 inputEvalList = []
+
+fileUploadState = False
+currentCnt = 6
+selectedModelOverviewTable = 0
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
 def fileUpload():
@@ -250,10 +251,10 @@ def chartTable():
 
   # combination
   impDetailList = ["rem!", "min!", "max!", "men!", "mod!", "med!", "em!", "lof!"]
-  transDetailList = ["mm!", "std!", "maxabs!", "rob!", "log!", "sqt!"]
+  transDetailList = ["mm!", "std!", "mbs!", "rob!", "log!", "sqt!"]
 
   with open('static/modelData.json') as f:
-    autoMLList = json.load(f)
+    autoMLDict = json.load(f)
 
   ##### example
   inputModelList = ['lr', 'knn', 'dt']
@@ -261,13 +262,13 @@ def chartTable():
   #####
 
   response = {}
-  response['combinationList'] = list(range(len(autoMLList) * len(inputModelList)))
+  response['combinationList'] = list(range(len(autoMLDict) * len(inputModelList)))
   response['inputModelList'] = inputModelList
   response['inputEvalList'] = inputEvalList
 
   # combination - modelNames
   modelNames = []
-  for i in range(len(autoMLList)):
+  for i in range(len(autoMLDict)):
     for j in range(len(inputModelList)):
       modelNames.append(inputModelList[j])
 
@@ -292,7 +293,7 @@ def chartTable():
     for j in range(len(inputModelList) * toCombinationCnt):
       combinationIconList.append(combinationIcon)
 
-      if len(combinationIconList) > (len(autoMLList) * len(inputModelList)) - 1:
+      if len(combinationIconList) > (len(autoMLDict) * len(inputModelList)) - 1:
         stopState = True
         break
 
@@ -307,7 +308,7 @@ def chartTable():
     for action in actionList:
       if action in permutationList[i]:
         if action == 'transformation':
-          toCombinationList.append(impDetailList)
+          toCombinationList.append(transDetailList)
         else:
           toCombinationList.append(impDetailList)
 
@@ -317,7 +318,9 @@ def chartTable():
       for j in range(len(combinationList)):
         combinationDetailIcon = combinationList[j]
         combinationDetailIcon = combinationDetailIcon[:-1]
-        combinationDetailIconList.append([combinationDetailIcon])
+
+        for k in range(len(inputModelList)):
+          combinationDetailIconList.append([combinationDetailIcon])
 
     else:
       combinationList = toCombinationList[0]
@@ -336,10 +339,11 @@ def chartTable():
         combinationDetailIcon = combinationList[j].split('!')
         combinationDetailIcon.remove('')
 
-        combinationDetailIconList.append(combinationDetailIcon)
-        if len(combinationDetailIconList) > (len(autoMLList) * len(inputModelList)) - 1:
-          stopState = True
-          break
+        for k in range(len(inputModelList)):
+          combinationDetailIconList.append(combinationDetailIcon[::-1])
+          if len(combinationDetailIconList) > (len(autoMLDict) * len(inputModelList)) - 1:
+            stopState = True
+            break
 
   # evalDict
   evalDict = {}
@@ -349,7 +353,7 @@ def chartTable():
     evalDict[inputEval] = []
     maxEvalList.append(0)
 
-  for autoML in autoMLList:
+  for autoML in autoMLDict:
     for i in range(len(inputEvalList)):
       for j in range(len(inputModelList)):
         if maxEvalList[i] < autoML[inputEvalList[i]][inputModelList[j]]:
@@ -383,32 +387,264 @@ def chartTable():
 
   return json.dumps(response)
 
-@app.route('/lineChart', methods=['GET', 'POST'])
-def lineChart():
-  # to fix
-  # client 받아오기
-  # 스텝 별 데이터프레임 생성 필요
-
-  # clf = setup(data = originDf.dropna(), target = predictName, preprocess = False, session_id = 42, silent = True)
-  # models = compare_models()
-  # results = pull()
-  # results.to_json('static/modelData.json', orient = 'records', indent = 4)
-
-  return json.dumps({'lineChart': 'success'})
-
 @app.route('/selectedModelOverviewTable', methods=['GET', 'POST'])
 def selectedModelOverviewTable():
   req = request.get_data().decode('utf-8')
-  print(req)
+
+  if req == '':
+    req = 0
+  else:
+    req = ast.literal_eval(req)
+
+  ##### example
+  global selectedModelOverviewTable
+  selectedModelOverviewTable = 80
+  #####
+
+  with open('static/combinationData.json') as f:
+    combinationDict = json.load(f)
+
+  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+  combinationIcon = combinationDict["combinationIconList"][selectedModelOverviewTable]
+  combinationDetailIcon = combinationDict["combinationDetailIconList"][selectedModelOverviewTable]
+
+  with open('static/file.json') as f:
+    data = json.load(f)
+
+  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  columnList = list(originDf.columns)
+  lastDf = originDf
+
+  stepDfList = []
+  for i in range(len(combinationIcon)):
+    action = combinationIcon[i]
+    actionDetail = combinationDetailIcon[i]
+
+    if action == 'missing':
+      resultColumnDf = []
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        if len(missingIndex) > 0:
+          if actionDetail == "rem":
+            columnDf = columnDf.dropna()
+            columnDf = columnDf.to_frame(name = columnList[j])
+          if actionDetail == "min":
+            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+          if actionDetail == "max":
+            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+          if actionDetail == "mod":
+            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+          if actionDetail == "men":
+            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+          if actionDetail == "med":
+            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+          if actionDetail == "em":
+            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+          if actionDetail == "lof":
+            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+        else:
+          columnDf = columnDf
+
+        resultColumnDf.append(columnDf)
+
+      resultConcatDf = resultColumnDf[0]
+      for j in range(len(resultColumnDf) - 1):
+        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
+        resultConcatDf = resultConcatDf.reset_index(drop = True)
+
+      lastDf = resultConcatDf
+    
+    if action == 'outlier':
+      resultColumnDf = []
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+        inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
+
+        lower, upper = imputation.LowerUpper(columnDf)
+        outlierDf = columnDf[(columnDf < lower) | (columnDf > upper)]
+        outlierIndex = list(outlierDf.index)
+
+        if len(outlierIndex) > 0:
+          if actionDetail == "rem":
+            columnDf = columnDf.drop(outlierIndex)
+            columnDf = columnDf.to_frame(name = columnList[j])
+
+          else:
+            for m in outlierIndex:
+              columnDf.loc[m] = np.nan
+
+          if actionDetail == "min":
+            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+          if actionDetail == "max":
+            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+          if actionDetail == "mod":
+            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+          if actionDetail == "men":
+            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+          if actionDetail == "med":
+            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+          if actionDetail == "em":
+            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+          if actionDetail == "lof":
+            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+          for m in missingIndex:
+            columnDf.loc[m, columnList[j]] = np.nan
+
+          for m in inconsIndex:
+            columnDf.loc[m, columnList[j]] = 'incons'
+      
+        else:
+          columnDf = columnDf
+        resultColumnDf.append(columnDf)
+
+      resultConcatDf = resultColumnDf[0]
+      for j in range(len(resultColumnDf) - 1):
+        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
+        resultConcatDf = resultConcatDf.reset_index(drop = True)
+
+      lastDf = resultConcatDf
+
+    if action == 'inconsistent':
+      resultColumnDf = []
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        if len(list(set(missingAndInconsIndex) - set(missingIndex))) > 0:
+          if actionDetail == "rem":
+            columnDf = columnDf.dropna()
+            columnDf = columnDf.to_frame(name = columnList[j])
+
+          else:
+            if actionDetail == "min":
+              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+            if actionDetail == "max":
+              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+            if actionDetail == "mod":
+              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+            if actionDetail == "men":
+              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+            if actionDetail == "med":
+              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+            if actionDetail == "em":
+              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+            if actionDetail == "lof":
+              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+              for m in missingIndex:
+                columnDf.loc[m, columnList[j]] = np.nan
+        else:
+          columnDf = columnDf
+
+        resultColumnDf.append(columnDf)
+
+      resultConcatDf = resultColumnDf[0]
+      for j in range(len(resultColumnDf) - 1):
+          resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
+          resultConcatDf = resultConcatDf.reset_index(drop = True)
+
+      lastDf = resultConcatDf
+
+    if action == 'transformation':
+      coerceDfList = []
+      inconsIndex = {}
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        coerceDfList.append(tmpDf)
+
+        if len(list(set(missingAndInconsIndex) - set(missingIndex))) > 0:
+          inconsIndex[j] = list(set(missingAndInconsIndex) - set(missingIndex))
+
+      coerceDf = coerceDfList[0]
+      for j in range(len(coerceDfList) - 1):
+        coerceDf = pd.concat([coerceDf, coerceDfList[j + 1]], axis = 1)
+
+      df = coerceDf
+
+      if actionDetail == "mm":
+        from sklearn.preprocessing import MinMaxScaler
+        scaler = MinMaxScaler()
+        scaler.fit(df)
+        resultDf = pd.DataFrame(scaler.transform(df), columns = columnList)
+
+      if actionDetail == "std":
+        from sklearn.preprocessing import StandardScaler
+        scaler = StandardScaler()
+        scaler.fit(df)
+        resultDf = pd.DataFrame(scaler.transform(df), columns = columnList)
+
+      if actionDetail == "mbs":
+        from sklearn.preprocessing import MaxAbsScaler
+        scaler = MaxAbsScaler()
+        scaler.fit(df)
+        resultDf = pd.DataFrame(scaler.transform(df), columns = columnList)
+
+      if actionDetail == "rob":
+        from sklearn.preprocessing import RobustScaler
+        scaler = RobustScaler()
+        scaler.fit(df)
+        resultDf = pd.DataFrame(scaler.transform(df), columns = columnList)
+
+      if actionDetail == "log":
+        df = df.reset_index(drop = True)
+        resultDf = np.log(df)
+
+      if actionDetail == "sqt":
+        df = df.reset_index(drop = True)
+        resultDf = np.sqrt(df)
+
+      if actionDetail == "boxcox":
+        print("have to develop")
+
+      for column in range(len(inconsIndex)):
+        for row in inconsIndex[column]:
+          resultDf.iloc[row, column] = 'incons'
+
+      lastDf = resultDf
+
+    stepDfList.append(lastDf)
+  
+  ##### cnt -> currentCnt
+  cnt = 0
+  for i in range(len(stepDfList)):
+    stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
+    cnt = cnt + 1
 
   return json.dumps({'selectedModelOverviewTable': 'success'})
+
+@app.route('/lineChart', methods=['GET', 'POST'])
+def lineChart():
+  return json.dumps({'lineChart': 'success'})
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
   # to fix
-  # client 받아오기
-  # 스텝 별 데이터프레임 생성 필요
-
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
@@ -431,8 +667,6 @@ def modelDetailTable():
     treeData = json.load(jsonData)
 
   # to fix
-  # client 받아오기
-  # 스텝 별 데이터프레임 생성 필요
   actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
   actionDetailList = ["start", "locf", "em", "remove", "standard"]
   
