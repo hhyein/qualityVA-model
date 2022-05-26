@@ -249,8 +249,8 @@ def chartTable():
   permutationList = sum(permutationList, [])
 
   # combination
-  actionDetailList = ["rem", "min", "max", "men", "mod", "med", "em", "lof"]
-  transDetailList = ['mm', 'std', 'maxabs', 'rob', 'log', 'sqt']
+  impDetailList = ["rem!", "min!", "max!", "men!", "mod!", "med!", "em!", "lof!"]
+  transDetailList = ["mm!", "std!", "maxabs!", "rob!", "log!", "sqt!"]
 
   with open('static/modelData.json') as f:
     autoMLList = json.load(f)
@@ -280,18 +280,14 @@ def chartTable():
 
     toCombinationCnt = 1
     combinationIcon = []
-    if 'missing' in permutationList[i]:
-      toCombinationCnt = toCombinationCnt * len(actionDetailList)
-      combinationIcon.append('missing')
-    if 'outlier' in permutationList[i]:
-      toCombinationCnt = toCombinationCnt * len(actionDetailList)
-      combinationIcon.append('outlier')
-    if 'inconsistent' in permutationList[i]:
-      toCombinationCnt = toCombinationCnt * len(actionDetailList)
-      combinationIcon.append('inconsistent')
-    if 'transformation' in permutationList[i]:
-      toCombinationCnt = toCombinationCnt * len(transDetailList)
-      combinationIcon.append('transformation')
+    for action in actionList:
+      if action in permutationList[i]:
+        combinationIcon.append(action)
+
+        if action == 'transformation':
+          toCombinationCnt = toCombinationCnt * len(transDetailList)
+        else:
+          toCombinationCnt = toCombinationCnt * len(impDetailList)
 
     for j in range(len(inputModelList) * toCombinationCnt):
       combinationIconList.append(combinationIcon)
@@ -308,20 +304,20 @@ def chartTable():
       break
 
     toCombinationList = []
-    if 'missing' in permutationList[i]:
-      toCombinationList.append(actionDetailList)
-    if 'outlier' in permutationList[i]:
-      toCombinationList.append(actionDetailList)
-    if 'inconsistent' in permutationList[i]:
-      toCombinationList.append(actionDetailList)
-    if 'transformation' in permutationList[i]:
-      toCombinationList.append(transDetailList)
+    for action in actionList:
+      if action in permutationList[i]:
+        if action == 'transformation':
+          toCombinationList.append(impDetailList)
+        else:
+          toCombinationList.append(impDetailList)
 
     if len(toCombinationList) == 1:
-      for j in range(len(toCombinationList[0])):
-        combinationDetailIcon = []
-        combinationDetailIcon.append(toCombinationList[0][j])
-      combinationDetailIconList.append(combinationDetailIcon)
+      combinationList = toCombinationList[0]
+
+      for j in range(len(combinationList)):
+        combinationDetailIcon = combinationList[j]
+        combinationDetailIcon = combinationDetailIcon[:-1]
+        combinationDetailIconList.append([combinationDetailIcon])
 
     else:
       combinationList = toCombinationList[0]
@@ -335,35 +331,10 @@ def chartTable():
 
         combinationList = tmpList
 
+      combinationDetailIcon = []
       for j in range(len(combinationList)):
-        if 'rem' in combinationList[j]:
-          combinationDetailIcon.append('rem')
-        if 'min' in combinationList[j]:
-          combinationDetailIcon.append('min')
-        if 'max' in combinationList[j]:
-          combinationDetailIcon.append('max')
-        if 'men' in combinationList[j]:
-          combinationDetailIcon.append('men')
-        if 'mod' in combinationList[j]:
-          combinationDetailIcon.append('mod')
-        if 'med' in combinationList[j]:
-          combinationDetailIcon.append('med')
-        if 'em' in combinationList[j]:
-          combinationDetailIcon.append('em')
-        if 'lof' in combinationList[j]:
-          combinationDetailIcon.append('lof')
-        if 'mm' in combinationList[j]:
-          combinationDetailIcon.append('mm')
-        if 'std' in combinationList[j]:
-          combinationDetailIcon.append('std')
-        if 'mbs' in combinationList[j]:
-          combinationDetailIcon.append('mbs')
-        if 'rob' in combinationList[j]:
-          combinationDetailIcon.append('rob')
-        if 'log' in combinationList[j]:
-          combinationDetailIcon.append('log')
-        if 'sqt' in combinationList[j]:
-          combinationDetailIcon.append('sqt')
+        combinationDetailIcon = combinationList[j].split('!')
+        combinationDetailIcon.remove('')
 
         combinationDetailIconList.append(combinationDetailIcon)
         if len(combinationDetailIconList) > (len(autoMLList) * len(inputModelList)) - 1:
@@ -409,15 +380,6 @@ def chartTable():
 
   with open('static/combinationData.json', 'w') as f:
       json.dump(response, f, indent = 4)
-
-  response = {
-    'combinationList': ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    'inputModelList': ['Logistic Regression'],
-    'inputEvalList': ['Accuracy', 'AUC', 'Recall'],
-    'Accuracy': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}],
-    'AUC': [{'data': 0.9, 'originData': 0.1}, {'data': 0.6, 'originData': 0.4}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}],
-    'Recall': [{'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.9, 'originData': 0.1}, {'data': 0.8, 'originData': 0.2}, {'data': 0.95, 'originData': 0.05}, {'data': 0.7, 'originData': 0.3}, {'data': 0.75, 'originData': 0.25}, {'data': 0.95, 'originData': 0.05}, {'data': 0.77, 'originData': 0.23}, {'data': 0.9553, 'originData': 0.04469999999999996}, {'data': 0.95, 'originData': 0.05}]
-  }
 
   return json.dumps(response)
 

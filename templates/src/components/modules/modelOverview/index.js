@@ -20,9 +20,9 @@ export default function ModelOverview() {
     setData(
       chartTable.combinationList.map((combination, i) => ({
         key: combination,
-        model: combination, //chartTable.modelNames[i]
-        combination: ["missing", "outlier", "inconsistent", "transformation"], // chartTable.combinationIconList[i]
-        combinationDetail: ["lof", "em", "rem", "std"], // chartTable.combinationDetailIconList[i]
+        model: chartTable.modelNames[i],
+        combination: chartTable.combinationIconList[i],
+        combinationDetail: chartTable.combinationDetailIconList[i],
         ...chartTable.inputEvalList.reduce(
           (acc, cur) => ({
             ...acc,
