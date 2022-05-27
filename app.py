@@ -12,11 +12,12 @@ import codecs
 import itertools
 import numpy as np
 import pandas as pd
-# from nl4dv import NL4DV
-from pycaret.regression import *
 from io import StringIO
 from scipy import stats
 from collections import Counter
+
+# from nl4dv import NL4DV
+from pycaret.regression import *
 
 import module.imputation as imputation
 import module.tree as tree
@@ -645,36 +646,34 @@ def selectedModelOverviewTable():
   evalName = 'MAE'
   #####
 
-  with open('static/combinationData.json') as f:
-    combinationDict = json.load(f)
-  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+  # with open('static/combinationData.json') as f:
+  #   combinationDict = json.load(f)
+  # modelName = combinationDict["modelNames"][selectedModelOverviewTable]
 
-  fileList = os.listdir('static/dataset')
-  print(fileList)
+  # fileList = os.listdir('static/dataset')
+  # print(fileList)
 
-  # dropna 처리 해야하는지?
-  resultList = []
-  for i in range(len(fileList)):
-    df = pd.read_csv('static/dataset/' + fileList[i])
-    clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-    model = compare_models(include = [modelName])
-    result = pull()
-    resultList.append(result)
+  # # dropna 처리 해야하는지?
+  # resultList = []
+  # for i in range(len(fileList)):
+  #   df = pd.read_csv('static/dataset/' + fileList[i])
+  #   clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  #   model = compare_models(include = [modelName])
+  #   result = pull()
+  #   resultList.append(result)
 
-  # test
-  with open('static/test.json', 'w') as file:
-    file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))
+  # # test
+  # with open('static/test.json', 'w') as file:
+  #   file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))
 
-  with open('static/test.json') as f:
-    test = json.load(f)
+  # with open('static/test.json') as f:
+  #   test = json.load(f)
 
-  evalResultList = []
-  for i in range(len(test)):
-    testData = test[i]
-    evalResult = testData[evalName][modelName]
-    evalResultList.append(evalResult)
-
-
+  # evalResultList = []
+  # for i in range(len(test)):
+  #   testData = test[i]
+  #   evalResult = testData[evalName][modelName]
+  #   evalResultList.append(evalResult)
 
   return json.dumps({'selectedModelOverviewTable': 'success'})
 
@@ -686,22 +685,22 @@ def lineChart():
   predictName = 'hue'
   #####
 
-  with open('static/combinationData.json') as f:
-    combinationDict = json.load(f)
-  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+  # with open('static/combinationData.json') as f:
+  #   combinationDict = json.load(f)
+  # modelName = combinationDict["modelNames"][selectedModelOverviewTable]
 
-  fileList = os.listdir('static/dataset')
-  prit(fileList)
+  # fileList = os.listdir('static/dataset')
+  # prit(fileList)
 
-  resultList = []
-  for i in range(len(fileList)):
-    df = pd.read_csv(fileList)
-    clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-    model = compare_models(include = [modelName])
-    result = pull()
-    resultList.append(result)
+  # resultList = []
+  # for i in range(len(fileList)):
+  #   df = pd.read_csv(fileList)
+  #   clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  #   model = compare_models(include = [modelName])
+  #   result = pull()
+  #   resultList.append(result)
 
-  print(resultList)
+  # print(resultList)
 
   return json.dumps({'lineChart': 'success'})
 
