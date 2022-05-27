@@ -3,6 +3,7 @@ import os
 from flask import *
 from flask_cors import CORS
 
+import os
 import ast
 import csv
 import math
@@ -12,6 +13,7 @@ import itertools
 import numpy as np
 import pandas as pd
 # from nl4dv import NL4DV
+from pycaret.regression import *
 from io import StringIO
 from scipy import stats
 from collections import Counter
@@ -636,10 +638,71 @@ def selectedModelOverviewTable():
     stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
     cnt = cnt + 1
 
+  ##### example
+  ##### click eval 필요
+  # global predictName
+  predictName = 'hue'
+  evalName = 'MAE'
+  #####
+
+  with open('static/combinationData.json') as f:
+    combinationDict = json.load(f)
+  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+
+  fileList = os.listdir('static/dataset')
+  print(fileList)
+
+  # dropna 처리 해야하는지?
+  resultList = []
+  for i in range(len(fileList)):
+    df = pd.read_csv('static/dataset/' + fileList[i])
+    clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+    model = compare_models(include = [modelName])
+    result = pull()
+    resultList.append(result)
+
+  # test
+  with open('static/test.json', 'w') as file:
+    file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))
+
+  with open('static/test.json') as f:
+    test = json.load(f)
+
+  evalResultList = []
+  for i in range(len(test)):
+    testData = test[i]
+    evalResult = testData[evalName][modelName]
+    evalResultList.append(evalResult)
+
+
+
   return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
+  ##### example
+  global selectedModelOverviewTable, predictName
+  selectedModelOverviewTable = 80
+  predictName = 'hue'
+  #####
+
+  with open('static/combinationData.json') as f:
+    combinationDict = json.load(f)
+  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+
+  fileList = os.listdir('static/dataset')
+  prit(fileList)
+
+  resultList = []
+  for i in range(len(fileList)):
+    df = pd.read_csv(fileList)
+    clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+    model = compare_models(include = [modelName])
+    result = pull()
+    resultList.append(result)
+
+  print(resultList)
+
   return json.dumps({'lineChart': 'success'})
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
