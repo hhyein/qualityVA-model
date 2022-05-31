@@ -78,11 +78,12 @@ export const FileDataProvider = ({ children }) => {
   }, [init, updateSetting])
 
   const updateModelDetail = useCallback(async () => {
-    const lineChart = await fetchData("/static/linechart.json")
-    const { treeData, treeLength } = await fetchData("/treeChart")
-    const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData("/modelDetailTable")
     const selectedModelOverviewTable = await postData("/selectedModelOverviewTable", selectedModelOverviewTableRow)
     console.log(selectedModelOverviewTable)
+    
+    const lineChart = await fetchData("/lineChart")
+    const { treeData, treeLength } = await fetchData("/treeChart")
+    const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData("/modelDetailTable")
 
     setModelDetailData({
       lineChart,
@@ -94,7 +95,7 @@ export const FileDataProvider = ({ children }) => {
         <DensityChart data={data} />
       )),
     })
-  }, [])
+  }, [selectedModelOverviewTableRow])
 
   const updateModelOverview = useCallback(async () => {
     const chartTable = await fetchData("/chartTable")

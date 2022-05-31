@@ -6,26 +6,14 @@
         {
             "index": "1",
             "state": "none",
-            "name": "EM",
+            "name": "mm",
             "children": [
                 {
                     "index": "2",
-                    "state": "none",
-                    "name": "LOCF",
+                    "state": "current",
+                    "name": "mod",
                     "children": [
                         {
-                            "index": "3",
-                            "state": "none",
-                            "name": "normalization",
-                            "children": [
-                                {
-                                    "index": "4",
-                                    "state": "current",
-                                    "name": "remove",
-                                    "children": [
-                                    ]
-                                }
-                            ]
                         }
                     ]
                 }

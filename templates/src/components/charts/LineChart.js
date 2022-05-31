@@ -24,7 +24,7 @@ export default function LineChart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var allGroup = ['lr', 'knn', 'nb']
+    var allGroup = ['lr', 'knn', 'dt']
 
     var dataReady = allGroup.map(function (grpName) {
       return {
@@ -50,7 +50,7 @@ export default function LineChart(props) {
 
     var y = d3
       .scaleLinear()
-      .domain([0, 1])
+      .domain([0, 0.5])
       .range([height - 10, 0])
     svg
       .append('g')

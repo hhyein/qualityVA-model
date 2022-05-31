@@ -17,7 +17,7 @@ from scipy import stats
 from collections import Counter
 
 # from nl4dv import NL4DV
-from pycaret.regression import *
+# from pycaret.regression import *
 
 import module.imputation as imputation
 import module.tree as tree
@@ -31,7 +31,7 @@ inputModelList = []
 inputEvalList = []
 
 fileUploadState = False
-currentCnt = 6
+currentCnt = 3
 selectedModelOverviewTable = 0
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
@@ -92,13 +92,19 @@ def setting():
         columnList.append({'label': tmpList[i], 'value': i})
 
       modelList = []
+      # #### to fix
+      # tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
+      #             'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+      # ####
       tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
                   'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
       for i in range(len(tmpList)):
         modelList.append({'label': tmpList[i], 'value': i})
 
       evalList = []
+      # #### to fix
       # tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+      # ####
       tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
       for i in range(len(tmpList)):
         evalList.append({'label': tmpList[i], 'value': i})
@@ -260,6 +266,7 @@ def chartTable():
     autoMLDict = json.load(f)
 
   ##### example
+  # global inputModelList, inputEvalList
   inputModelList = ['lr', 'knn', 'dt']
   inputEvalList = ['MAE', 'MSE', 'RMSE']
   #####
@@ -394,15 +401,11 @@ def chartTable():
 def selectedModelOverviewTable():
   req = request.get_data().decode('utf-8')
 
-  if req == '':
-    req = 0
-  else:
-    req = ast.literal_eval(req)
+  if req == '': req = 0
+  else: req = ast.literal_eval(req)
 
-  ##### example
   global selectedModelOverviewTable
-  selectedModelOverviewTable = 80
-  #####
+  selectedModelOverviewTable = req
 
   with open('static/combinationData.json') as f:
     combinationDict = json.load(f)
@@ -633,86 +636,88 @@ def selectedModelOverviewTable():
 
     stepDfList.append(lastDf)
   
-  ##### cnt -> currentCnt
+  ##### example
+  # global currentCnt
+  #####
   cnt = 0
   for i in range(len(stepDfList)):
     stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
     cnt = cnt + 1
 
-  ##### example
-  ##### click eval 필요
-  # global predictName
-  predictName = 'hue'
-  evalName = 'MAE'
-  #####
-
-  # with open('static/combinationData.json') as f:
-  #   combinationDict = json.load(f)
-  # modelName = combinationDict["modelNames"][selectedModelOverviewTable]
-
-  # fileList = os.listdir('static/dataset')
-  # print(fileList)
-
-  # # dropna 처리 해야하는지?
-  # resultList = []
-  # for i in range(len(fileList)):
-  #   df = pd.read_csv('static/dataset/' + fileList[i])
-  #   clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  #   model = compare_models(include = [modelName])
-  #   result = pull()
-  #   resultList.append(result)
-
-  # # test
-  # with open('static/test.json', 'w') as file:
-  #   file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))
-
-  # with open('static/test.json') as f:
-  #   test = json.load(f)
-
-  # evalResultList = []
-  # for i in range(len(test)):
-  #   testData = test[i]
-  #   evalResult = testData[evalName][modelName]
-  #   evalResultList.append(evalResult)
-
   return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
-  ##### example
-  global selectedModelOverviewTable, predictName
-  selectedModelOverviewTable = 80
-  predictName = 'hue'
-  #####
-
-  # with open('static/combinationData.json') as f:
-  #   combinationDict = json.load(f)
-  # modelName = combinationDict["modelNames"][selectedModelOverviewTable]
+  # ##### example
+  # # global selectedModelOverviewTable, inputModelList, predictName
+  # selectedModelOverviewTable = 80
+  inputModelList = ['lr', 'knn', 'dt']
+  # predictName = 'hue'
+  # ##### to fix
+  # orderEval = 'MAE'
+  # #####
 
   # fileList = os.listdir('static/dataset')
-  # prit(fileList)
+  # evalResultList = []
+  # for i in range(len(fileList) + 1):
+  #   evalResultList.append([])
 
-  # resultList = []
+  # with open('static/file.json') as f:
+  #   data = json.load(f)
+
+  # originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  # ##### to fix
+  # originDf = originDf.dropna()
+  # #####
+
+  # clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  # model = compare_models(include = inputModelList)
+  # evalResultDf = pull()
+
+  # for i in range(len(inputModelList)):
+  #   modelName = inputModelList[i]
+  #   evalResult = evalResultDf.loc[modelName][orderEval]
+  #   evalResultList[0].append(evalResult)
+
   # for i in range(len(fileList)):
-  #   df = pd.read_csv(fileList)
+  #   df = pd.read_csv('static/dataset/' + fileList[i])
+  #   ##### to fix
+  #   df = df.dropna()
+  #   #####
+
   #   clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  #   model = compare_models(include = [modelName])
-  #   result = pull()
-  #   resultList.append(result)
+  #   model = compare_models(include = inputModelList)
+  #   evalResultDf = pull()
 
-  # print(resultList)
+  #   for j in range(len(inputModelList)):
+  #     modelName = inputModelList[j]
+  #     evalResult = evalResultDf.loc[modelName][orderEval]
+  #     evalResultList[i + 1].append(evalResult)
 
-  return json.dumps({'lineChart': 'success'})
+  evalResultList = [[0.1244, 0.1883, 0.1565], [0.1012, 0.0978, 0.1286], [0.1036, 0.0975, 0.1426]]
+
+  lineChartList = []
+  for i in range(len(evalResultList)):
+    tmpDict = {}
+    tmpDict['time'] = i
+
+    for j in range(len(inputModelList)):
+      tmpDict[inputModelList[j]] = evalResultList[i][j]
+
+    lineChartList.append(tmpDict)
+
+  return jsonify(lineChartList)
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
-  # to fix
+  ##### to fix
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
   response = {}
   response['treeData'] = treeData
   response['treeLength'] = currentCnt
+  #####
 
   return jsonify(response)
 
@@ -728,9 +733,10 @@ def modelDetailTable():
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
-  # to fix
+  ##### to fix
   actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
   actionDetailList = ["start", "locf", "em", "remove", "standard"]
+  #####
   
   # barChart
   barChartList = []
@@ -751,9 +757,10 @@ def modelDetailTable():
     tmpList.append(df.isnull().sum().values[0].tolist())
   incons = sum(tmpList)
 
-  # to fix
+  ###### to fix
   for i in range(0, 5):
     barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
+  #####
 
   # densityChart
   densityChartList = []

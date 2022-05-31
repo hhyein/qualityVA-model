@@ -53,7 +53,7 @@ export default function ChartTable({
               <div
                 className="grid-td"
                 key={`${key}${colIdx}`}
-                onClick={() => onTableCellClick(rowIdx)}
+                onClick={() => onTableCellClick(key)}
                 style={{
                   borderRight:
                     colIdx === columnKeys.length - 1 ? "none" : undefined,
