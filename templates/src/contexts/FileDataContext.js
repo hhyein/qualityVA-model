@@ -1,10 +1,10 @@
-import axios from "axios"
-import React, { useCallback, useContext, useEffect, useState } from "react"
-import BarChart from "../components/charts/BarChart"
-import DensityChart from "../components/charts/DensityChart"
-import { PORT } from "../const"
+import axios from 'axios'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import BarChart from '../components/charts/BarChart'
+import DensityChart from '../components/charts/DensityChart'
+import { PORT } from '../const'
 
-const fetchData = async (route) => {
+const fetchData = async route => {
   try {
     const res = await axios.get(
       `http://${window.location.hostname}:${PORT}${route}?${Math.random()}`
@@ -16,11 +16,12 @@ const fetchData = async (route) => {
   }
 }
 
-const postData = async (route, params) => {
+const postData = async (route, params, config) => {
   try {
     const res = await axios.post(
       `http://${window.location.hostname}:${PORT}${route}?${Math.random()}`,
-      params
+      params,
+      config
     )
     return res.data
   } catch (e) {
@@ -47,66 +48,101 @@ export const FileDataProvider = ({ children }) => {
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
-  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] = useState(0)
-  const [selectedActionDetailHeatmapIndex, setSelectedActionDetailHeatmapIndex] = useState("")
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
+    useState(0)
+  const [
+    selectedActionDetailHeatmapIndex,
+    setSelectedActionDetailHeatmapIndex,
+  ] = useState('')
 
-  const isEmptyData = (data) => {
-    return Object.values(data).some((value) => value === undefined)
+  const isEmptyData = data => {
+    return Object.values(data).some(value => value === undefined)
   }
 
   const init = useCallback(async () => {
-    const data = await fetchData("/")
+    const data = await fetchData('/')
     setColumnList(data?.columnList ?? [])
   }, [])
 
-  const updateSetting = useCallback(async () => {
-    const { columnList, modelList, evalList, dimensionList } = await fetchData("/setting")
-    const postSettingValues = await postData("/setting", settingValues)
-    console.log(postSettingValues)
+  useEffect(() => {
+    init()
+  }, [init])
 
+  const handleSettingValuesChange = useCallback(async () => {
+    if (Object.values(settingValues).some(value => value === undefined)) {
+      return
+    }
+    console.log(settingValues)
+    await postData('/setting', settingValues)
+  }, [settingValues])
+
+  useEffect(() => {
+    handleSettingValuesChange()
+  }, [handleSettingValuesChange])
+
+  const updateSetting = useCallback(async () => {
+    const { columnList, modelList, evalList, dimensionList } = await fetchData(
+      '/setting'
+    )
     setSettingData({
       columnList,
       modelList,
       evalList,
       dimensionList,
     })
-  }, [settingValues])
+  }, [])
 
-  useEffect(() => {
-    init()
-    updateSetting()
-  }, [init, updateSetting])
+  const handleDrop = useCallback(
+    async files => {
+      setFile(files[0])
+      var formData = new FormData()
+      const config = {
+        header: { 'content-type': 'multipart/form-data' },
+      }
+      formData.append('file', files[0])
+      await postData('/fileUpload', formData, config)
+      await updateSetting()
+    },
+    [updateSetting]
+  )
 
   const updateModelDetail = useCallback(async () => {
-    const selectedModelOverviewTable = await postData("/selectedModelOverviewTable", selectedModelOverviewTableRow)
+    const selectedModelOverviewTable = await postData(
+      '/selectedModelOverviewTable',
+      selectedModelOverviewTableRow
+    )
     console.log(selectedModelOverviewTable)
-    
-    const lineChart = await fetchData("/lineChart")
-    const { treeData, treeLength } = await fetchData("/treeChart")
-    const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData("/modelDetailTable")
+
+    const lineChart = await fetchData('/lineChart')
+    const { treeData, treeLength } = await fetchData('/treeChart')
+    const { actionList, actionDetailList, barChartList, densityChartList } =
+      await fetchData('/modelDetailTable')
 
     setModelDetailData({
       lineChart,
       treeChart: { ...treeData, treeLength },
       actionList,
       actionDetailList,
-      barChartList: barChartList.map((data) => <BarChart data={[data]} />),
-      densityChartList: densityChartList.map((data) => (
+      barChartList: barChartList.map(data => <BarChart data={[data]} />),
+      densityChartList: densityChartList.map(data => (
         <DensityChart data={data} />
       )),
     })
   }, [selectedModelOverviewTableRow])
 
   const updateModelOverview = useCallback(async () => {
-    const chartTable = await fetchData("/chartTable")
+    const chartTable = await fetchData('/chartTable')
     setModelOverviewData({ chartTable })
   }, [])
 
   const updateActionDetail = useCallback(async () => {
-    const barChart = await fetchData("/actionDetailBarchart")
-    const { heatmapList, heatmapYList } = await fetchData("/heatmapChart")
-    const histogramChart = await postData("/histogramChart", selectedActionDetailHeatmapIndex)
-    const scatterChart = await fetchData("/scatterChart")
+    const barChart = await fetchData('/actionDetailBarchart')
+    const { heatmapList, heatmapYList } = await fetchData('/heatmapChart')
+    const histogramChart = await postData(
+      '/histogramChart',
+      selectedActionDetailHeatmapIndex
+    )
+    const scatterChart = await fetchData('/scatterChart')
     setActionDetailData({
       barChart,
       heatmapChart: heatmapList,
@@ -136,7 +172,7 @@ export const FileDataProvider = ({ children }) => {
       value={{
         dataColumnList,
         file,
-        setFile,
+        handleDrop,
         settingValues,
         setSettingValues,
         settingData,
