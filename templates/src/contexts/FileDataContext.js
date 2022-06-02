@@ -49,7 +49,7 @@ export const FileDataProvider = ({ children }) => {
   const [actionDetailData, setActionDetailData] = useState({})
 
   const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
-    useState(0)
+    useState()
   const [
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
@@ -107,11 +107,17 @@ export const FileDataProvider = ({ children }) => {
   )
 
   const updateModelDetail = useCallback(async () => {
-    const selectedModelOverviewTable = await postData(
-      '/selectedModelOverviewTable',
+    if (selectedModelOverviewTableRow === undefined) {
+      return
+    }
+    const { key, combination, combinationDetail } =
       selectedModelOverviewTableRow
-    )
-    console.log(selectedModelOverviewTable)
+    await postData('/selectedModelOverviewTable', key)
+    const res = await postData('/modelDetailTable', {
+      combination,
+      combinationDetail,
+    })
+    console.log(res)
 
     const lineChart = await fetchData('/lineChart')
     const { treeData, treeLength } = await fetchData('/treeChart')

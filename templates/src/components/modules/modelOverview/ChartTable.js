@@ -1,8 +1,8 @@
-import React from "react"
+import React from 'react'
 
 export default function ChartTable({
   data = [],
-  onTableCellClick,
+  onTableRowClick,
   onTableHeadClick,
   canSortColumns,
   selectedColumn,
@@ -12,40 +12,46 @@ export default function ChartTable({
   return data.length > 0 ? (
     <div
       style={{
-        display: "grid",
+        display: 'grid',
         gridTemplateColumns: `auto auto auto auto repeat(${canSortColumns.length}, 1fr)`,
       }}
     >
       <div className="grid-th" />
       {columnKeys.map((key, i) => {
         const isSortButton = canSortColumns.includes(key)
+        const selected = selectedColumn === key
         return (
           <div
             className="grid-th"
             key={key}
             style={{
-              cursor: isSortButton ? "pointer" : "default",
-              background: selectedColumn === key ? "#e1e1e1" : undefined,
-              textAlign: "center",
-              fontWeight: "bold",
-              borderRight: i === columnKeys.length - 1 ? "none" : undefined,
+              cursor: isSortButton ? 'pointer' : 'default',
+              background: selected ? '#e1e1e1' : undefined,
+              textAlign: 'center',
+              fontWeight: 'bold',
+              borderRight: i === columnKeys.length - 1 ? 'none' : undefined,
             }}
             onClick={() => isSortButton && onTableHeadClick(key)}
           >
             {key}
+            {selected && <>&nbsp;&darr;</>}
           </div>
         )
       })}
       {data.map(({ key, ...others }, rowIdx) => {
         const isLastRow = rowIdx === data.length - 1
+        const { combination, combinationDetail } = others
+        const onClick = () =>
+          onTableRowClick({ key, combination, combinationDetail })
         return (
           <React.Fragment key={key}>
             <div
               className="grid-td"
               style={{
-                fontWeight: "bold",
-                borderBottom: isLastRow ? "none" : undefined,
+                fontWeight: 'bold',
+                borderBottom: isLastRow ? 'none' : undefined,
               }}
+              onClick={onClick}
             >
               {key}
             </div>
@@ -53,11 +59,11 @@ export default function ChartTable({
               <div
                 className="grid-td"
                 key={`${key}${colIdx}`}
-                onClick={() => onTableCellClick(key)}
+                onClick={onClick}
                 style={{
                   borderRight:
-                    colIdx === columnKeys.length - 1 ? "none" : undefined,
-                  borderBottom: isLastRow ? "none" : undefined,
+                    colIdx === columnKeys.length - 1 ? 'none' : undefined,
+                  borderBottom: isLastRow ? 'none' : undefined,
                 }}
               >
                 {chart}

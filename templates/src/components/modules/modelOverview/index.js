@@ -30,13 +30,18 @@ export default function ModelOverview() {
       ),
     }))
     const defaultSelectedColumn = chartTable.inputEvalList[0]
-    setSelectedColumn(defaultSelectedColumn)
-    setData(
-      chartTableData.sort(
-        (a, b) => b[defaultSelectedColumn].data - a[defaultSelectedColumn].data
-      )
+    const sortedChartTableData = chartTableData.sort(
+      (a, b) => b[defaultSelectedColumn].data - a[defaultSelectedColumn].data
     )
-  }, [chartTable])
+    setSelectedColumn(defaultSelectedColumn)
+    setData(sortedChartTableData)
+    const firstRow = sortedChartTableData[0]
+    setSelectedModelOverviewTableRow({
+      key: firstRow.key,
+      combination: firstRow.combination,
+      combinationDetail: firstRow.combinationDetail,
+    })
+  }, [chartTable, setSelectedModelOverviewTableRow])
 
   const handleTableHeadClick = useCallback(columnName => {
     setSelectedColumn(columnName)
@@ -52,7 +57,7 @@ export default function ModelOverview() {
           canSortColumns={chartTable.inputEvalList}
           selectedColumn={selectedColumn}
           onTableHeadClick={handleTableHeadClick}
-          onTableCellClick={rowIdx => setSelectedModelOverviewTableRow(rowIdx)}
+          onTableRowClick={params => setSelectedModelOverviewTableRow(params)}
           data={data.map(d => ({
             key: d.key,
             ...['model'].reduce(
