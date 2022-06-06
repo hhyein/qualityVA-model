@@ -32,7 +32,9 @@ inputEvalList = []
 
 fileUploadState = False
 currentCnt = 3
-selectedModelOverviewTable = 0
+
+combinationIcon = []
+combinationDetailIcon = []
 
 @app.route('/fileUpload', methods=['GET', 'POST'])
 def fileUpload():
@@ -134,25 +136,20 @@ def setting():
     req = eval(req)
 
     global predictName, dimension, inputModelList, inputEvalList
+    predictName = req["column"]["label"]
+    dimension = req["dimension"]["label"]
+    modelList = req["model"]
+    evalList = req["eval"]
 
-    if len(req) == 4:
-      predictName = req["column"]["label"]
-      dimension = req["dimension"]["label"]
-      modelList = req["model"]
-      evalList = req["eval"]
+    inputModelList = []
+    for i in range(len(modelList)):
+        inputModelList.append(modelList[i]["label"])
 
-      inputModelList = []
-      for i in range(len(modelList)):
-          inputModelList.append(modelList[i]["label"])
+    inputEvalList = []
+    for i in range(len(evalList)):
+        inputEvalList.append(evalList[i]["label"])
 
-      inputEvalList = []
-      for i in range(len(evalList)):
-          inputEvalList.append(evalList[i]["label"])
-
-      return json.dumps({'setting': 'success'})
-
-    else:
-      return json.dumps({'setting': 'failure'})
+    return json.dumps({'setting': 'success'})
 
 @app.route('/query', methods=['GET', 'POST'])
 def query():
@@ -400,19 +397,15 @@ def chartTable():
 @app.route('/selectedModelOverviewTable', methods=['GET', 'POST'])
 def selectedModelOverviewTable():
   req = request.get_data().decode('utf-8')
+  req = eval(req)
 
-  if req == '': req = 0
-  else: req = ast.literal_eval(req)
-
-  global selectedModelOverviewTable
-  selectedModelOverviewTable = req
-
-  with open('static/combinationData.json') as f:
-    combinationDict = json.load(f)
-
-  modelName = combinationDict["modelNames"][selectedModelOverviewTable]
-  combinationIcon = combinationDict["combinationIconList"][selectedModelOverviewTable]
-  combinationDetailIcon = combinationDict["combinationDetailIconList"][selectedModelOverviewTable]
+  global combinationIcon, combinationDetailIcon
+  selectedModelOverviewTable = req['key']
+  combinationIcon = req['combination']
+  combinationDetailIcon = req['combinationDetail']
+  ##### to fix
+  modelName = 'dt'
+  #####
 
   with open('static/file.json') as f:
     data = json.load(f)
@@ -636,21 +629,39 @@ def selectedModelOverviewTable():
 
     stepDfList.append(lastDf)
   
-  ##### example
-  # global currentCnt
-  #####
   cnt = 0
   for i in range(len(stepDfList)):
     stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
     cnt = cnt + 1
+
+  # with open('static/treeData.json') as jsonData:
+  #   treeData = json.load(jsonData)
+
+  # root = tree.TreeNode(index = treeData['index'], state = treeData['state'])
+  # root = root.dict_to_tree(treeData['children'])
+
+  # newNode = tree.TreeNode(index = '0', state = 'none')
+  # root.add_child_to(str(currentCnt), newNode)
+  # root.update_state()
+
+  # for i in range(len(stepDfList)):
+  #   if i == len(stepDfList) - 1: state = 'current'
+  #   else: state = 'none'
+
+  #   newNode = tree.TreeNode(index = str(i + 1), state = state)
+  #   root.add_child_to(str(currentCnt), newNode)
+  #   root.update_state()
+
+  # treeData = root.tree_to_dict()
+  # with open('static/treeData.json', 'w') as f:
+  #   json.dump(treeData, f, indent = 4) 
 
   return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
   # ##### example
-  # # global selectedModelOverviewTable, inputModelList, predictName
-  # selectedModelOverviewTable = 80
+  # # global inputModelList, predictName
   inputModelList = ['lr', 'knn', 'dt']
   # predictName = 'hue'
   # ##### to fix
@@ -710,14 +721,12 @@ def lineChart():
 
 @app.route('/treeChart', methods = ['GET', 'POST'])
 def treeChart():
-  ##### to fix
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
   response = {}
   response['treeData'] = treeData
   response['treeLength'] = currentCnt
-  #####
 
   return jsonify(response)
 
@@ -733,11 +742,6 @@ def modelDetailTable():
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
-  ##### to fix
-  actionList = ["start", "missing", "outlier", "inconsistent", "normalization"]
-  actionDetailList = ["start", "locf", "em", "remove", "standard"]
-  #####
-  
   # barChart
   barChartList = []
   missing = sum(originDf.isnull().sum().values.tolist())
@@ -757,10 +761,7 @@ def modelDetailTable():
     tmpList.append(df.isnull().sum().values[0].tolist())
   incons = sum(tmpList)
 
-  ###### to fix
-  for i in range(0, 5):
-    barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
-  #####
+  barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
 
   # densityChart
   densityChartList = []
@@ -776,8 +777,51 @@ def modelDetailTable():
   normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
   densityDf = imputation.densityDf(normalDf, tsneDf)
 
-  for i in range(0, 5):
+  densityChartList.append(densityDf.to_dict('records'))
+
+  fileList = os.listdir('static/dataset')
+  for i in range(len(fileList)):
+    df = pd.read_csv('static/dataset/' + fileList[i])
+
+    # barChart
+    missing = sum(df.isnull().sum().values.tolist())
+
+    tmpList = []
+    for column in df:
+      lower, upper = imputation.LowerUpper(df[column])
+      data1 = df[df[column] > upper]
+      data2 = df[df[column] < lower]
+      tmpList.append(data1.shape[0] + data2.shape[0])
+    outlier = sum(tmpList)
+
+    tmpList = []
+    for column in df:
+      columnDf = df[column].dropna()
+      columnDf = pd.DataFrame(pd.to_numeric(columnDf, errors = 'coerce'))
+      tmpList.append(columnDf.isnull().sum().values[0].tolist())
+    incons = sum(tmpList)
+
+    barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
+
+    # densityChart
+    dataMatrix = df.dropna().reset_index(drop = True).values
+    tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
+    tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
+
+    mu = tsneDf.mean()
+    std = tsneDf.std()
+    rv = stats.norm(loc = mu, scale = std)
+    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+    densityDf = imputation.densityDf(normalDf, tsneDf)
+
     densityChartList.append(densityDf.to_dict('records'))
+
+  global combinationIcon, combinationDetailIcon
+  actionList = combinationIcon
+  actionDetailList = combinationDetailIcon
+
+  actionList.insert(0, 'start')
+  actionDetailList.insert(0, 'start')
 
   response = {}
   response['actionList'] = actionList
