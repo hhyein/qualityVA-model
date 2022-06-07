@@ -5,8 +5,7 @@ import HorizontalBarChart from '../../charts/HorizontalBarChart'
 import { useFileData } from '../../../contexts/FileDataContext'
 
 export default function ModelOverview() {
-  const { modelOverviewData, isEmptyData, setSelectedModelOverviewTableRow } =
-    useFileData()
+  const { modelOverviewData, isEmptyData, setSelectedModelOverviewTableRow } = useFileData()
   const { chartTable } = modelOverviewData
 
   const [data, setData] = useState([])
@@ -31,7 +30,7 @@ export default function ModelOverview() {
     }))
     const defaultSelectedColumn = chartTable.inputEvalList[0]
     const sortedChartTableData = chartTableData.sort(
-      (a, b) => b[defaultSelectedColumn].data - a[defaultSelectedColumn].data
+      (a, b) => a[defaultSelectedColumn].data - b[defaultSelectedColumn].data
     )
     setSelectedColumn(defaultSelectedColumn)
     setData(sortedChartTableData)

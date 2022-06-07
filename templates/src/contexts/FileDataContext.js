@@ -37,6 +37,7 @@ export const FileDataProvider = ({ children }) => {
 
   const [file, setFile] = useState()
   const [settingValues, setSettingValues] = useState({
+    purpose: undefined,
     column: undefined,
     model: undefined,
     eval: undefined,
@@ -76,9 +77,10 @@ export const FileDataProvider = ({ children }) => {
   }, [handleSettingValuesChange])
 
   const updateSetting = useCallback(async () => {
-    const { columnList, modelList, evalList, dimensionList } = await fetchData('/setting')
+    const { purposeList, columnList, modelList, evalList, dimensionList } = await fetchData('/setting')
 
     setSettingData({
+      purposeList,
       columnList,
       modelList,
       evalList,
@@ -108,12 +110,13 @@ export const FileDataProvider = ({ children }) => {
     await postData('/selectedModelOverviewTable', {key, combination, combinationDetail})
 
     const lineChart = await fetchData('/lineChart')
-    const { treeData, treeLength } = await fetchData('/treeChart')
-    const { actionList, actionDetailList, barChartList, densityChartList } = await fetchData('/modelDetailTable')
+    const treeChart = await fetchData('/treeChart')
+    const { currentCnt, actionList, actionDetailList, barChartList, densityChartList } = await fetchData('/modelDetailTable')
 
     setModelDetailData({
       lineChart,
-      treeChart: { ...treeData, treeLength },
+      treeChart,
+      currentCnt,
       actionList,
       actionDetailList,
       barChartList: barChartList.map(data => <BarChart data={[data]} />),

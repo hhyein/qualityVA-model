@@ -34,7 +34,7 @@ export default function ChartTable({
             onClick={() => isSortButton && onTableHeadClick(key)}
           >
             {key}
-            {selected && <>&nbsp;&darr;</>}
+            {selected && <>&nbsp;&uarr;</>}
           </div>
         )
       })}

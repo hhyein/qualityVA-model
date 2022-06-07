@@ -7,7 +7,7 @@ import { useFileData } from "../../../contexts/FileDataContext"
 export default function Setting() {
   const {
     isEmptyData,
-    settingData: { columnList, modelList, evalList, dimensionList },
+    settingData: { purposeList, columnList, modelList, evalList, dimensionList },
     settingValues,
     setSettingValues,
   } = useFileData()
@@ -35,7 +35,15 @@ export default function Setting() {
         dimensionList,
       }) && (
         <>
-          <Title title="column to predict" />
+          <Title title="purpose of data" />
+          <Select
+            options={purposeList}
+            placeholder={<div>select purpose</div>}
+            onChange={(v) => {
+              handleChange("purpose", v)
+            }}
+          />
+          <Title title="column to purpose" />
           <Select
             options={columnList}
             value={settingValues.column}

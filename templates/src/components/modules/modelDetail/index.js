@@ -18,6 +18,7 @@ export default function ModelDetail() {
   const {
     lineChart,
     treeChart,
+    currentCnt,
     actionList,
     actionDetailList,
     barChartList,
@@ -35,6 +36,7 @@ export default function ModelDetail() {
       {!isEmptyData({
         lineChart,
         treeChart,
+        currentCnt,
         actionList,
         actionDetailList,
         barChartList,
@@ -42,8 +44,8 @@ export default function ModelDetail() {
       }) && (
         <>
           <Legend dataColorInfo={dataColorInfo} />
-          <LineChart data={lineChart} dataLenght={treeChart.treeLength} />
-          <HorizontalTreeChart data={[treeChart]} />
+          <LineChart data={lineChart} dataLenght={currentCnt} />
+          <HorizontalTreeChart data={treeChart} dataLenght={currentCnt} />
           <div>
             <ModelDetailTable
               data={[

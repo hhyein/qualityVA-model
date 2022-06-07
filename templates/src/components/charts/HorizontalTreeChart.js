@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react'
 
 function HorizontalTreeChart(props) {
-  const { data } = props
+  const { data, dataLenght } = props
   const svgRef = useRef()
   const d3 = window.d3v3
 
   const leftMove = 25
+  const nodeGap = 90
 
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
@@ -28,7 +29,7 @@ function HorizontalTreeChart(props) {
       return [d.y, d.x]
     })
 
-    var root = data[0]
+    var root = data
     update(root)
 
     function update() {
@@ -37,7 +38,7 @@ function HorizontalTreeChart(props) {
 
       nodes.forEach(function (d) {
         d.x = 20
-        d.y = d.depth * 90
+        d.y = d.depth * nodeGap
       })
 
       var node = svg.selectAll('g.node').data(nodes, function (d) {
@@ -79,7 +80,7 @@ function HorizontalTreeChart(props) {
         .attr('class', 'link')
         .attr('d', diagonal)
     }
-  }, [data])
+  }, [data, dataLenght])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
 }

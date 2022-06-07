@@ -21,8 +21,6 @@ export default function ModelDetailTable(props) {
                 style={{
                   width: "70px",
                   textAlign: "center",
-                  fontSize: "14px",
-                  fontWeight: "bold",
                 }}
               >
                 {chart}

@@ -25,7 +25,8 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-predictName = ''
+purpose = ''
+purposeColumn = ''
 dimension = ''
 inputModelList = []
 inputEvalList = []
@@ -88,6 +89,11 @@ def setting():
 
       originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
 
+      purposeList = []
+      tmpList = ['prediction', 'classification']
+      for i in range(len(tmpList)):
+        purposeList.append({'label': tmpList[i], 'value': i})      
+
       columnList = []
       tmpList = list(originDf.columns)
       for i in range(len(tmpList)):
@@ -117,13 +123,15 @@ def setting():
         dimensionList.append({'label': tmpList[i], 'value': i})
 
       response = {}
-      response['columnList'] = columnList  
+      response['purposeList'] = purposeList
+      response['columnList'] = columnList
       response['modelList'] = modelList
       response['evalList'] = evalList
       response['dimensionList'] = dimensionList
 
     else:
       response = {}
+      response['purposeList'] = []
       response['columnList'] = []
       response['modelList'] = []
       response['evalList'] = []
@@ -135,8 +143,9 @@ def setting():
     req = request.get_data().decode('utf-8')
     req = eval(req)
 
-    global predictName, dimension, inputModelList, inputEvalList
-    predictName = req["column"]["label"]
+    global purpose, purposeColumn, dimension, inputModelList, inputEvalList
+    purpose = req["purpose"]["label"]
+    purposeColumn = req["column"]["label"]
     dimension = req["dimension"]["label"]
     modelList = req["model"]
     evalList = req["eval"]
@@ -661,9 +670,9 @@ def selectedModelOverviewTable():
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
   # ##### example
-  # # global inputModelList, predictName
+  # # global inputModelList, purposeColumn
   inputModelList = ['lr', 'knn', 'dt']
-  # predictName = 'hue'
+  # purposeColumn = 'hue'
   # ##### to fix
   # orderEval = 'MAE'
   # #####
@@ -681,7 +690,7 @@ def lineChart():
   # originDf = originDf.dropna()
   # #####
 
-  # clf = setup(data = originDf, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  # clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
   # model = compare_models(include = inputModelList)
   # evalResultDf = pull()
 
@@ -696,7 +705,7 @@ def lineChart():
   #   df = df.dropna()
   #   #####
 
-  #   clf = setup(data = df, target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  #   clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
   #   model = compare_models(include = inputModelList)
   #   evalResultDf = pull()
 
@@ -726,14 +735,13 @@ def treeChart():
 
   response = {}
   response['treeData'] = treeData
-  response['treeLength'] = currentCnt
 
   return jsonify(response)
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
   with open('static/file.json') as f:
-    data = json.load(f) 
+    data = json.load(f)
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
@@ -816,7 +824,7 @@ def modelDetailTable():
 
     densityChartList.append(densityDf.to_dict('records'))
 
-  global combinationIcon, combinationDetailIcon
+  global combinationIcon, combinationDetailIcon, currentCnt
   actionList = combinationIcon
   actionDetailList = combinationDetailIcon
 
@@ -824,6 +832,7 @@ def modelDetailTable():
   actionDetailList.insert(0, 'start')
 
   response = {}
+  response['currentCnt'] = currentCnt
   response['actionList'] = actionList
   response['actionDetailList'] = actionDetailList
   response['barChartList'] = barChartList
