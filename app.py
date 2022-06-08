@@ -80,9 +80,9 @@ def home():
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-  if request.method == 'GET':
-    global fileUploadState
+  global fileUploadState, purpose, purposeColumn, dimension, inputModelList, inputEvalList
 
+  if request.method == 'GET':
     if fileUploadState == True:
       with open('static/file.json', 'r', encoding = 'utf-8') as f:
         data = json.load(f) 
@@ -100,20 +100,22 @@ def setting():
         columnList.append({'label': tmpList[i], 'value': i})
 
       modelList = []
-      # #### to fix
-      # tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
-      #             'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-      # ####
-      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
+      if purpose == 'prediction':
+        tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
                   'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+      
+      else:
+        tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
+                    'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
       for i in range(len(tmpList)):
         modelList.append({'label': tmpList[i], 'value': i})
 
       evalList = []
-      # #### to fix
-      # tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
-      # ####
-      tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
+      if purpose == 'prediction':
+        tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
+      
+      else:
+        tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
       for i in range(len(tmpList)):
         evalList.append({'label': tmpList[i], 'value': i})
 
@@ -143,7 +145,6 @@ def setting():
     req = request.get_data().decode('utf-8')
     req = eval(req)
 
-    global purpose, purposeColumn, dimension, inputModelList, inputEvalList
     purpose = req["purpose"]["label"]
     purposeColumn = req["column"]["label"]
     dimension = req["dimension"]["label"]
