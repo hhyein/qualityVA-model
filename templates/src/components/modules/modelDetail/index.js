@@ -1,19 +1,20 @@
-import React from "react"
-import { Box } from "../../Box"
-import Legend from "../../Legend"
-import LineChart from "../../charts/LineChart"
-import HorizontalTreeChart from "../../charts/HorizontalTreeChart"
-import ModelDetailTable from "./ModelDetailTable"
-import { useFileData } from "../../../contexts/FileDataContext"
+import React from 'react'
+import { Box } from '../../Box'
+import Legend from '../../Legend'
+import LineChart from '../../charts/LineChart'
+import HorizontalTreeChart from '../../charts/HorizontalTreeChart'
+import ModelDetailTable from './ModelDetailTable'
+import { useFileData } from '../../../contexts/FileDataContext'
 
 const dataColorInfo = {
-  lr: "crimson",
-  knn: "mediumpurple",
-  dt: "yellowgreen",
+  lr: 'crimson',
+  knn: 'mediumpurple',
+  dt: 'yellowgreen',
 }
 
 export default function ModelDetail() {
-  const { modelDetailData, isEmptyData } = useFileData()
+  const { modelDetailData, isEmptyData, modelOverviewTableSortingInfo } =
+    useFileData()
 
   const {
     lineChart,
@@ -24,13 +25,13 @@ export default function ModelDetail() {
     barChartList,
     densityChartList,
   } = modelDetailData
-
+  console.log('sort column: ' + modelOverviewTableSortingInfo.column)
   return (
     <Box
       title="model-detail"
       style={{
-        display: "grid",
-        gridTemplateRows: "auto auto 40px 1fr",
+        display: 'grid',
+        gridTemplateRows: 'auto auto 40px 1fr',
       }}
     >
       {!isEmptyData({
@@ -53,7 +54,7 @@ export default function ModelDetail() {
                 actionDetailList,
                 barChartList,
                 densityChartList,
-              ].map((list) =>
+              ].map(list =>
                 list.reduce(
                   (acc, cur, i) => ({
                     ...acc,
