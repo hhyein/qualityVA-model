@@ -1,21 +1,25 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box } from '../../Box'
 import ChartTable from './ChartTable'
 import HorizontalBarChart from '../../charts/HorizontalBarChart'
 import { useFileData } from '../../../contexts/FileDataContext'
 
 export default function ModelOverview() {
-  const { modelOverviewData, isEmptyData, setSelectedModelOverviewTableRow } = useFileData()
+  const {
+    modelOverviewData,
+    isEmptyData,
+    modelOverviewTableSortingInfo,
+    setModelOverviewTableSortingInfo,
+    selectedModelOverviewTableRow,
+    setSelectedModelOverviewTableRow,
+  } = useFileData()
   const { chartTable } = modelOverviewData
 
-  const [data, setData] = useState([])
-  const [selectedColumn, setSelectedColumn] = useState()
-
-  useEffect(() => {
+  const data = useMemo(() => {
     if (!chartTable) {
-      return
+      return []
     }
-    const chartTableData = chartTable.combinationList.map((combination, i) => ({
+    return chartTable.combinationList.map((combination, i) => ({
       key: combination,
       model: chartTable.modelNames[i],
       combination: chartTable.combinationIconList[i],
@@ -28,36 +32,53 @@ export default function ModelOverview() {
         {}
       ),
     }))
-    const defaultSelectedColumn = chartTable.inputEvalList[0]
-    const sortedChartTableData = chartTableData.sort(
-      (a, b) => a[defaultSelectedColumn].data - b[defaultSelectedColumn].data
-    )
-    setSelectedColumn(defaultSelectedColumn)
-    setData(sortedChartTableData)
-    const firstRow = sortedChartTableData[0]
-    setSelectedModelOverviewTableRow({
-      key: firstRow.key,
-      combination: firstRow.combination,
-      combinationDetail: firstRow.combinationDetail,
-    })
-  }, [chartTable, setSelectedModelOverviewTableRow])
+  }, [chartTable])
 
-  const handleTableHeadClick = useCallback(columnName => {
-    setSelectedColumn(columnName)
-    setData(prev =>
-      prev.sort((a, b) => b[columnName].data - a[columnName].data)
+  const sortedData = useMemo(() => {
+    const { column, isAscending } = modelOverviewTableSortingInfo
+    if (!column) {
+      return []
+    }
+    const sortedChartTableData = data.sort((a, b) =>
+      isAscending
+        ? b[column].data - a[column].data
+        : a[column].data - b[column].data
     )
-  }, [])
+
+    if (
+      selectedModelOverviewTableRow === undefined &&
+      sortedChartTableData.length > 0
+    ) {
+      const firstRow = sortedChartTableData[0]
+      setSelectedModelOverviewTableRow({
+        key: firstRow.key,
+        combination: firstRow.combination,
+        combinationDetail: firstRow.combinationDetail,
+        model: firstRow.model,
+      })
+    }
+    return sortedChartTableData
+  }, [modelOverviewTableSortingInfo, data])
+
+  const handleTableHeadClick = useCallback(
+    columnName => {
+      setModelOverviewTableSortingInfo(prev => ({
+        ...prev,
+        column: columnName,
+      }))
+    },
+    [setModelOverviewTableSortingInfo]
+  )
 
   return (
     <Box title="model-overview" style={{ overflow: 'auto' }}>
       {!isEmptyData({ chartTable }) && data.length > 0 && (
         <ChartTable
           canSortColumns={chartTable.inputEvalList}
-          selectedColumn={selectedColumn}
+          selectedColumn={modelOverviewTableSortingInfo.column}
           onTableHeadClick={handleTableHeadClick}
           onTableRowClick={params => setSelectedModelOverviewTableRow(params)}
-          data={data.map(d => ({
+          data={sortedData.map(d => ({
             key: d.key,
             ...['model'].reduce(
               (acc, cur) => ({

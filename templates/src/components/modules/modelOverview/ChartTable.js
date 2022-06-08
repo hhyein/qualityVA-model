@@ -1,4 +1,5 @@
 import React from 'react'
+import { useFileData } from '../../../contexts/FileDataContext'
 
 export default function ChartTable({
   data = [],
@@ -7,6 +8,7 @@ export default function ChartTable({
   canSortColumns,
   selectedColumn,
 }) {
+  const { modelOverviewTableSortingInfo } = useFileData()
   const columnKeys = Object.keys(data[0]).slice(1)
 
   return data.length > 0 ? (
@@ -34,7 +36,16 @@ export default function ChartTable({
             onClick={() => isSortButton && onTableHeadClick(key)}
           >
             {key}
-            {selected && <>&nbsp;&uarr;</>}
+            {selected && (
+              <>
+                &nbsp;
+                {modelOverviewTableSortingInfo.isAscending ? (
+                  <>&uarr;</>
+                ) : (
+                  <>&darr;</>
+                )}
+              </>
+            )}
           </div>
         )
       })}

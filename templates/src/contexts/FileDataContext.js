@@ -50,6 +50,8 @@ export const FileDataProvider = ({ children }) => {
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
+  const [modelOverviewTableSortingInfo, setModelOverviewTableSortingInfo] =
+    useState({}) // { column: string, isAscending: boolean }
   const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
     useState()
   const [
@@ -91,6 +93,10 @@ export const FileDataProvider = ({ children }) => {
     if (!settingValues.purpose) {
       return
     }
+    setModelOverviewTableSortingInfo(prev => ({
+      ...prev,
+      isAscending: settingValues.purpose.label === 'prediction',
+    }))
     await postData('/setting', settingValues)
     const { columnList, modelList, evalList, dimensionList } = await fetchData(
       '/setting'
@@ -121,13 +127,7 @@ export const FileDataProvider = ({ children }) => {
     if (selectedModelOverviewTableRow === undefined) {
       return
     }
-    const { key, combination, combinationDetail } =
-      selectedModelOverviewTableRow
-    await postData('/selectedModelOverviewTable', {
-      key,
-      combination,
-      combinationDetail,
-    })
+    await postData('/selectedModelOverviewTable', selectedModelOverviewTableRow)
 
     const lineChart = await fetchData('/lineChart')
     const treeChart = await fetchData('/treeChart')
@@ -154,6 +154,10 @@ export const FileDataProvider = ({ children }) => {
 
   const updateModelOverview = useCallback(async () => {
     const chartTable = await fetchData('/chartTable')
+    setModelOverviewTableSortingInfo(prev => ({
+      ...prev,
+      column: chartTable.inputEvalList[0],
+    }))
     setModelOverviewData({ chartTable })
   }, [])
 
@@ -205,6 +209,8 @@ export const FileDataProvider = ({ children }) => {
         settingData,
         modelOverviewData,
         modelDetailData,
+        modelOverviewTableSortingInfo,
+        setModelOverviewTableSortingInfo,
         selectedModelOverviewTableRow,
         setSelectedModelOverviewTableRow,
         selectedActionDetailHeatmapIndex,
