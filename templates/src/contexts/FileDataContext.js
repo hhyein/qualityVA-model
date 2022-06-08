@@ -44,13 +44,18 @@ export const FileDataProvider = ({ children }) => {
     dimension: undefined,
   })
 
+  const [purposeList, setPurposeList] = useState()
   const [settingData, setSettingData] = useState({})
   const [modelOverviewData, setModelOverviewData] = useState({})
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
 
-  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] = useState()
-  const [selectedActionDetailHeatmapIndex, setSelectedActionDetailHeatmapIndex] = useState('')
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
+    useState()
+  const [
+    selectedActionDetailHeatmapIndex,
+    setSelectedActionDetailHeatmapIndex,
+  ] = useState('')
 
   const isEmptyData = data => {
     return Object.values(data).some(value => value === undefined)
@@ -76,17 +81,27 @@ export const FileDataProvider = ({ children }) => {
     handleSettingValuesChange()
   }, [handleSettingValuesChange])
 
-  const updateSetting = useCallback(async () => {
-    const { purposeList, columnList, modelList, evalList, dimensionList } = await fetchData('/setting')
+  const updatePurposeList = useCallback(async () => {
+    const { purposeList } = await fetchData('/setting')
 
+    setPurposeList(purposeList)
+  }, [])
+
+  const handlePurposeChange = useCallback(async () => {
+    if (!settingValues.purpose) {
+      return
+    }
+    await postData('/setting', settingValues)
+    const { columnList, modelList, evalList, dimensionList } = await fetchData(
+      '/setting'
+    )
     setSettingData({
-      purposeList,
       columnList,
       modelList,
       evalList,
       dimensionList,
     })
-  }, [])
+  }, [settingValues.purpose])
 
   const handleDrop = useCallback(
     async files => {
@@ -97,21 +112,32 @@ export const FileDataProvider = ({ children }) => {
       }
       formData.append('file', files[0])
       await postData('/fileUpload', formData, config)
-      await updateSetting()
+      await updatePurposeList()
     },
-    [updateSetting]
+    [updatePurposeList]
   )
 
   const updateModelDetail = useCallback(async () => {
     if (selectedModelOverviewTableRow === undefined) {
       return
     }
-    const { key, combination, combinationDetail } = selectedModelOverviewTableRow
-    await postData('/selectedModelOverviewTable', {key, combination, combinationDetail})
+    const { key, combination, combinationDetail } =
+      selectedModelOverviewTableRow
+    await postData('/selectedModelOverviewTable', {
+      key,
+      combination,
+      combinationDetail,
+    })
 
     const lineChart = await fetchData('/lineChart')
     const treeChart = await fetchData('/treeChart')
-    const { currentCnt, actionList, actionDetailList, barChartList, densityChartList } = await fetchData('/modelDetailTable')
+    const {
+      currentCnt,
+      actionList,
+      actionDetailList,
+      barChartList,
+      densityChartList,
+    } = await fetchData('/modelDetailTable')
 
     setModelDetailData({
       lineChart,
@@ -134,7 +160,10 @@ export const FileDataProvider = ({ children }) => {
   const updateActionDetail = useCallback(async () => {
     const barChart = await fetchData('/actionDetailBarchart')
     const { heatmapList, heatmapYList } = await fetchData('/heatmapChart')
-    const histogramChart = await postData('/histogramChart', selectedActionDetailHeatmapIndex)
+    const histogramChart = await postData(
+      '/histogramChart',
+      selectedActionDetailHeatmapIndex
+    )
     const scatterChart = await fetchData('/scatterChart')
     setActionDetailData({
       barChart,
@@ -144,6 +173,10 @@ export const FileDataProvider = ({ children }) => {
       scatterChart,
     })
   }, [selectedActionDetailHeatmapIndex])
+
+  useEffect(() => {
+    handlePurposeChange()
+  }, [handlePurposeChange])
 
   useEffect(() => {
     if (!file || isEmptyData(settingValues)) {
@@ -168,6 +201,7 @@ export const FileDataProvider = ({ children }) => {
         handleDrop,
         settingValues,
         setSettingValues,
+        purposeList,
         settingData,
         modelOverviewData,
         modelDetailData,
