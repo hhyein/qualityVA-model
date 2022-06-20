@@ -34,7 +34,6 @@ const FileDataContext = React.createContext()
 
 export const FileDataProvider = ({ children }) => {
   const [dataColumnList, setColumnList] = useState([])
-
   const [file, setFile] = useState()
   const [settingValues, setSettingValues] = useState({
     purpose: undefined,
@@ -49,28 +48,13 @@ export const FileDataProvider = ({ children }) => {
   const [modelOverviewData, setModelOverviewData] = useState({})
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
-
-  const [modelOverviewTableSortingInfo, setModelOverviewTableSortingInfo] =
-    useState({}) // { column: string, isAscending: boolean }
-  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
-    useState()
-  const [
-    selectedActionDetailHeatmapIndex,
-    setSelectedActionDetailHeatmapIndex,
-  ] = useState('')
+  const [modelOverviewTableSortingInfo, setModelOverviewTableSortingInfo] = useState({})
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] = useState()
+  const [selectedActionDetailHeatmapIndex, setSelectedActionDetailHeatmapIndex] = useState('')
 
   const isEmptyData = data => {
     return Object.values(data).some(value => value === undefined)
   }
-
-  const init = useCallback(async () => {
-    const data = await fetchData('/')
-    setColumnList(data?.columnList ?? [])
-  }, [])
-
-  useEffect(() => {
-    init()
-  }, [init])
 
   const handleSettingValuesChange = useCallback(async () => {
     if (Object.values(settingValues).some(value => value === undefined)) {
@@ -85,7 +69,6 @@ export const FileDataProvider = ({ children }) => {
 
   const updatePurposeList = useCallback(async () => {
     const { purposeList } = await fetchData('/setting')
-
     setPurposeList(purposeList)
   }, [])
 
@@ -98,9 +81,7 @@ export const FileDataProvider = ({ children }) => {
       isAscending: settingValues.purpose.label === 'prediction',
     }))
     await postData('/setting', settingValues)
-    const { columnList, modelList, evalList, dimensionList } = await fetchData(
-      '/setting'
-    )
+    const { columnList, modelList, evalList, dimensionList } = await fetchData('/setting')
     setSettingData({
       columnList,
       modelList,
@@ -117,7 +98,8 @@ export const FileDataProvider = ({ children }) => {
         header: { 'content-type': 'multipart/form-data' },
       }
       formData.append('file', files[0])
-      await postData('/fileUpload', formData, config)
+      const data = await postData('/fileUpload', formData, config)
+      setColumnList(data?.columnList ?? [])
       await updatePurposeList()
     },
     [updatePurposeList]

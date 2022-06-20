@@ -31,7 +31,6 @@ dimension = ''
 inputModelList = []
 inputEvalList = []
 
-fileUploadState = False
 currentCnt = 3
 
 combinationIcon = []
@@ -52,92 +51,65 @@ def fileUpload():
   fileUploadDf = fileUploadDf.drop(fileUploadDf.index[0])
   fileUploadDf = fileUploadDf.reset_index(drop = True)
 
-  global fileUploadState
   originDf = fileUploadDf.reindex(sorted(fileUploadDf.columns), axis = 1)
   originDf.to_json('static/file.json', orient = 'records', indent = 4)
-  fileUploadState = True
 
-  return json.dumps({'fileUpload': 'success'})
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-  global fileUploadState
-
-  if fileUploadState == True:
-    with open('static/file.json', 'r', encoding = 'utf-8') as f:
-      data = json.load(f) 
-
-    originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
-
-    response = {}
-    response['columnList'] = list(originDf.columns)
-
-  else:
-    response = {}
-    response['columnList'] = []
+  response = {}
+  response['columnList'] = list(originDf.columns)
 
   return json.dumps(response)
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-  global fileUploadState, purpose, purposeColumn, dimension, inputModelList, inputEvalList
+  global purpose, purposeColumn, dimension, inputModelList, inputEvalList
 
   if request.method == 'GET':
-    if fileUploadState == True:
-      with open('static/file.json', 'r', encoding = 'utf-8') as f:
-        data = json.load(f) 
+    with open('static/file.json', 'r', encoding = 'utf-8') as f:
+      data = json.load(f) 
 
-      originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+    originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
 
-      purposeList = []
-      tmpList = ['prediction', 'classification']
-      for i in range(len(tmpList)):
-        purposeList.append({'label': tmpList[i], 'value': i})      
+    purposeList = []
+    tmpList = ['prediction', 'classification']
+    for i in range(len(tmpList)):
+      purposeList.append({'label': tmpList[i], 'value': i})      
 
-      columnList = []
-      tmpList = list(originDf.columns)
-      for i in range(len(tmpList)):
-        columnList.append({'label': tmpList[i], 'value': i})
+    columnList = []
+    tmpList = list(originDf.columns)
+    for i in range(len(tmpList)):
+      columnList.append({'label': tmpList[i], 'value': i})
 
-      modelList = []
-      if purpose == 'prediction':
-        tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
-                  'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-      
-      else:
-        tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
-                    'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-      for i in range(len(tmpList)):
-        modelList.append({'label': tmpList[i], 'value': i})
-
-      evalList = []
-      if purpose == 'prediction':
-        tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
-      
-      else:
-        tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
-      for i in range(len(tmpList)):
-        evalList.append({'label': tmpList[i], 'value': i})
-
-      dimensionList = []
-      tmpList = ['TSNE', 'PCA']
-      for i in range(len(tmpList)):
-        dimensionList.append({'label': tmpList[i], 'value': i})
-
-      response = {}
-      response['purposeList'] = purposeList
-      response['columnList'] = columnList
-      response['modelList'] = modelList
-      response['evalList'] = evalList
-      response['dimensionList'] = dimensionList
-
+    modelList = []
+    if purpose == 'prediction':
+      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
+                'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+    
     else:
-      response = {}
-      response['purposeList'] = []
-      response['columnList'] = []
-      response['modelList'] = []
-      response['evalList'] = []
-      response['dimensionList'] = []
+      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
+                  'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+    for i in range(len(tmpList)):
+      modelList.append({'label': tmpList[i], 'value': i})
+
+    evalList = []
+    if purpose == 'prediction':
+      tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
+    
+    else:
+      tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
+    for i in range(len(tmpList)):
+      evalList.append({'label': tmpList[i], 'value': i})
+
+    dimensionList = []
+    tmpList = ['TSNE', 'PCA']
+    for i in range(len(tmpList)):
+      dimensionList.append({'label': tmpList[i], 'value': i})
+
+    response = {}
+    response['purposeList'] = purposeList
+    response['columnList'] = columnList
+    response['modelList'] = modelList
+    response['evalList'] = evalList
+    response['dimensionList'] = dimensionList
     
     return json.dumps(response)
 

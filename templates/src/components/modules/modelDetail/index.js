@@ -25,7 +25,7 @@ export default function ModelDetail() {
     barChartList,
     densityChartList,
   } = modelDetailData
-  console.log('sort column: ' + modelOverviewTableSortingInfo.column)
+  
   return (
     <Box
       title="model-detail"
