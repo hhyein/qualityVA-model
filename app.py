@@ -32,7 +32,6 @@ inputModelList = []
 inputEvalList = []
 
 currentCnt = 3
-
 combinationIcon = []
 combinationDetailIcon = []
 
@@ -388,6 +387,8 @@ def selectedModelOverviewTable():
   ##### to fix
   modelName = 'dt'
   #####
+
+  print(selectedModelOverviewTable)
 
   with open('static/file.json') as f:
     data = json.load(f)

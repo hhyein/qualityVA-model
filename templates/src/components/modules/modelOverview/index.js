@@ -41,8 +41,8 @@ export default function ModelOverview() {
     }
     const sortedChartTableData = data.sort((a, b) =>
       isAscending
-        ? b[column].data - a[column].data
-        : a[column].data - b[column].data
+        ? a[column].data - b[column].data
+        : b[column].data - a[column].data
     )
 
     if (

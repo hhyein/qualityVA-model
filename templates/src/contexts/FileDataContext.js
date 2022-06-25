@@ -109,6 +109,8 @@ export const FileDataProvider = ({ children }) => {
     if (selectedModelOverviewTableRow === undefined) {
       return
     }
+    console.log(selectedModelOverviewTableRow)
+    console.log(typeof(selectedModelOverviewTableRow))
     await postData('/selectedModelOverviewTable', selectedModelOverviewTableRow)
 
     const lineChart = await fetchData('/lineChart')
