@@ -25,11 +25,11 @@ export const mainLayout2Style = {
 
 export const boxTitles = {
   'data-upload': 'data upload',
-  setting: 'setting',
-  visualization: 'nl4dv',
+  setting: 'setting panel',
+  visualization: 'NLP2Vis',
   'model-overview': 'model overview',
-  'model-detail': 'model detail',
-  'action-detail': 'action detail',
+  'model-detail': 'data quality analysis',
+  'action-detail': 'custom built action',
 }
 
 export const PORT = 5000
