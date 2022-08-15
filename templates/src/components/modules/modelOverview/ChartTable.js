@@ -77,7 +77,7 @@ export default function ChartTable({
                   borderBottom: isLastRow ? 'none' : undefined,
                 }}
               >
-                {chart}
+                {colIdx < 3 || rowIdx < 6 ? chart : chart.props.data?.[0]?.data}
               </div>
             ))}
           </React.Fragment>
