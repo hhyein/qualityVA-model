@@ -54,7 +54,6 @@ export default function ModelOverview() {
         key: firstRow.key,
         combination: firstRow.combination,
         combinationDetail: firstRow.combinationDetail,
-        model: firstRow.model,
       })
     }
     return sortedChartTableData
@@ -77,7 +76,13 @@ export default function ModelOverview() {
           canSortColumns={chartTable.inputEvalList}
           selectedColumn={modelOverviewTableSortingInfo.column}
           onTableHeadClick={handleTableHeadClick}
-          onTableRowClick={params => setSelectedModelOverviewTableRow(params)}
+          onTableRowClick={({ key, rowIdx }) =>
+            setSelectedModelOverviewTableRow({
+              key,
+              combination: sortedData[rowIdx].combination,
+              combinationDetail: sortedData[rowIdx].combinationDetail,
+            })
+          }
           data={sortedData.map(d => ({
             key: d.key,
             ...['model'].reduce(

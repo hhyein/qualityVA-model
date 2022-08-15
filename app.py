@@ -802,8 +802,10 @@ def modelDetailTable():
   actionList = combinationIcon
   actionDetailList = combinationDetailIcon
 
-  actionList.insert(0, 'start')
-  actionDetailList.insert(0, 'start')
+  if 'start' not in actionList:
+    actionList.insert(0, 'start')
+  if 'start' not in actionDetailList:
+    actionDetailList.insert(0, 'start')
 
   response = {}
   response['currentCnt'] = currentCnt

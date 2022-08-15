@@ -52,8 +52,7 @@ export default function ChartTable({
       {data.map(({ key, ...others }, rowIdx) => {
         const isLastRow = rowIdx === data.length - 1
         const { combination, combinationDetail } = others
-        const onClick = () =>
-          onTableRowClick({ key, combination, combinationDetail })
+        const onClick = () => onTableRowClick({ key, rowIdx })
         return (
           <React.Fragment key={key}>
             <div
