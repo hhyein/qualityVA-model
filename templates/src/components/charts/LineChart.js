@@ -5,7 +5,8 @@ export default function LineChart(props) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
-  const leftMove = 25
+  const leftMove = 30
+  console.log(data)
 
   useEffect(() => {
     if (!data) {
@@ -50,7 +51,7 @@ export default function LineChart(props) {
 
     var y = d3
       .scaleLinear()
-      .domain([0, 0.5])
+      .domain([0, 1])
       .range([height - 10, 0])
     svg
       .append('g')

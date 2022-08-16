@@ -5,8 +5,8 @@ function HorizontalTreeChart(props) {
   const svgRef = useRef()
   const d3 = window.d3v3
 
-  const leftMove = 25
-  const nodeGap = 90
+  const leftMove = 30
+  const nodeGap = 180
 
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
@@ -24,7 +24,6 @@ function HorizontalTreeChart(props) {
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
     var tree = d3.layout.tree().size([height, width])
-
     var diagonal = d3.svg.diagonal().projection(function (d) {
       return [d.y, d.x]
     })
@@ -80,8 +79,9 @@ function HorizontalTreeChart(props) {
         .attr('class', 'link')
         .attr('d', diagonal)
     }
-  }, [data, dataLenght])
+  }, [data, dataLenght, svgRef])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
 }
+
 export default HorizontalTreeChart

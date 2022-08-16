@@ -388,8 +388,6 @@ def selectedModelOverviewTable():
   modelName = 'dt'
   #####
 
-  print(selectedModelOverviewTable)
-
   with open('static/file.json') as f:
     data = json.load(f)
 
@@ -612,42 +610,50 @@ def selectedModelOverviewTable():
 
     stepDfList.append(lastDf)
   
+  for file in os.scandir('static/dataset/'):
+    os.remove(file.path)
+
   cnt = 0
   for i in range(len(stepDfList)):
     stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
     cnt = cnt + 1
 
-  # with open('static/treeData.json') as jsonData:
-  #   treeData = json.load(jsonData)
+  os.remove('static/treeData.json')
 
-  # root = tree.TreeNode(index = treeData['index'], state = treeData['state'])
-  # root = root.dict_to_tree(treeData['children'])
+  initTreeDict = {
+    "index": "0",
+    "state": "none",
+    "name": "start",
+    "children": [
+    ]
+  }
 
-  # newNode = tree.TreeNode(index = '0', state = 'none')
-  # root.add_child_to(str(currentCnt), newNode)
-  # root.update_state()
+  with open('static/treeData.json', 'w') as f:
+    json.dump(initTreeDict, f, indent = 4)
 
-  # for i in range(len(stepDfList)):
-  #   if i == len(stepDfList) - 1: state = 'current'
-  #   else: state = 'none'
+  with open('static/treeData.json') as jsonData:
+      treeData = json.load(jsonData)
 
-  #   newNode = tree.TreeNode(index = str(i + 1), state = state)
-  #   root.add_child_to(str(currentCnt), newNode)
-  #   root.update_state()
+  root = tree.TreeNode(index = treeData['index'], state = treeData['state'], name = treeData['name'])
+  root = root.dict_to_tree(treeData['children'])
 
-  # treeData = root.tree_to_dict()
-  # with open('static/treeData.json', 'w') as f:
-  #   json.dump(treeData, f, indent = 4) 
+  for i in range(len(stepDfList)):
+    newNode = tree.TreeNode(index = str(i + 1), state = 'none', name = combinationDetailIcon[i])
+    
+    root.add_child_to(str(i), newNode)
+    root.update_state()
+
+    treeData = root.tree_to_dict()
+    with open('static/treeData.json', 'w') as f:
+        json.dump(treeData, f, indent = 4)  
 
   return json.dumps({'selectedModelOverviewTable': 'success'})
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
-  # ##### example
-  # # global inputModelList, purposeColumn
+  # ##### to fix
   inputModelList = ['lr', 'knn', 'dt']
   # purposeColumn = 'hue'
-  # ##### to fix
   # orderEval = 'MAE'
   # #####
 
@@ -707,10 +713,7 @@ def treeChart():
   with open('static/treeData.json') as jsonData:
     treeData = json.load(jsonData)
 
-  response = {}
-  response['treeData'] = treeData
-
-  return jsonify(response)
+  return jsonify(treeData)
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
@@ -857,7 +860,6 @@ def heatmapChart():
     data = json.load(f) 
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
-
   heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   columnList = list(heatmapDf.columns)
@@ -954,9 +956,9 @@ def action():
 
   originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   targetList = ['missing', 'outlier', 'incons']
-  columnList = list(originDf.columns)
   actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
 
+  columnList = list(originDf.columns)
   actionDf = originDf.iloc[:, columnIndex]
   remainDf = originDf.drop([columnList[columnIndex]], axis = 1)
 
@@ -1053,8 +1055,9 @@ def action():
   root = root.dict_to_tree(treeData['children'])
 
   global currentCnt
-  newNode = tree.TreeNode(index = str(currentCnt + 1), state = '', name = actionList[actionIndex])
-  root.add_child_to(str(currentCnt), newNode)
+  newNode = tree.TreeNode(index = str(currentCnt), state = '', name = actionList[actionIndex])
+  
+  root.add_child_to(str(i), newNode)
   root.update_state()
   currentCnt = currentCnt + 1
 
