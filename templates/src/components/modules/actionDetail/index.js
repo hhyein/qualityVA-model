@@ -22,6 +22,7 @@ export default function ActionDetail() {
     isEmptyData,
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
+    settingData: { dimensionList },
   } = useFileData()
   const {
     barChart,
@@ -33,6 +34,7 @@ export default function ActionDetail() {
 
   const [dataTargetIdx, setDataTargetIdx] = useState(0)
   const [selectValue, setSelectValue] = useState()
+  const [reductionMethodIdx, setReductionMethodIdx] = useState(0)
 
   const postActionData = useCallback(async () => {
     if (!selectValue) {
@@ -40,7 +42,7 @@ export default function ActionDetail() {
     }
     await postData('/action', [
       dataTargetIdx,
-      selectedActionDetailHeatmapIndex.value,
+      selectedActionDetailHeatmapIndex?.value ?? 0,
       selectValue,
     ])
   }, [selectValue, dataTargetIdx, selectedActionDetailHeatmapIndex])
@@ -89,7 +91,30 @@ export default function ActionDetail() {
             style={{ margin: '5px 0', height: '45%' }}
             componentInfo={{
               'column data': <HistogramChart data={histogramChart} />,
-              'specific data': <ScatterChart data={scatterChart} method={1} />,
+              'specific data': (
+                <>
+                  <div style={{ display: 'flex' }}>
+                    {dimensionList &&
+                      dimensionList.map((item, idx) => (
+                        <div key={item}>
+                          <input
+                            type="radio"
+                            name="radio"
+                            value={item.value}
+                            style={{ marginRight: '15px' }}
+                            onClick={async () => {
+                              setReductionMethodIdx(idx)
+                              await postData('/scatterChart', idx)
+                            }}
+                            checked={reductionMethodIdx === idx}
+                          />
+                          {item.label}
+                        </div>
+                      ))}
+                  </div>
+                  <ScatterChart data={scatterChart} method={1} />
+                </>
+              ),
             }}
           />
           <Action onSelectChange={e => setSelectValue(e.value)} />
