@@ -7,14 +7,7 @@
             "index": "1",
             "state": "none",
             "name": "std",
-            "children": [
-                {
-                    "index": "2",
-                    "state": "none",
-                    "name": "max",
-                    "children": []
-                }
-            ]
+            "children": []
         }
     ]
 }

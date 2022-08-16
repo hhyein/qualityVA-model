@@ -380,10 +380,11 @@ def selectedModelOverviewTable():
   req = request.get_data().decode('utf-8')
   req = eval(req)
 
-  global combinationIcon, combinationDetailIcon
+  global currentCnt, combinationIcon, combinationDetailIcon
   selectedModelOverviewTable = req['key']
   combinationIcon = req['combination']
   combinationDetailIcon = req['combinationDetail']
+  currentCnt = len(combinationDetailIcon) + 1
   ##### to fix
   modelName = 'dt'
   #####
@@ -821,10 +822,9 @@ def modelDetailTable():
 
 @app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
 def actionDetailBarchart():
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  global currentCnt
+  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
+  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
 
   for column in originDf:
     if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
@@ -856,10 +856,9 @@ def actionDetailBarchart():
 
 @app.route('/heatmapChart', methods = ['GET', 'POST'])
 def heatmapChart():
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  global currentCnt
+  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
+  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
   heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   columnList = list(heatmapDf.columns)
@@ -874,16 +873,14 @@ def heatmapChart():
 
 @app.route('/histogramChart', methods = ['GET', 'POST'])
 def histogramChart():
-  req = request.get_data().decode('utf-8')
-
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  global currentCnt
+  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
+  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
 
   histogramDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = list(histogramDf.columns)
 
+  req = request.get_data().decode('utf-8')
   if req == '':
     histogramDf = pd.DataFrame(histogramDf.iloc[:, 0])
   else:
@@ -918,10 +915,9 @@ def histogramChart():
 
 @app.route('/scatterChart', methods = ['GET', 'POST'])
 def scatterChart():
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  global currentCnt
+  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
+  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
 
   scatterDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   scatterDf = scatterDf.dropna().reset_index(drop = True)
@@ -945,18 +941,19 @@ def scatterChart():
 @app.route('/action', methods=['GET', 'POST'])
 def action():
   req = request.get_data().decode('utf-8')
-  req = ast.literal_eval(req)
 
+  req = req.strip('[')
+  req = req.strip(']')
+  req = req.split(',')
+  
   targetIndex = int(req[0])
-  columnIndex = int(req[1])
+  # columnIndex = int(req[1])
+  columnIndex = 0
   actionIndex = int(req[2])
 
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
-  targetList = ['missing', 'outlier', 'incons']
-  actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
+  global currentCnt
+  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
+  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
 
   columnList = list(originDf.columns)
   actionDf = originDf.iloc[:, columnIndex]
@@ -964,6 +961,9 @@ def action():
 
   tmpDf = actionDf.to_frame(name = columnList[columnIndex])
   missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+  targetList = ['missing', 'outlier', 'incons']
+  actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
 
   if targetList[targetIndex] == 'missing':
     if actionList[actionIndex] == "remove":
@@ -1054,16 +1054,17 @@ def action():
   root = tree.TreeNode(index = treeData['index'], state = treeData['state'], name = treeData['name'])
   root = root.dict_to_tree(treeData['children'])
 
-  global currentCnt
-  newNode = tree.TreeNode(index = str(currentCnt), state = '', name = actionList[actionIndex])
+  newNode = tree.TreeNode(index = str(currentCnt - 1), state = '', name = actionList[actionIndex])
   
-  root.add_child_to(str(i), newNode)
+  root.add_child_to(str(currentCnt - 2), newNode)
   root.update_state()
-  currentCnt = currentCnt + 1
-
   treeData = root.tree_to_dict()
+
   with open('static/treeData.json', 'w') as f:
-      json.dump(treeData, f, indent = 4)  
+      json.dump(treeData, f, indent = 4)
+
+  changeDf.to_csv('static/dataset/' + str(currentCnt - 1) + '.csv', index = False)
+  currentCnt = currentCnt + 1
 
   return json.dumps({'action': 'success'})
 
