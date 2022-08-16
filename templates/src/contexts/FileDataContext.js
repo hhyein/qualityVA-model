@@ -16,7 +16,7 @@ const fetchData = async route => {
   }
 }
 
-const postData = async (route, params, config) => {
+export const postData = async (route, params, config) => {
   try {
     const res = await axios.post(
       `http://${window.location.hostname}:${PORT}${route}?${Math.random()}`,
@@ -48,9 +48,14 @@ export const FileDataProvider = ({ children }) => {
   const [modelOverviewData, setModelOverviewData] = useState({})
   const [modelDetailData, setModelDetailData] = useState({})
   const [actionDetailData, setActionDetailData] = useState({})
-  const [modelOverviewTableSortingInfo, setModelOverviewTableSortingInfo] = useState({})
-  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] = useState()
-  const [selectedActionDetailHeatmapIndex, setSelectedActionDetailHeatmapIndex] = useState('')
+  const [modelOverviewTableSortingInfo, setModelOverviewTableSortingInfo] =
+    useState({})
+  const [selectedModelOverviewTableRow, setSelectedModelOverviewTableRow] =
+    useState()
+  const [
+    selectedActionDetailHeatmapIndex,
+    setSelectedActionDetailHeatmapIndex,
+  ] = useState('')
 
   const isEmptyData = data => {
     return Object.values(data).some(value => value === undefined)
@@ -81,7 +86,9 @@ export const FileDataProvider = ({ children }) => {
       isAscending: settingValues.purpose.label === 'prediction',
     }))
     await postData('/setting', settingValues)
-    const { columnList, modelList, evalList, dimensionList } = await fetchData('/setting')
+    const { columnList, modelList, evalList, dimensionList } = await fetchData(
+      '/setting'
+    )
     setSettingData({
       columnList,
       modelList,
