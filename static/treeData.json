@@ -6,8 +6,22 @@
         {
             "index": "1",
             "state": "none",
-            "name": "std",
-            "children": []
+            "name": "men",
+            "children": [
+                {
+                    "index": "2",
+                    "state": "none",
+                    "name": "max",
+                    "children": [
+                        {
+                            "index": "3",
+                            "state": "none",
+                            "name": "em",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

@@ -23,7 +23,7 @@ export default function HistogramChart(props) {
       ordinals.push(i)
     }
 
-    var margin = { top: 100, right: 20, bottom: 20, left: 20 },
+    var margin = { top: 100, right: 20, bottom: 20, left: 30 },
       width = svgRef.current.clientWidth - margin.left - margin.right,
       height = svgRef.current.clientHeight - margin.top - margin.bottom,
       height2 = 40

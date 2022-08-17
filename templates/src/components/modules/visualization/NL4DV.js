@@ -17,7 +17,7 @@ function NL4DV(props) {
 
   return (
     <>
-      <div className="visualization" style={{ width: "270px", height: "150px" }}></div>
+      <div className="visualization" style={{ width: "230px", height: "150px" }}></div>
     </>
   )
 }

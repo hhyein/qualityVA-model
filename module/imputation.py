@@ -56,7 +56,7 @@ def ecdfDf(df, index):
     outputDf = pd.DataFrame(data)
     return outputDf
 
-def heatmapDf(columnList, df):
+def missingHeatmapDf(columnList, df):
     size = int(len(df)/10)
     
     tmpIndex, tmpY, tmpValue = [], [], []

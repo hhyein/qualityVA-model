@@ -101,10 +101,9 @@ export default function ActionDetail() {
                             type="radio"
                             name="radio"
                             value={item.value}
-                            style={{ marginRight: '15px' }}
+                            style={{ marginRight: '5px' }}
                             onClick={async () => {
                               setReductionMethodIdx(idx)
-                              await postData('/scatterChart', idx)
                             }}
                             checked={reductionMethodIdx === idx}
                           />
@@ -112,7 +111,7 @@ export default function ActionDetail() {
                         </div>
                       ))}
                   </div>
-                  <ScatterChart data={scatterChart} method={1} />
+                  <ScatterChart data={scatterChart} method={reductionMethodIdx} />
                 </>
               ),
             }}

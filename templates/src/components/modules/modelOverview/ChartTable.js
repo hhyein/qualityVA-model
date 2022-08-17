@@ -49,7 +49,7 @@ export default function ChartTable({
           </div>
         )
       })}
-      {data.map(({ key, ...others }, rowIdx) => {
+      {data.slice(0, 500).map(({ key, ...others }, rowIdx) => {
         const isLastRow = rowIdx === data.length - 1
         const { combination, combinationDetail } = others
         const onClick = () => onTableRowClick({ key, rowIdx })

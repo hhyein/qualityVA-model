@@ -4,9 +4,15 @@ import numpy as np
 import pandas as pd
 import module.imputation as imputation
 
+# 모델 성능 계산할 시에는 incons, missing 모두 drop 처리
+
 #####
 # input: originDf, predictName, inputModelList
 #####
+
+originDf = pd.read_csv('10housePrice.csv')
+predictName = 'Price'
+inputModelList = ['lr', 'knn', 'dt']
 
 # missing, outlier, incons check
 missing = sum(originDf.isnull().sum().values.tolist())
@@ -38,6 +44,8 @@ if outlier > 0:
     actionList.append('o')
 if incons > 0:
     actionList.append('i')
+
+actionList = ['m', 'i', 'o']
 
 # permutation
 permutationList = []
@@ -305,22 +313,25 @@ for permutation in permutationList:
 
 print(len(actionTotalDfList))
 
+dfList = []
+for i in range(len(actionTotalDfList)):
+    columnList = list(actionTotalDfList[i].columns)
+
+    df = actionTotalDfList[i].apply(pd.to_numeric, errors = 'coerce')
+    df = pd.DataFrame(df, columns = columnList)
+    df = df.dropna()
+
+    dfList.append(df)
+
 # autoML
 from pycaret.regression import *
 
-print(predictName)
-print(inputModelList)
-
-#####
-# example: len(actionTotalDfList) = 100
-#####
-
 resultList = []
-for i in range(0, 100):
-    clf = setup(data = actionTotalDfList[i], target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+for i in range(0, len(dfList)):
+    clf = setup(data = dfList[i], target = predictName, preprocess = False, session_id = 42, use_gpu = True, silent = True)
     model = compare_models(include = inputModelList)
     result = pull()
     resultList.append(result)
 
-with open('../static/modelData.json', 'w') as file:
+with open('10house.json', 'w') as file:
     file.write(json.dumps([result.to_dict() for result in resultList], indent = 4))

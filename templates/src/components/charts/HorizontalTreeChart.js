@@ -6,7 +6,7 @@ function HorizontalTreeChart(props) {
   const d3 = window.d3v3
 
   const leftMove = 30
-  const nodeGap = 180
+  const nodeGap = 135
 
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()

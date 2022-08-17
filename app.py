@@ -25,13 +25,13 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
+fileName = 'house'
 purpose = ''
 purposeColumn = ''
-dimension = ''
 inputModelList = []
 inputEvalList = []
 
-currentCnt = 3
+currentCnt = 0
 combinationIcon = []
 combinationDetailIcon = []
 
@@ -60,13 +60,11 @@ def fileUpload():
 
 @app.route('/setting', methods=['GET', 'POST'])
 def setting():
-  global purpose, purposeColumn, dimension, inputModelList, inputEvalList
+  global purpose, purposeColumn, inputModelList, inputEvalList
 
   if request.method == 'GET':
-    with open('static/file.json', 'r', encoding = 'utf-8') as f:
-      data = json.load(f) 
-
-    originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+    originDf = pd.read_csv('static/' + fileName + '.csv')
+    originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
     purposeList = []
     tmpList = ['prediction', 'classification']
@@ -98,17 +96,11 @@ def setting():
     for i in range(len(tmpList)):
       evalList.append({'label': tmpList[i], 'value': i})
 
-    dimensionList = []
-    tmpList = ['TSNE', 'PCA']
-    for i in range(len(tmpList)):
-      dimensionList.append({'label': tmpList[i], 'value': i})
-
     response = {}
     response['purposeList'] = purposeList
     response['columnList'] = columnList
     response['modelList'] = modelList
     response['evalList'] = evalList
-    response['dimensionList'] = dimensionList
     
     return json.dumps(response)
 
@@ -118,7 +110,6 @@ def setting():
 
     purpose = req["purpose"]["label"]
     purposeColumn = req["column"]["label"]
-    dimension = req["dimension"]["label"]
     modelList = req["model"]
     evalList = req["eval"]
 
@@ -136,10 +127,7 @@ def setting():
 def query():
   query = request.get_data().decode('utf-8')
 
-  # with open('static/file.json', 'r', encoding = 'utf-8') as f:
-  #   data = json.load(f) 
-
-  # originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  # originDf = pd.read_csv('static/10housePrice.csv')
   # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   # nl4dvDict = originDf.dropna().to_dict('records')
@@ -196,39 +184,11 @@ def query():
 
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
-  with open('static/file.json') as f:
-    data = json.load(f) 
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
-
-  # missing, outlier, incons check
-  missing = sum(originDf.isnull().sum().values.tolist())
-
-  tmpList = []
-  for column in originDf:
-      df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
-      df = df.dropna()
-
-      lower, upper = imputation.LowerUpper(df[column])
-      data1 = df[df[column] > upper]
-      data2 = df[df[column] < lower]
-      tmpList.append(data1.shape[0] + data2.shape[0])
-      outlier = sum(tmpList)
-
-  tmpList = []
-  for column in originDf:
-      df = originDf[column].dropna()    
-      df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-      tmpList.append(df.isnull().sum().values[0].tolist())
-      incons = sum(tmpList)
-
-  actionList = ['transformation']
-  if missing > 0:
-      actionList.append('missing')
-  if outlier > 0:
-      actionList.append('outlier')
-  if incons > 0:
-      actionList.append('inconsistent')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  ##### to fix
+  actionList = ['missing', 'outlier', 'inconsistent']
+  #####
 
   # permutation
   permutationList = []
@@ -243,8 +203,7 @@ def chartTable():
   with open('static/modelData.json') as f:
     autoMLDict = json.load(f)
 
-  ##### example
-  # global inputModelList, inputEvalList
+  ##### to fix
   inputModelList = ['lr', 'knn', 'dt']
   inputEvalList = ['MAE', 'MSE', 'RMSE']
   #####
@@ -349,6 +308,10 @@ def chartTable():
         evalDict[inputEvalList[i]].append(autoML[inputEvalList[i]][inputModelList[j]])
 
   # evalDict to make bar chart
+  ##### to fix
+  print(maxEvalList)
+  maxEvalList = [10, 20, 10]
+
   resultEvalList = []
   for i in range(len(inputEvalList)):
     resultEvalList.append([])
@@ -385,18 +348,20 @@ def selectedModelOverviewTable():
   combinationIcon = req['combination']
   combinationDetailIcon = req['combinationDetail']
   currentCnt = len(combinationDetailIcon) + 1
+
   ##### to fix
-  modelName = 'dt'
+  modelName = 'lr'
   #####
 
-  with open('static/file.json') as f:
-    data = json.load(f)
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
   columnList = list(originDf.columns)
   lastDf = originDf
 
-  stepDfList = []
+  for file in os.scandir('static/dataset/'):
+    os.remove(file.path)
+
   for i in range(len(combinationIcon)):
     action = combinationIcon[i]
     actionDetail = combinationDetailIcon[i]
@@ -406,44 +371,7 @@ def selectedModelOverviewTable():
 
       for j in range(len(columnList)):
         columnDf = lastDf.iloc[:, j]
-        tmpDf = columnDf.to_frame(name = columnList[j])
-        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
 
-        if len(missingIndex) > 0:
-          if actionDetail == "rem":
-            columnDf = columnDf.dropna()
-            columnDf = columnDf.to_frame(name = columnList[j])
-          if actionDetail == "min":
-            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
-          if actionDetail == "max":
-            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
-          if actionDetail == "mod":
-            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
-          if actionDetail == "men":
-            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
-          if actionDetail == "med":
-            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
-          if actionDetail == "em":
-            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
-          if actionDetail == "lof":
-            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
-        else:
-          columnDf = columnDf
-
-        resultColumnDf.append(columnDf)
-
-      resultConcatDf = resultColumnDf[0]
-      for j in range(len(resultColumnDf) - 1):
-        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
-        resultConcatDf = resultConcatDf.reset_index(drop = True)
-
-      lastDf = resultConcatDf
-    
-    if action == 'outlier':
-      resultColumnDf = []
-
-      for j in range(len(columnList)):
-        columnDf = lastDf.iloc[:, j]
         tmpDf = columnDf.to_frame(name = columnList[j])
         missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
 
@@ -452,64 +380,7 @@ def selectedModelOverviewTable():
         missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
         inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
 
-        lower, upper = imputation.LowerUpper(columnDf)
-        outlierDf = columnDf[(columnDf < lower) | (columnDf > upper)]
-        outlierIndex = list(outlierDf.index)
-
-        if len(outlierIndex) > 0:
-          if actionDetail == "rem":
-            columnDf = columnDf.drop(outlierIndex)
-            columnDf = columnDf.to_frame(name = columnList[j])
-
-          else:
-            for m in outlierIndex:
-              columnDf.loc[m] = np.nan
-
-          if actionDetail == "min":
-            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
-          if actionDetail == "max":
-            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
-          if actionDetail == "mod":
-            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
-          if actionDetail == "men":
-            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
-          if actionDetail == "med":
-            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
-          if actionDetail == "em":
-            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
-          if actionDetail == "lof":
-            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
-
-          for m in missingIndex:
-            columnDf.loc[m, columnList[j]] = np.nan
-
-          for m in inconsIndex:
-            columnDf.loc[m, columnList[j]] = 'incons'
-      
-        else:
-          columnDf = columnDf
-        resultColumnDf.append(columnDf)
-
-      resultConcatDf = resultColumnDf[0]
-      for j in range(len(resultColumnDf) - 1):
-        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
-        resultConcatDf = resultConcatDf.reset_index(drop = True)
-
-      lastDf = resultConcatDf
-
-    if action == 'inconsistent':
-      resultColumnDf = []
-
-      for j in range(len(columnList)):
-        columnDf = lastDf.iloc[:, j]
-        tmpDf = columnDf.to_frame(name = columnList[j])
-        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
-
-        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
-        tmpDf = columnDf.to_frame(name = columnList[j])
-        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
-
-        if len(list(set(missingAndInconsIndex) - set(missingIndex))) > 0:
+        if len(missingIndex) > 0:
           if actionDetail == "rem":
             columnDf = columnDf.dropna()
             columnDf = columnDf.to_frame(name = columnList[j])
@@ -530,8 +401,126 @@ def selectedModelOverviewTable():
             if actionDetail == "lof":
               columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
 
-              for m in missingIndex:
-                columnDf.loc[m, columnList[j]] = np.nan
+            for m in inconsIndex:
+              columnDf.loc[m] = 'incons'
+
+        else:
+          columnDf = columnDf
+
+        resultColumnDf.append(columnDf)
+
+      resultConcatDf = resultColumnDf[0]
+      for j in range(len(resultColumnDf) - 1):
+        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
+        resultConcatDf = resultConcatDf.reset_index(drop = True)
+
+      lastDf = resultConcatDf
+      lastDf.to_csv('static/dataset/' + str(i) + '.csv', index = False)
+    
+    if action == 'outlier':
+      resultColumnDf = []
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        tmpDf = pd.to_numeric(columnDf, errors = 'coerce')
+        tmpDf = tmpDf.to_frame(name = columnList[j])
+        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+        inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
+
+        tmpDf = pd.to_numeric(columnDf, errors = 'coerce')
+        lower, upper = imputation.LowerUpper(tmpDf)
+        outlierDf = tmpDf[(tmpDf < lower) | (tmpDf > upper)]
+        outlierIndex = list(outlierDf.index)
+
+        if len(outlierIndex) > 0:
+          if actionDetail == "rem":
+            columnDf = columnDf.drop(outlierIndex)
+            columnDf = columnDf.to_frame(name = columnList[j])
+
+          else:
+            for m in outlierIndex:
+              columnDf.loc[m] = np.nan
+            
+            columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+            
+            if actionDetail == "min":
+              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+            if actionDetail == "max":
+              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+            if actionDetail == "mod":
+              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+            if actionDetail == "men":
+              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+            if actionDetail == "med":
+              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+            if actionDetail == "em":
+              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+            if actionDetail == "lof":
+              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+            for m in missingIndex:
+              columnDf.loc[m] = np.nan
+
+            for m in inconsIndex:
+              columnDf.loc[m] = 'incons'
+      
+        else:
+          columnDf = columnDf
+
+        resultColumnDf.append(columnDf)
+
+      resultConcatDf = resultColumnDf[0]
+      for j in range(len(resultColumnDf) - 1):
+        resultConcatDf = pd.concat([resultConcatDf, resultColumnDf[j + 1]], axis = 1, join = 'inner')
+        resultConcatDf = resultConcatDf.reset_index(drop = True)
+
+      lastDf = resultConcatDf
+      lastDf.to_csv('static/dataset/' + str(i) + '.csv', index = False)      
+
+    if action == 'inconsistent':
+      resultColumnDf = []
+
+      for j in range(len(columnList)):
+        columnDf = lastDf.iloc[:, j]
+
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+
+        columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+        tmpDf = columnDf.to_frame(name = columnList[j])
+        missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
+        inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
+
+        if len(inconsIndex) > 0:
+          if actionDetail == "rem":
+            columnDf = lastDf.iloc[:, j]
+
+            for i in inconsIndex:
+              columnDf.drop([i], axis = 0)
+
+          else:
+            if actionDetail == "min":
+              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+            if actionDetail == "max":
+              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+            if actionDetail == "mod":
+              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+            if actionDetail == "men":
+              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+            if actionDetail == "med":
+              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+            if actionDetail == "em":
+              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+            if actionDetail == "lof":
+              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+            for m in missingIndex:
+              columnDf.loc[m] = np.nan
+
         else:
           columnDf = columnDf
 
@@ -543,6 +532,7 @@ def selectedModelOverviewTable():
           resultConcatDf = resultConcatDf.reset_index(drop = True)
 
       lastDf = resultConcatDf
+      lastDf.to_csv('static/dataset/' + str(i) + '.csv', index = False)
 
     if action == 'transformation':
       coerceDfList = []
@@ -608,16 +598,7 @@ def selectedModelOverviewTable():
           resultDf.iloc[row, column] = 'incons'
 
       lastDf = resultDf
-
-    stepDfList.append(lastDf)
-  
-  for file in os.scandir('static/dataset/'):
-    os.remove(file.path)
-
-  cnt = 0
-  for i in range(len(stepDfList)):
-    stepDfList[i].to_csv('static/dataset/' + str(cnt) + '.csv', index = False)
-    cnt = cnt + 1
+      lastDf.to_csv('static/dataset/' + str(i) + '.csv', index = False)
 
   os.remove('static/treeData.json')
 
@@ -638,7 +619,7 @@ def selectedModelOverviewTable():
   root = tree.TreeNode(index = treeData['index'], state = treeData['state'], name = treeData['name'])
   root = root.dict_to_tree(treeData['children'])
 
-  for i in range(len(stepDfList)):
+  for i in range(len(combinationIcon)):
     newNode = tree.TreeNode(index = str(i + 1), state = 'none', name = combinationDetailIcon[i])
     
     root.add_child_to(str(i), newNode)
@@ -652,24 +633,21 @@ def selectedModelOverviewTable():
 
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
-  # ##### to fix
+  ##### to fix
   inputModelList = ['lr', 'knn', 'dt']
-  # purposeColumn = 'hue'
-  # orderEval = 'MAE'
-  # #####
+  purposeColumn = 'Price'
+  orderEval = 'MAE'
+  #####
 
   # fileList = os.listdir('static/dataset')
   # evalResultList = []
   # for i in range(len(fileList) + 1):
   #   evalResultList.append([])
 
-  # with open('static/file.json') as f:
-  #   data = json.load(f)
-
-  # originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
-  # ##### to fix
+  # originDf = pd.read_csv('static/' + fileName + '.csv')
+  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  # originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
   # originDf = originDf.dropna()
-  # #####
 
   # clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
   # model = compare_models(include = inputModelList)
@@ -682,9 +660,8 @@ def lineChart():
 
   # for i in range(len(fileList)):
   #   df = pd.read_csv('static/dataset/' + fileList[i])
-  #   ##### to fix
+  #   df = df.apply(pd.to_numeric, errors = 'coerce')
   #   df = df.dropna()
-  #   #####
 
   #   clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
   #   model = compare_models(include = inputModelList)
@@ -695,7 +672,8 @@ def lineChart():
   #     evalResult = evalResultDf.loc[modelName][orderEval]
   #     evalResultList[i + 1].append(evalResult)
 
-  evalResultList = [[0.1244, 0.1883, 0.1565], [0.1012, 0.0978, 0.1286], [0.1036, 0.0975, 0.1426]]
+  evalResultList = [[7.6972, 8.3341, 7.4454], [6.7544, 7.3388, 7.8797], [4.3, 5.3421, 5.0086], [4.8095, 6.0706, 5.6525]]
+  print(evalResultList)
 
   lineChartList = []
   for i in range(len(evalResultList)):
@@ -718,10 +696,7 @@ def treeChart():
 
 @app.route('/modelDetailTable', methods = ['GET', 'POST'])
 def modelDetailTable():
-  with open('static/file.json') as f:
-    data = json.load(f)
-
-  originDf = pd.DataFrame(data).apply(pd.to_numeric, errors = 'ignore')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
   columnList = originDf.columns.tolist()
 
@@ -734,9 +709,12 @@ def modelDetailTable():
 
   tmpList = []
   for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
+    df = originDf[column]
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+
+    lower, upper = imputation.LowerUpper(df)
+    data1 = originDf[df > upper]
+    data2 = originDf[df < lower]
     tmpList.append(data1.shape[0] + data2.shape[0])
   outlier = sum(tmpList)
 
@@ -753,7 +731,10 @@ def modelDetailTable():
   densityChartList = []
   from sklearn.manifold import TSNE
 
-  dataMatrix = originDf.dropna().reset_index(drop = True).values
+  df = originDf.apply(pd.to_numeric, errors = 'coerce')
+  df = df.dropna().reset_index(drop = True)
+  dataMatrix = df.values
+
   tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
   tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
 
@@ -774,9 +755,12 @@ def modelDetailTable():
 
     tmpList = []
     for column in df:
-      lower, upper = imputation.LowerUpper(df[column])
-      data1 = df[df[column] > upper]
-      data2 = df[df[column] < lower]
+      columnDf = df[column].dropna()
+      columnDf = pd.DataFrame(pd.to_numeric(columnDf, errors = 'coerce'))
+
+      lower, upper = imputation.LowerUpper(columnDf)
+      data1 = df[columnDf > upper]
+      data2 = df[columnDf < lower]
       tmpList.append(data1.shape[0] + data2.shape[0])
     outlier = sum(tmpList)
 
@@ -790,7 +774,10 @@ def modelDetailTable():
     barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
 
     # densityChart
-    dataMatrix = df.dropna().reset_index(drop = True).values
+    df = df.apply(pd.to_numeric, errors = 'coerce')
+    df = df.dropna().reset_index(drop = True)
+    dataMatrix = df.values
+
     tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
     tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
 
@@ -822,30 +809,29 @@ def modelDetailTable():
 
 @app.route('/actionDetailBarchart', methods = ['GET', 'POST'])
 def actionDetailBarchart():
-  global currentCnt
-  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
-  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  for column in originDf:
-    if originDf[column].dtype != 'int64' and originDf[column].dtype != 'float64':
-      originDf = originDf.drop([column], axis = 1)
-
+  # missing, outlier, incons check
   missing = sum(originDf.isnull().sum().values.tolist())
 
   tmpList = []
   for column in originDf:
-    lower, upper = imputation.LowerUpper(originDf[column])
-    data1 = originDf[originDf[column] > upper]
-    data2 = originDf[originDf[column] < lower]
-    tmpList.append(data1.shape[0] + data2.shape[0])
-  outlier = sum(tmpList)
+      df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+      df = df.dropna()
+
+      lower, upper = imputation.LowerUpper(df[column])
+      data1 = df[df[column] > upper]
+      data2 = df[df[column] < lower]
+      tmpList.append(data1.shape[0] + data2.shape[0])
+      outlier = sum(tmpList)
 
   tmpList = []
   for column in originDf:
-    df = originDf[column].dropna()
-    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-    tmpList.append(df.isnull().sum().values[0].tolist())
-  incons = sum(tmpList)
+      df = originDf[column].dropna()    
+      df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+      tmpList.append(df.isnull().sum().values[0].tolist())
+      incons = sum(tmpList)
 
   response = {}
   response['missing'] = {'data': missing, 'originData': len(originDf) - missing}
@@ -856,29 +842,27 @@ def actionDetailBarchart():
 
 @app.route('/heatmapChart', methods = ['GET', 'POST'])
 def heatmapChart():
-  global currentCnt
-  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
-  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
-  heatmapDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  columnList = list(heatmapDf.columns)
-  heatmapDf, heatmapYList = imputation.heatmapDf(columnList, heatmapDf)
+  columnList = list(originDf.columns)
+  heatmapDf, heatmapYList = imputation.missingHeatmapDf(columnList, originDf)
   heatmapList = list(heatmapDf.transpose().to_dict().values())
 
   response = {}
   response['heatmapList'] = heatmapList
-  response['heatmapYList'] = heatmapYList 
+  response['heatmapYList'] = heatmapYList
 
-  return json.dumps(response)  
+  return json.dumps(response) 
 
 @app.route('/histogramChart', methods = ['GET', 'POST'])
 def histogramChart():
-  global currentCnt
-  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
-  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
 
-  histogramDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  columnList = list(histogramDf.columns)
+  columnList = list(originDf.columns)
+  histogramDf = originDf
 
   req = request.get_data().decode('utf-8')
   if req == '':
@@ -915,12 +899,11 @@ def histogramChart():
 
 @app.route('/scatterChart', methods = ['GET', 'POST'])
 def scatterChart():
-  global currentCnt
-  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
-  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
 
-  scatterDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  scatterDf = scatterDf.dropna().reset_index(drop = True)
+  scatterDf = originDf.dropna().reset_index(drop = True)
 
   from sklearn.manifold import TSNE
   dataMatrix = scatterDf.values
@@ -947,13 +930,14 @@ def action():
   req = req.split(',')
   
   targetIndex = int(req[0])
-  # columnIndex = int(req[1])
-  columnIndex = 0
+  columnIndex = int(req[1])
   actionIndex = int(req[2])
 
-  global currentCnt
-  originDf = pd.read_csv('static/dataset/' + str(currentCnt - 2) + '.csv')
-  originDf = originDf.apply(pd.to_numeric, errors = 'ignore')
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+
+  targetList = ['missing', 'outlier', 'incons']
+  actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
 
   columnList = list(originDf.columns)
   actionDf = originDf.iloc[:, columnIndex]
@@ -961,9 +945,6 @@ def action():
 
   tmpDf = actionDf.to_frame(name = columnList[columnIndex])
   missingIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
-
-  targetList = ['missing', 'outlier', 'incons']
-  actionList = ["remove", "min", "max", "mean", "mode", "median", "em", "locf"]
 
   if targetList[targetIndex] == 'missing':
     if actionList[actionIndex] == "remove":
@@ -1047,6 +1028,7 @@ def action():
   
   originDf = changeDf
   originDf.to_json('static/file.json', orient = 'records', indent = 4)
+  originDf.to_csv('static/' + fileName + '.csv', index = False)
 
   with open('static/treeData.json') as jsonData:
       treeData = json.load(jsonData)
@@ -1054,17 +1036,18 @@ def action():
   root = tree.TreeNode(index = treeData['index'], state = treeData['state'], name = treeData['name'])
   root = root.dict_to_tree(treeData['children'])
 
-  newNode = tree.TreeNode(index = str(currentCnt - 1), state = '', name = actionList[actionIndex])
+  global currentCnt
+  newNode = tree.TreeNode(index = str(currentCnt), state = '', name = actionList[actionIndex])
   
-  root.add_child_to(str(currentCnt - 2), newNode)
+  root.add_child_to(str(currentCnt - 1), newNode)
   root.update_state()
-  treeData = root.tree_to_dict()
+  currentCnt = currentCnt + 1
 
+  treeData = root.tree_to_dict()
   with open('static/treeData.json', 'w') as f:
       json.dump(treeData, f, indent = 4)
 
-  changeDf.to_csv('static/dataset/' + str(currentCnt - 1) + '.csv', index = False)
-  currentCnt = currentCnt + 1
+  changeDf.to_csv('static/dataset/' + str(currentCnt) + '.csv', index = False)
 
   return json.dumps({'action': 'success'})
 

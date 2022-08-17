@@ -64,14 +64,6 @@ export default function Setting() {
             placeholder={<div>select method</div>}
             onChange={v => handleChange('eval', v)}
           />
-          <Title title="dimension reduction method" />
-          <Select
-            options={dimensionList}
-            placeholder={<div>select method</div>}
-            onChange={v => {
-              handleChange('dimension', v)
-            }}
-          />
         </>
       )}
     </Box>

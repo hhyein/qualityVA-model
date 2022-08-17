@@ -34,7 +34,7 @@ function DensityChart(props) {
       .remove()
 
     var y = d3.scaleLinear()
-      .domain([0, 0.15])
+      .domain([0, 0.07])
       .range([height, 0])
     svg.append("g")
       .call(d3.axisLeft(y).ticks(0))

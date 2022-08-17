@@ -39,8 +39,7 @@ export const FileDataProvider = ({ children }) => {
     purpose: undefined,
     column: undefined,
     model: undefined,
-    eval: undefined,
-    dimension: undefined,
+    eval: undefined
   })
 
   const [purposeList, setPurposeList] = useState()
@@ -86,14 +85,13 @@ export const FileDataProvider = ({ children }) => {
       isAscending: settingValues.purpose.label === 'prediction',
     }))
     await postData('/setting', settingValues)
-    const { columnList, modelList, evalList, dimensionList } = await fetchData(
+    const { columnList, modelList, evalList } = await fetchData(
       '/setting'
     )
     setSettingData({
       columnList,
       modelList,
       evalList,
-      dimensionList,
     })
   }, [settingValues.purpose])
 

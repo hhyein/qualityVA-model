@@ -99,7 +99,7 @@ function ScatterChart(props) {
 
   return (
     <>
-      <svg ref={svgRef} style={{ width: '100%', height: '95%' }}></svg>
+      <svg ref={svgRef} style={{ width: '100%', height: '90%' }}></svg>
       {clicked && (
         <div
           className="contextMenu"

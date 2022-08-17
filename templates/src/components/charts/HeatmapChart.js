@@ -27,12 +27,18 @@ export default function HeatmapChart({
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var x = d3.scaleBand().range([0, width]).domain(dataColumnList).padding(0.1)
+    var x = d3
+      .scaleBand()
+      .range([0, width])
+      .domain(dataColumnList)
+      .padding(0.1)
+
     var y = d3
       .scaleBand()
       .range([height, 0])
       .domain(dataHeatmapChartYList)
       .padding(0.1)
+      
     var color1 = d3.scaleLinear().range(['white', '#cccccc']).domain([0, 100])
     var color2 = d3.scaleLinear().range(['white', colorCode]).domain([0, 100])
 
