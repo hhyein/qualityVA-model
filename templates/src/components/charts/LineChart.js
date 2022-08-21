@@ -24,7 +24,7 @@ export default function LineChart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var allGroup = ['lr', 'knn', 'dt']
+    var allGroup = ['lr', 'svm', 'gbr']
 
     var dataReady = allGroup.map(function (grpName) {
       return {

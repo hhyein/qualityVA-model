@@ -151,6 +151,7 @@ export const FileDataProvider = ({ children }) => {
   const updateActionDetail = useCallback(async () => {
     const barChart = await fetchData('/actionDetailBarchart')
     const { heatmapList, heatmapYList } = await fetchData('/heatmapChart')
+    
     const histogramChart = await postData(
       '/histogramChart',
       selectedActionDetailHeatmapIndex

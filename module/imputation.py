@@ -80,6 +80,66 @@ def missingHeatmapDf(columnList, df):
     outputDf = pd.DataFrame(data)
     return outputDf, tmpY
 
+def outlierHeatmapDf(columnList, df):
+    size = int(len(df)/10)
+    
+    tmpIndex, tmpY, tmpValue = [], [], []
+    data = {}
+
+    for i in range(len(columnList)):
+        columnDf = df[columnList[i]]
+        columnDf = columnDf.apply(pd.to_numeric, errors = 'coerce')
+
+        q25 = np.quantile(columnDf.dropna(), 0.25)
+        q75 = np.quantile(columnDf.dropna(), 0.75)
+        iqr = q75 - q25
+        cut_off = iqr * 1.5
+        lower, upper = q25 - cut_off, q75 + cut_off
+
+        for j in range(int(len(df)/size)):
+            sliceDf = columnDf.iloc[size * j : size * (j + 1)]
+            data1 = sliceDf[sliceDf > upper]
+            data2 = sliceDf[sliceDf < lower]
+            
+            outlier = data1.shape[0] + data2.shape[0]
+
+            tmpIndex.append(columnList[i])
+            tmpY.append(size * (j + 1))
+            tmpValue.append(outlier)
+
+    data['index'] = tmpIndex
+    data['y'] = tmpY
+    data['value'] = tmpValue
+    
+    outputDf = pd.DataFrame(data)
+    return outputDf, tmpY
+
+def inconsHeatmapDf(columnList, df):
+    size = int(len(df)/10)
+    
+    tmpIndex, tmpY, tmpValue = [], [], []
+    data = {}
+
+    for i in range(len(columnList)):
+        tmpDf = df[columnList[i]]
+
+        for j in range(int(len(df)/size)):
+            sliceDf = tmpDf.iloc[size * j : size * (j + 1)]
+            sliceDf = sliceDf.dropna()
+            sliceDf = pd.to_numeric(sliceDf, errors = 'coerce')
+            incons = sliceDf.isnull().sum()
+
+            tmpIndex.append(columnList[i])
+            tmpY.append(size * (j + 1))
+            tmpValue.append(incons)
+
+    data['index'] = tmpIndex
+    data['y'] = tmpY
+    data['value'] = tmpValue
+    
+    outputDf = pd.DataFrame(data)
+    return outputDf, tmpY
+
 def custom_imp_min(df, colName):
     minValue = df.min()
     df = df.fillna(minValue)

@@ -34,14 +34,7 @@ function ScatterChart(props) {
 
     var x = d3
       .scaleLinear()
-      .domain([
-        d3.min(df, function (d) {
-          return d.value1
-        }) - 1,
-        d3.max(df, function (d) {
-          return d.value1
-        }) + 1,
-      ])
+      .domain([d3.min(df, function (d) { return d.value1 }) - 1, d3.max(df, function (d) { return d.value1 }) + 1])
       .range([0, width])
     svg
       .append('g')
@@ -52,16 +45,8 @@ function ScatterChart(props) {
 
     var y = d3
       .scaleLinear()
-      .domain([
-        d3.min(df, function (d) {
-          return d.value2
-        }) - 1,
-        d3.max(df, function (d) {
-          return d.value2
-        }) + 1,
-      ])
+      .domain([d3.min(df, function (d) { return d.value2 }) - 1, d3.max(df, function (d) { return d.value2 }) + 1])
       .range([height, 0])
-    
       svg
       .append('g')
       .call(d3.axisLeft(y).ticks(0))
@@ -83,9 +68,11 @@ function ScatterChart(props) {
       .attr('r', 3)
       .style('fill', '#555')
 
-    d3.selectAll('svg').on('click', function () {
-      d3.event.preventDefault()
-      setClicked(false)
+    d3
+      .selectAll('svg')
+      .on('click', function () {
+        d3.event.preventDefault()
+        setClicked(false)
     })
 
     d3.selectAll('circle')
@@ -103,11 +90,11 @@ function ScatterChart(props) {
       {clicked && (
         <div
           className="contextMenu"
-          style={{ position: 'absolute', left: X, top: Y }}
+          style={{ position: 'absolute', left: X, top: Y, width: '130px' }}
         >
-          <div className="contextMenu--option">remove cell</div>
+          <div className="contextMenu--option">action</div>
           <div className="contextMenu--separator" />
-          <div className="contextMenu--option">remove cluster</div>
+          <div className="contextMenu--option">exit</div>
         </div>
       )}
     </>

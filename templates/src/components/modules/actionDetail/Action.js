@@ -4,14 +4,15 @@ import Title from '../../Title'
 
 export default function Action({ onSelectChange }) {
   const action = [
-    { label: 'remove', value: 0 },
-    { label: 'min', value: 1 },
-    { label: 'max', value: 2 },
-    { label: 'mean', value: 3 },
-    { label: 'mode', value: 4 },
-    { label: 'median', value: 5 },
-    { label: 'EM', value: 6 },
-    { label: 'LOCF', value: 7 },
+    { label: 'none', value: 0 },
+    { label: 'remove', value: 1 },
+    { label: 'min', value: 2 },
+    { label: 'max', value: 3 },
+    { label: 'mean', value: 4 },
+    { label: 'mode', value: 5 },
+    { label: 'median', value: 6 },
+    { label: 'EM', value: 7 },
+    { label: 'LOCF', value: 8 },
   ]
 
   const loadOptions = inputValue =>

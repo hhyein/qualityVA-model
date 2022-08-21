@@ -17,7 +17,7 @@ from scipy import stats
 from collections import Counter
 
 # from nl4dv import NL4DV
-# from pycaret.regression import *
+from pycaret.regression import *
 
 import module.imputation as imputation
 import module.tree as tree
@@ -79,7 +79,7 @@ def setting():
     modelList = []
     if purpose == 'prediction':
       tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
-                'qda', 'ada', 'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+                'qda', 'ada', 'gbr', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
     
     else:
       tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
@@ -204,7 +204,7 @@ def chartTable():
     autoMLDict = json.load(f)
 
   ##### to fix
-  inputModelList = ['lr', 'knn', 'dt']
+  inputModelList = ['lr', 'svm', 'gbr']
   inputEvalList = ['MAE', 'MSE', 'RMSE']
   #####
 
@@ -350,7 +350,7 @@ def selectedModelOverviewTable():
   currentCnt = len(combinationDetailIcon) + 1
 
   ##### to fix
-  modelName = 'lr'
+  modelName = 'gbr'
   #####
 
   originDf = pd.read_csv('static/' + fileName + '.csv')
@@ -634,46 +634,43 @@ def selectedModelOverviewTable():
 @app.route('/lineChart', methods=['GET', 'POST'])
 def lineChart():
   ##### to fix
-  inputModelList = ['lr', 'knn', 'dt']
+  inputModelList = ['lr', 'svm', 'gbr']
   purposeColumn = 'Price'
   orderEval = 'MAE'
   #####
 
-  # fileList = os.listdir('static/dataset')
-  # evalResultList = []
-  # for i in range(len(fileList) + 1):
-  #   evalResultList.append([])
+  fileList = os.listdir('static/dataset')
+  evalResultList = []
+  for i in range(len(fileList) + 1):
+    evalResultList.append([])
 
-  # originDf = pd.read_csv('static/' + fileName + '.csv')
-  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  # originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
-  # originDf = originDf.dropna()
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
+  originDf = originDf.dropna()
 
-  # clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  # model = compare_models(include = inputModelList)
-  # evalResultDf = pull()
+  clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  model = compare_models(include = inputModelList)
+  evalResultDf = pull()
 
-  # for i in range(len(inputModelList)):
-  #   modelName = inputModelList[i]
-  #   evalResult = evalResultDf.loc[modelName][orderEval]
-  #   evalResultList[0].append(evalResult)
+  for i in range(len(inputModelList)):
+    modelName = inputModelList[i]
+    evalResult = evalResultDf.loc[modelName][orderEval]
+    evalResultList[0].append(evalResult)
 
-  # for i in range(len(fileList)):
-  #   df = pd.read_csv('static/dataset/' + fileList[i])
-  #   df = df.apply(pd.to_numeric, errors = 'coerce')
-  #   df = df.dropna()
+  for i in range(len(fileList)):
+    df = pd.read_csv('static/dataset/' + fileList[i])
+    df = df.apply(pd.to_numeric, errors = 'coerce')
+    df = df.dropna()
 
-  #   clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  #   model = compare_models(include = inputModelList)
-  #   evalResultDf = pull()
+    clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+    model = compare_models(include = inputModelList)
+    evalResultDf = pull()
 
-  #   for j in range(len(inputModelList)):
-  #     modelName = inputModelList[j]
-  #     evalResult = evalResultDf.loc[modelName][orderEval]
-  #     evalResultList[i + 1].append(evalResult)
-
-  evalResultList = [[7.6972, 8.3341, 7.4454], [6.7544, 7.3388, 7.8797], [4.3, 5.3421, 5.0086], [4.8095, 6.0706, 5.6525]]
-  print(evalResultList)
+    for j in range(len(inputModelList)):
+      modelName = inputModelList[j]
+      evalResult = evalResultDf.loc[modelName][orderEval]
+      evalResultList[i + 1].append(evalResult)
 
   lineChartList = []
   for i in range(len(evalResultList)):
@@ -741,8 +738,8 @@ def modelDetailTable():
   mu = tsneDf.mean()
   std = tsneDf.std()
   rv = stats.norm(loc = mu, scale = std)
-  normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
-  densityDf = imputation.densityDf(normalDf, tsneDf)
+  originNormalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+  densityDf = imputation.densityDf(originNormalDf, tsneDf)
 
   densityChartList.append(densityDf.to_dict('records'))
 
@@ -784,8 +781,7 @@ def modelDetailTable():
     mu = tsneDf.mean()
     std = tsneDf.std()
     rv = stats.norm(loc = mu, scale = std)
-    normalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
-    densityDf = imputation.densityDf(normalDf, tsneDf)
+    densityDf = imputation.densityDf(originNormalDf, tsneDf)
 
     densityChartList.append(densityDf.to_dict('records'))
 
@@ -846,8 +842,16 @@ def heatmapChart():
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
   columnList = list(originDf.columns)
+  heatmapList = []
+  
   heatmapDf, heatmapYList = imputation.missingHeatmapDf(columnList, originDf)
-  heatmapList = list(heatmapDf.transpose().to_dict().values())
+  heatmapList.append(list(heatmapDf.transpose().to_dict().values()))
+
+  heatmapDf, heatmapYList = imputation.outlierHeatmapDf(columnList, originDf)
+  heatmapList.append(list(heatmapDf.transpose().to_dict().values()))
+
+  heatmapDf, heatmapYList = imputation.inconsHeatmapDf(columnList, originDf)
+  heatmapList.append(list(heatmapDf.transpose().to_dict().values()))
 
   response = {}
   response['heatmapList'] = heatmapList
@@ -865,6 +869,7 @@ def histogramChart():
   histogramDf = originDf
 
   req = request.get_data().decode('utf-8')
+  
   if req == '':
     histogramDf = pd.DataFrame(histogramDf.iloc[:, 0])
   else:
@@ -876,21 +881,24 @@ def histogramChart():
 
     histogramDf = pd.DataFrame(histogramDf.iloc[:, selectedIndex])
 
-  histogramDf = histogramDf.dropna()
-
-  minValue = histogramDf.iloc[0][0]
-  maxValue = histogramDf.iloc[len(histogramDf) - 1][0]
+  minValue = histogramDf.min()
+  maxValue = histogramDf.max()
   size = (maxValue - minValue)/20
 
-  histogramChartList = []
+  histogramList = histogramDf.values.tolist()
+  histogramList = sum(histogramList, [])
+  histogramChartList = [0 for i in range(20)]
+
   for i in range(20):
-    minRange = minValue + (size * (i))
-    maxRange = minValue + (size * (i + 1))
-    cnt = 0
-    for j in range(len(histogramDf)):
-      if histogramDf.iloc[j][0] >= minRange and histogramDf.iloc[j][0] < maxRange:
-        cnt = cnt + 1
-    histogramChartList.append(cnt)
+    minRange = float(minValue + (size * (i)))
+    maxRange = float(minValue + (size * (i + 1)))
+
+    for j in range(len(histogramList)):
+      if histogramList[j] == 'nan':
+        break
+      
+      if histogramList[j] >= minRange and histogramList[j] < maxRange:
+        histogramChartList[i] = histogramChartList[i] + 1
 
     response = {}
     response['histogramChartList'] = histogramChartList

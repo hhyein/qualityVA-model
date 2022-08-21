@@ -6,6 +6,7 @@ export default function HistogramChart(props) {
   const d3 = window.d3v4
 
   var df = {}
+  var dfLenght = 506
   Object.assign(df, data.histogramChartList)
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function HistogramChart(props) {
       .domain(d3.range(-1, ordinals.length))
       .range([0, width])
 
-    var xAxis = d3.axisBottom(x).tickFormat((d, e) => ordinals[d])
+    var xAxis = d3.axisBottom(x).tickFormat((d, e) => ordinals[d] * parseInt(dfLenght/20))
     var yAxis = d3.axisLeft(y)
 
     svg

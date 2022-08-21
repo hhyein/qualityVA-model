@@ -22,7 +22,6 @@ export default function ActionDetail() {
     isEmptyData,
     selectedActionDetailHeatmapIndex,
     setSelectedActionDetailHeatmapIndex,
-    settingData: { dimensionList },
   } = useFileData()
   const {
     barChart,
@@ -32,6 +31,7 @@ export default function ActionDetail() {
     scatterChart,
   } = actionDetailData
 
+  const dimensionList = ['TSNE', 'PCA']
   const [dataTargetIdx, setDataTargetIdx] = useState(0)
   const [selectValue, setSelectValue] = useState()
   const [reductionMethodIdx, setReductionMethodIdx] = useState(0)
@@ -79,7 +79,7 @@ export default function ActionDetail() {
             ))}
           </div>
           <HeatmapChart
-            data={heatmapChart}
+            data={heatmapChart[dataTargetIdx]}
             dataHeatmapChartYList={heatmapChartY}
             dataColumnList={dataColumnList}
             colorCode={Object.values(dataColorInfo)[dataTargetIdx]}
@@ -100,14 +100,14 @@ export default function ActionDetail() {
                           <input
                             type="radio"
                             name="radio"
-                            value={item.value}
-                            style={{ marginRight: '5px' }}
+                            value={item}
+                            style={{ marginRight: '5px', accentColor: 'grey' }}
                             onClick={async () => {
                               setReductionMethodIdx(idx)
                             }}
                             checked={reductionMethodIdx === idx}
                           />
-                          {item.label}
+                          {item}
                         </div>
                       ))}
                   </div>

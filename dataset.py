@@ -21,6 +21,7 @@ for i in range(0, int(percentDataset/3)):
     df.iloc[rowRandom, columnRandom] = np.nan
 
 # outlier
+# for wine quality
 for i in range(0, int(percentDataset/3)):
     columnRandom = random.randint(0, columnLenght - 1)
     rowRandom = random.randint(0, rowLenght - 1)

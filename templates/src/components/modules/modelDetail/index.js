@@ -8,8 +8,8 @@ import { useFileData } from '../../../contexts/FileDataContext'
 
 const dataColorInfo = {
   lr: 'crimson',
-  knn: 'mediumpurple',
-  dt: 'yellowgreen',
+  svm: 'mediumpurple',
+  gbr: 'yellowgreen',
 }
 
 export default function ModelDetail() {
