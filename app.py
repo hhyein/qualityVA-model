@@ -17,7 +17,7 @@ from scipy import stats
 from collections import Counter
 
 # from nl4dv import NL4DV
-from pycaret.regression import *
+# from pycaret.regression import *
 
 import module.imputation as imputation
 import module.tree as tree
@@ -639,39 +639,41 @@ def lineChart():
   orderEval = 'MAE'
   #####
 
-  fileList = os.listdir('static/dataset')
-  evalResultList = []
-  for i in range(len(fileList) + 1):
-    evalResultList.append([])
+  # fileList = os.listdir('static/dataset')
+  # evalResultList = []
+  # for i in range(len(fileList) + 1):
+  #   evalResultList.append([])
 
-  originDf = pd.read_csv('static/' + fileName + '.csv')
-  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
-  originDf = originDf.dropna()
+  # originDf = pd.read_csv('static/' + fileName + '.csv')
+  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  # originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
+  # originDf = originDf.dropna()
 
-  clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  model = compare_models(include = inputModelList)
-  evalResultDf = pull()
+  # clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  # model = compare_models(include = inputModelList)
+  # evalResultDf = pull()
 
-  for i in range(len(inputModelList)):
-    modelName = inputModelList[i]
-    evalResult = evalResultDf.loc[modelName][orderEval]
-    evalResultList[0].append(evalResult)
+  # for i in range(len(inputModelList)):
+  #   modelName = inputModelList[i]
+  #   evalResult = evalResultDf.loc[modelName][orderEval]
+  #   evalResultList[0].append(evalResult)
 
-  for i in range(len(fileList)):
-    df = pd.read_csv('static/dataset/' + fileList[i])
-    df = df.apply(pd.to_numeric, errors = 'coerce')
-    df = df.dropna()
+  # for i in range(len(fileList)):
+  #   df = pd.read_csv('static/dataset/' + fileList[i])
+  #   df = df.apply(pd.to_numeric, errors = 'coerce')
+  #   df = df.dropna()
 
-    clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-    model = compare_models(include = inputModelList)
-    evalResultDf = pull()
+  #   clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  #   model = compare_models(include = inputModelList)
+  #   evalResultDf = pull()
 
-    for j in range(len(inputModelList)):
-      modelName = inputModelList[j]
-      evalResult = evalResultDf.loc[modelName][orderEval]
-      evalResultList[i + 1].append(evalResult)
+  #   for j in range(len(inputModelList)):
+  #     modelName = inputModelList[j]
+  #     evalResult = evalResultDf.loc[modelName][orderEval]
+  #     evalResultList[i + 1].append(evalResult)
 
+  evalResultList = [[3.3419, 4.6557, 2.6677], [3.0848, 4.0154, 2.9036], [3.1096, 3.9894, 2.8213]]
+  
   lineChartList = []
   for i in range(len(evalResultList)):
     tmpDict = {}

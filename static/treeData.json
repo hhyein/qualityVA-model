@@ -12,14 +12,7 @@
                     "index": "2",
                     "state": "none",
                     "name": "med",
-                    "children": [
-                        {
-                            "index": "3",
-                            "state": "none",
-                            "name": "med",
-                            "children": []
-                        }
-                    ]
+                    "children": []
                 }
             ]
         }
