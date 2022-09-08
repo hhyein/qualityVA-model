@@ -33,35 +33,35 @@ export default function Setting() {
         purposeList,
       }) && (
         <>
-          <Title title="purpose of data" />
+          <Title title="Model type" />
           <Select
             options={purposeList}
-            placeholder={<div>select purpose</div>}
+            placeholder={<div>Select model type</div>}
             onChange={v => {
               handleChange('purpose', v)
             }}
           />
-          <Title title="column to purpose" />
+          <Title title="Target column" />
           <Select
             options={columnList}
             value={settingValues.column}
-            placeholder={<div>select column</div>}
+            placeholder={<div>Select column</div>}
             onChange={v => {
               handleChange('column', v)
             }}
           />
-          <Title title="machine learning model" />
+          <Title title="Target model" />
           <Select
             isMulti
             options={modelList}
-            placeholder={<div>select model</div>}
+            placeholder={<div>Select model</div>}
             onChange={v => handleChange('model', v)}
           />
-          <Title title="evaluation method" />
+          <Title title="Target metric" />
           <Select
             isMulti
             options={evalList}
-            placeholder={<div>select method</div>}
+            placeholder={<div>Select metric</div>}
             onChange={v => handleChange('eval', v)}
           />
         </>

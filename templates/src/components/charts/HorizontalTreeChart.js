@@ -4,9 +4,10 @@ function HorizontalTreeChart(props) {
   const { data, dataLenght } = props
   const svgRef = useRef()
   const d3 = window.d3v3
-
   const leftMove = 30
-  const nodeGap = 135
+  
+  // to fix
+  const nodeGap = 270
 
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()
@@ -57,7 +58,7 @@ function HorizontalTreeChart(props) {
         .attr('r', 10)
         .style('fill', function (d) {
           if (d.state == 'current') {
-            return '#999999'
+            return '#FF8085'
           } else {
             return '#cccccc'
           }

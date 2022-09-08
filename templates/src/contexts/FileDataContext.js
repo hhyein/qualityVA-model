@@ -126,6 +126,8 @@ export const FileDataProvider = ({ children }) => {
       densityChartList,
     } = await fetchData('/modelDetailTable')
 
+    const densityChartNum = [["(S) 1.288", "(K) 1.698"], ["(S) 1.376", "(K) 2.356"], ["(S) 0.665", "(K) 0.329"], ["(S) 0.665", "(K) 0.329"]]
+
     setModelDetailData({
       lineChart,
       treeChart,
@@ -133,8 +135,8 @@ export const FileDataProvider = ({ children }) => {
       actionList,
       actionDetailList,
       barChartList: barChartList.map(data => <BarChart data={[data]} />),
-      densityChartList: densityChartList.map(data => (
-        <DensityChart data={data} />
+      densityChartList: densityChartList.map((data, i) => (
+        <DensityChart data={data} densityChartNum = {densityChartNum[i]} />
       )),
     })
   }, [selectedModelOverviewTableRow])

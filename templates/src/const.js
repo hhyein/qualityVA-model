@@ -24,12 +24,12 @@ export const mainLayout2Style = {
 }
 
 export const boxTitles = {
-  'data-upload': 'data upload',
-  setting: 'setting panel',
+  'data-upload': 'Data upload',
+  setting: 'Setting panel',
   visualization: 'NLP2Vis',
-  'model-overview': 'model overview',
-  'model-detail': 'data quality analysis',
-  'action-detail': 'custom built action',
+  'model-overview': 'Model overview',
+  'model-detail': 'Data quality analysis',
+  'action-detail': 'Custom built action',
 }
 
 export const PORT = 5000

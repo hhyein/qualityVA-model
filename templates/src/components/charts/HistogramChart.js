@@ -6,8 +6,10 @@ export default function HistogramChart(props) {
   const d3 = window.d3v4
 
   var df = {}
-  var dfLenght = 506
   Object.assign(df, data.histogramChartList)
+
+  // to fix
+  var dfLenght = 506
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)
@@ -16,7 +18,7 @@ export default function HistogramChart(props) {
     var data = []
     var ordinals = []
 
-    for (var i = 0; i < 20; i++) {
+    for (var i = 0; i < 21; i++) {
       data.push({
         value: df[i],
         index: i,

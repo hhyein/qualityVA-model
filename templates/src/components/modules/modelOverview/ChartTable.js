@@ -8,8 +8,10 @@ export default function ChartTable({
   canSortColumns,
   selectedColumn,
 }) {
-  const { modelOverviewTableSortingInfo } = useFileData()
+  const { modelOverviewTableSortingInfo, selectedModelOverviewTableRow } = useFileData()
   const columnKeys = Object.keys(data[0]).slice(1)
+
+  console.log(selectedModelOverviewTableRow)
 
   return data.length > 0 ? (
     <div
@@ -18,7 +20,12 @@ export default function ChartTable({
         gridTemplateColumns: `auto auto auto auto repeat(${canSortColumns.length}, 1fr)`,
       }}
     >
-      <div className="grid-th" />
+      <div className="grid-th" style={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+      }}>
+        Index
+      </div>
       {columnKeys.map((key, i) => {
         const isSortButton = canSortColumns.includes(key)
         const selected = selectedColumn === key
@@ -58,8 +65,9 @@ export default function ChartTable({
             <div
               className="grid-td"
               style={{
-                fontWeight: 'bold',
+                textAlign: 'center',
                 borderBottom: isLastRow ? 'none' : undefined,
+                backgroundColor: selectedModelOverviewTableRow?.key === key ? '#e1e1e1' : undefined
               }}
               onClick={onClick}
             >
@@ -74,6 +82,7 @@ export default function ChartTable({
                   borderRight:
                     colIdx === columnKeys.length - 1 ? 'none' : undefined,
                   borderBottom: isLastRow ? 'none' : undefined,
+                  backgroundColor: selectedModelOverviewTableRow?.key === key ? '#e1e1e1' : undefined
                 }}
               >
                 {colIdx < 3 || rowIdx < 6 ? chart : chart.props.data?.[0]?.data.toFixed(5)}

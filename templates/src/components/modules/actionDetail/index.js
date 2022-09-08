@@ -90,13 +90,13 @@ export default function ActionDetail() {
           <IndexingButtonBox
             style={{ margin: '5px 0', height: '45%' }}
             componentInfo={{
-              'column data': <HistogramChart data={histogramChart} />,
-              'specific data': (
+              'Histogram': <HistogramChart data={histogramChart} />,
+              'Scatter plot': (
                 <>
                   <div style={{ display: 'flex' }}>
                     {dimensionList &&
                       dimensionList.map((item, idx) => (
-                        <div key={item}>
+                        <div key={item} style={{ marginRight: '10px' }}>
                           <input
                             type="radio"
                             name="radio"

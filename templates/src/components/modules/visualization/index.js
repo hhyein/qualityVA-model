@@ -43,11 +43,11 @@ export default function Visualization() {
           type="text"
           value={dataQuery}
           onChange={handleChange}
-          placeholder="type your query here..."
+          placeholder="Type your question here..."
           style={{ borderRadius: "4px 0 0 4px", borderRightWidth: 0 }}
         />
         <Button type="submit" style={{ borderRadius: "0 4px 4px 0" }}>
-          submit
+          Submit
         </Button>
       </form>
       <NL4DV data={dataNL4DV} />

@@ -16,8 +16,8 @@ from io import StringIO
 from scipy import stats
 from collections import Counter
 
-# from nl4dv import NL4DV
-# from pycaret.regression import *
+from nl4dv import NL4DV
+from pycaret.regression import *
 
 import module.imputation as imputation
 import module.tree as tree
@@ -25,7 +25,7 @@ import module.tree as tree
 app = Flask(__name__)
 CORS(app)
 
-fileName = 'house'
+fileName = 'bike'
 purpose = ''
 purposeColumn = ''
 inputModelList = []
@@ -67,7 +67,7 @@ def setting():
     originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
     purposeList = []
-    tmpList = ['prediction', 'classification']
+    tmpList = ['Prediction', 'Classification']
     for i in range(len(tmpList)):
       purposeList.append({'label': tmpList[i], 'value': i})      
 
@@ -77,22 +77,16 @@ def setting():
       columnList.append({'label': tmpList[i], 'value': i})
 
     modelList = []
-    if purpose == 'prediction':
-      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'rbfsvm', 'gpc', 'mlp', 'ridge', 'rf',
-                'qda', 'ada', 'gbr', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
-    
-    else:
-      tmpList = ['lr', 'knn', 'nb', 'dt', 'svm', 'ridge', 'rf', 'qda', 'ada',
-                  'gbc', 'lda', 'et', 'xgboost', 'lightgbm', 'catboost']
+    tmpList = ['LR', 'LASSO', 'RIDGE', 'EN', 'LAR', 'LLAR', 'OMP', 'BR', 'ARD', 'PAR', 'RANSAC',
+                'TR', 'HUBER', 'KR', 'SVM', 'KNN', 'DT', 'RF', 'ET', 'ADA', 'GBR', 'MLP', 'XGBOOST',
+                'LIGHTGBM', 'CATBOOST']
+  
     for i in range(len(tmpList)):
       modelList.append({'label': tmpList[i], 'value': i})
 
     evalList = []
-    if purpose == 'prediction':
-      tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE', 'TT']
+    tmpList = ['MAE', 'MSE', 'RMSE', 'R2', 'RMSLE', 'MAPE']
     
-    else:
-      tmpList = ['Accuracy', 'AUC', 'Recall', 'Precision', 'F1', 'Kappa', 'MCC', 'TT']
     for i in range(len(tmpList)):
       evalList.append({'label': tmpList[i], 'value': i})
 
@@ -104,91 +98,69 @@ def setting():
     
     return json.dumps(response)
 
-  if request.method == 'POST':
-    req = request.get_data().decode('utf-8')
-    req = eval(req)
-
-    purpose = req["purpose"]["label"]
-    purposeColumn = req["column"]["label"]
-    modelList = req["model"]
-    evalList = req["eval"]
-
-    inputModelList = []
-    for i in range(len(modelList)):
-        inputModelList.append(modelList[i]["label"])
-
-    inputEvalList = []
-    for i in range(len(evalList)):
-        inputEvalList.append(evalList[i]["label"])
-
-    return json.dumps({'setting': 'success'})
-
 @app.route('/query', methods=['GET', 'POST'])
 def query():
   query = request.get_data().decode('utf-8')
 
-  # originDf = pd.read_csv('static/10housePrice.csv')
-  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
 
-  # nl4dvDict = originDf.dropna().to_dict('records')
-  # nl4dvInstance = NL4DV(data_url = os.path.join(filePath))
-  # nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
-  # nl4dvOutput = nl4dvInstance.analyze_query(query)
+  nl4dvDict = originDf.dropna().to_dict('records')
+  nl4dvInstance = NL4DV(data_url = os.path.join('static/' + fileName + '.csv'))
+  nl4dvInstance.set_dependency_parser(config = {"name": "spacy", "model": "en_core_web_sm", "parser": None})
+  nl4dvOutput = nl4dvInstance.analyze_query(query)
 
-  # # extraction attribute, task, vistype
-  # try:
-  #   attributes = nl4dvOutput['visList'][0]['attributes']
-  #   tasks = nl4dvOutput['visList'][0]['tasks']
-  #   visType = nl4dvOutput['visList'][0]['visType']
-  # except:
-  #   return jsonify({'nl4dv': 'please writing valid query'})
+  # extraction attribute, task, vistype
+  try:
+    attributes = nl4dvOutput['visList'][0]['attributes']
+    tasks = nl4dvOutput['visList'][0]['tasks']
+    visType = nl4dvOutput['visList'][0]['visType']
+  except:
+    return jsonify({'nl4dv': 'please writing valid query'})
 
-  # if type(attributes) == list:
-  #   attributes = ",".join(attributes)
-  # if type(tasks) == list:
-  #   tasks = ",".join(tasks)
-  # if type(visType) == list:
-  #   visType = ",".join(visType)
+  if type(attributes) == list:
+    attributes = ",".join(attributes)
+  if type(tasks) == list:
+    tasks = ",".join(tasks)
+  if type(visType) == list:
+    visType = ",".join(visType)
 
-  # # extraction vlspec
-  # vlSpec = nl4dvOutput['visList'][0]['vlSpec']
-  # vlSpec['data']['values'] = nl4dvDict
+  # extraction vlspec
+  vlSpec = nl4dvOutput['visList'][0]['vlSpec']
+  vlSpec['data']['values'] = nl4dvDict
 
-  # vlSpec['width'] = "container"
-  # vlSpec['height'] = "container"
+  vlSpec['width'] = "container"
+  vlSpec['height'] = "container"
 
-  # # preprocessing vlspec
-  # if 'encoding' in vlSpec:
-  #     if 'x' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['x']:
-  #             del vlSpec['encoding']['x']['aggregate']
-  # if 'encoding' in vlSpec:
-  #     if 'y' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['y']:
-  #             del vlSpec['encoding']['y']['aggregate']
-  # if 'encoding' in vlSpec:
-  #     if 'x' in vlSpec['encoding']:
-  #         if 'bin' in vlSpec['encoding']['x']:
-  #             del vlSpec['encoding']['x']['bin']
-  # if 'encoding' in vlSpec:
-  #     if 'color' in vlSpec['encoding']:
-  #         if 'aggregate' in vlSpec['encoding']['color']:
-  #             del vlSpec['encoding']['color']['aggregate']
+  # preprocessing vlspec
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'y' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['y']:
+              del vlSpec['encoding']['y']['aggregate']
+  if 'encoding' in vlSpec:
+      if 'x' in vlSpec['encoding']:
+          if 'bin' in vlSpec['encoding']['x']:
+              del vlSpec['encoding']['x']['bin']
+  if 'encoding' in vlSpec:
+      if 'color' in vlSpec['encoding']:
+          if 'aggregate' in vlSpec['encoding']['color']:
+              del vlSpec['encoding']['color']['aggregate']
 
-  # del vlSpec['mark']['tooltip']
-  # del vlSpec['data']['format']
-  # del vlSpec['data']['url']
+  del vlSpec['mark']['tooltip']
+  del vlSpec['data']['format']
+  del vlSpec['data']['url']
 
-  # return jsonify({'nl4dv': vlSpec})
-  return json.dumps({'nl4dv': 'success'})
+  return jsonify({'nl4dv': vlSpec})
 
 @app.route('/chartTable', methods = ['GET', 'POST'])
 def chartTable():
   originDf = pd.read_csv('static/' + fileName + '.csv')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  ##### to fix
-  actionList = ['missing', 'outlier', 'inconsistent']
-  #####
+  actionList = ['missing', 'outlier', 'transformation']
 
   # permutation
   permutationList = []
@@ -204,7 +176,7 @@ def chartTable():
     autoMLDict = json.load(f)
 
   ##### to fix
-  inputModelList = ['lr', 'svm', 'gbr']
+  inputModelList = ['LR', 'SVM', 'GBR']
   inputEvalList = ['MAE', 'MSE', 'RMSE']
   #####
 
@@ -303,14 +275,11 @@ def chartTable():
   for autoML in autoMLDict:
     for i in range(len(inputEvalList)):
       for j in range(len(inputModelList)):
-        if maxEvalList[i] < autoML[inputEvalList[i]][inputModelList[j]]:
-          maxEvalList[i] = autoML[inputEvalList[i]][inputModelList[j]]
-        evalDict[inputEvalList[i]].append(autoML[inputEvalList[i]][inputModelList[j]])
+        inputModel = inputModelList[j].lower()
 
-  # evalDict to make bar chart
-  ##### to fix
-  print(maxEvalList)
-  maxEvalList = [10, 20, 10]
+        if maxEvalList[i] < autoML[inputEvalList[i]][inputModel]:
+          maxEvalList[i] = autoML[inputEvalList[i]][inputModel]
+        evalDict[inputEvalList[i]].append(autoML[inputEvalList[i]][inputModel])
 
   resultEvalList = []
   for i in range(len(inputEvalList)):
@@ -345,13 +314,9 @@ def selectedModelOverviewTable():
 
   global currentCnt, combinationIcon, combinationDetailIcon
   selectedModelOverviewTable = req['key']
-  combinationIcon = req['combination']
-  combinationDetailIcon = req['combinationDetail']
+  combinationIcon = req['Combination']
+  combinationDetailIcon = req['CombinationDetail']
   currentCnt = len(combinationDetailIcon) + 1
-
-  ##### to fix
-  modelName = 'gbr'
-  #####
 
   originDf = pd.read_csv('static/' + fileName + '.csv')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
@@ -380,32 +345,28 @@ def selectedModelOverviewTable():
         missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
         inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
 
-        if len(missingIndex) > 0:
-          if actionDetail == "rem":
-            columnDf = columnDf.dropna()
-            columnDf = columnDf.to_frame(name = columnList[j])
-
-          else:
-            if actionDetail == "min":
-              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
-            if actionDetail == "max":
-              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
-            if actionDetail == "mod":
-              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
-            if actionDetail == "men":
-              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
-            if actionDetail == "med":
-              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
-            if actionDetail == "em":
-              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
-            if actionDetail == "lof":
-              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
-
-            for m in inconsIndex:
-              columnDf.loc[m] = 'incons'
+        if actionDetail == "rem":
+          columnDf = columnDf.dropna()
+          columnDf = columnDf.to_frame(name = columnList[j])
 
         else:
-          columnDf = columnDf
+          if actionDetail == "min":
+            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+          if actionDetail == "max":
+            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+          if actionDetail == "mod":
+            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+          if actionDetail == "men":
+            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+          if actionDetail == "med":
+            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+          if actionDetail == "em":
+            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+          if actionDetail == "lof":
+            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+          for m in inconsIndex:
+            columnDf.loc[m] = 'incons'
 
         resultColumnDf.append(columnDf)
 
@@ -436,40 +397,36 @@ def selectedModelOverviewTable():
         outlierDf = tmpDf[(tmpDf < lower) | (tmpDf > upper)]
         outlierIndex = list(outlierDf.index)
 
-        if len(outlierIndex) > 0:
-          if actionDetail == "rem":
-            columnDf = columnDf.drop(outlierIndex)
-            columnDf = columnDf.to_frame(name = columnList[j])
+        if actionDetail == "rem":
+          columnDf = columnDf.drop(outlierIndex)
+          columnDf = columnDf.to_frame(name = columnList[j])
 
-          else:
-            for m in outlierIndex:
-              columnDf.loc[m] = np.nan
-            
-            columnDf = pd.to_numeric(columnDf, errors = 'coerce')
-            
-            if actionDetail == "min":
-              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
-            if actionDetail == "max":
-              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
-            if actionDetail == "mod":
-              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
-            if actionDetail == "men":
-              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
-            if actionDetail == "med":
-              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
-            if actionDetail == "em":
-              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
-            if actionDetail == "lof":
-              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
-
-            for m in missingIndex:
-              columnDf.loc[m] = np.nan
-
-            for m in inconsIndex:
-              columnDf.loc[m] = 'incons'
-      
         else:
-          columnDf = columnDf
+          for m in outlierIndex:
+            columnDf.loc[m] = np.nan
+          
+          columnDf = pd.to_numeric(columnDf, errors = 'coerce')
+          
+          if actionDetail == "min":
+            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+          if actionDetail == "max":
+            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+          if actionDetail == "mod":
+            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+          if actionDetail == "men":
+            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+          if actionDetail == "med":
+            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+          if actionDetail == "em":
+            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+          if actionDetail == "lof":
+            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+          for m in missingIndex:
+            columnDf.loc[m] = np.nan
+
+          for m in inconsIndex:
+            columnDf.loc[m] = 'incons'
 
         resultColumnDf.append(columnDf)
 
@@ -495,34 +452,30 @@ def selectedModelOverviewTable():
         missingAndInconsIndex = [index for index, row in tmpDf.iterrows() if row.isnull().any()]
         inconsIndex = list(set(missingAndInconsIndex) - set(missingIndex))
 
-        if len(inconsIndex) > 0:
-          if actionDetail == "rem":
-            columnDf = lastDf.iloc[:, j]
+        if actionDetail == "rem":
+          columnDf = lastDf.iloc[:, j]
 
-            for i in inconsIndex:
-              columnDf.drop([i], axis = 0)
-
-          else:
-            if actionDetail == "min":
-              columnDf = imputation.custom_imp_min(columnDf, columnList[j])
-            if actionDetail == "max":
-              columnDf = imputation.custom_imp_max(columnDf, columnList[j])
-            if actionDetail == "mod":
-              columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
-            if actionDetail == "men":
-              columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
-            if actionDetail == "med":
-              columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
-            if actionDetail == "em":
-              columnDf = imputation.custom_imp_em(columnDf, columnList[j])
-            if actionDetail == "lof":
-              columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
-
-            for m in missingIndex:
-              columnDf.loc[m] = np.nan
+          for i in inconsIndex:
+            columnDf.drop([i], axis = 0)
 
         else:
-          columnDf = columnDf
+          if actionDetail == "min":
+            columnDf = imputation.custom_imp_min(columnDf, columnList[j])
+          if actionDetail == "max":
+            columnDf = imputation.custom_imp_max(columnDf, columnList[j])
+          if actionDetail == "mod":
+            columnDf = imputation.custom_imp_mode(columnDf, columnList[j])
+          if actionDetail == "men":
+            columnDf = imputation.custom_imp_mean(columnDf, columnList[j])
+          if actionDetail == "med":
+            columnDf = imputation.custom_imp_median(columnDf, columnList[j])  
+          if actionDetail == "em":
+            columnDf = imputation.custom_imp_em(columnDf, columnList[j])
+          if actionDetail == "lof":
+            columnDf = imputation.custom_imp_locf(columnDf, columnList[j])
+
+          for m in missingIndex:
+            columnDf.loc[m] = np.nan
 
         resultColumnDf.append(columnDf)
 
@@ -635,45 +588,43 @@ def selectedModelOverviewTable():
 def lineChart():
   ##### to fix
   inputModelList = ['lr', 'svm', 'gbr']
-  purposeColumn = 'Price'
+  purposeColumn = 'cnt'
   orderEval = 'MAE'
   #####
 
-  # fileList = os.listdir('static/dataset')
-  # evalResultList = []
-  # for i in range(len(fileList) + 1):
-  #   evalResultList.append([])
+  fileList = os.listdir('static/dataset')
+  evalResultList = []
+  for i in range(len(fileList) + 1):
+    evalResultList.append([])
 
-  # originDf = pd.read_csv('static/' + fileName + '.csv')
-  # originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
-  # originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
-  # originDf = originDf.dropna()
+  originDf = pd.read_csv('static/' + fileName + '.csv')
+  originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  originDf = originDf.apply(pd.to_numeric, errors = 'coerce')
+  originDf = originDf.dropna()
 
-  # clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  # model = compare_models(include = inputModelList)
-  # evalResultDf = pull()
+  clf = setup(data = originDf, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+  model = compare_models(include = inputModelList)
+  evalResultDf = pull()
 
-  # for i in range(len(inputModelList)):
-  #   modelName = inputModelList[i]
-  #   evalResult = evalResultDf.loc[modelName][orderEval]
-  #   evalResultList[0].append(evalResult)
+  for i in range(len(inputModelList)):
+    modelName = inputModelList[i]
+    evalResult = evalResultDf.loc[modelName][orderEval]
+    evalResultList[0].append(evalResult)
 
-  # for i in range(len(fileList)):
-  #   df = pd.read_csv('static/dataset/' + fileList[i])
-  #   df = df.apply(pd.to_numeric, errors = 'coerce')
-  #   df = df.dropna()
+  for i in range(len(fileList)):
+    df = pd.read_csv('static/dataset/' + fileList[i])
+    df = df.apply(pd.to_numeric, errors = 'coerce')
+    df = df.dropna()
 
-  #   clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
-  #   model = compare_models(include = inputModelList)
-  #   evalResultDf = pull()
+    clf = setup(data = df, target = purposeColumn, preprocess = False, session_id = 42, use_gpu = True, silent = True)
+    model = compare_models(include = inputModelList)
+    evalResultDf = pull()
 
-  #   for j in range(len(inputModelList)):
-  #     modelName = inputModelList[j]
-  #     evalResult = evalResultDf.loc[modelName][orderEval]
-  #     evalResultList[i + 1].append(evalResult)
+    for j in range(len(inputModelList)):
+      modelName = inputModelList[j]
+      evalResult = evalResultDf.loc[modelName][orderEval]
+      evalResultList[i + 1].append(evalResult)
 
-  evalResultList = [[3.3419, 4.6557, 2.6677], [3.0848, 4.0154, 2.9036], [3.1096, 3.9894, 2.8213]]
-  
   lineChartList = []
   for i in range(len(evalResultList)):
     tmpDict = {}
@@ -708,12 +659,12 @@ def modelDetailTable():
 
   tmpList = []
   for column in originDf:
-    df = originDf[column]
-    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+    df = df.dropna()
 
-    lower, upper = imputation.LowerUpper(df)
-    data1 = originDf[df > upper]
-    data2 = originDf[df < lower]
+    lower, upper = imputation.LowerUpper(df[column])
+    data1 = df[df[column] > upper]
+    data2 = df[df[column] < lower]
     tmpList.append(data1.shape[0] + data2.shape[0])
   outlier = sum(tmpList)
 
@@ -726,64 +677,56 @@ def modelDetailTable():
 
   barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
 
-  # densityChart
+  # denisityChart
   densityChartList = []
-  from sklearn.manifold import TSNE
 
-  df = originDf.apply(pd.to_numeric, errors = 'coerce')
+  df = originDf['cnt'].apply(pd.to_numeric, errors = 'coerce')
   df = df.dropna().reset_index(drop = True)
-  dataMatrix = df.values
+  df = pd.DataFrame(df)
 
-  tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
-  tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
-
-  mu = tsneDf.mean()
-  std = tsneDf.std()
+  mu = df.mean()
+  std = df.std()
   rv = stats.norm(loc = mu, scale = std)
-  originNormalDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
-  densityDf = imputation.densityDf(originNormalDf, tsneDf)
+  normDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+
+  rv = stats.uniform(loc = mu, scale = std)
+  uniformDf = pd.DataFrame(rv.rvs(size = 5000, random_state = 0))
+  densityDf = imputation.densityDf(normDf, uniformDf, df)
 
   densityChartList.append(densityDf.to_dict('records'))
 
   fileList = os.listdir('static/dataset')
   for i in range(len(fileList)):
-    df = pd.read_csv('static/dataset/' + fileList[i])
+    originDf = pd.read_csv('static/dataset/' + fileList[i])
 
     # barChart
-    missing = sum(df.isnull().sum().values.tolist())
+    missing = sum(originDf.isnull().sum().values.tolist())
 
     tmpList = []
-    for column in df:
-      columnDf = df[column].dropna()
-      columnDf = pd.DataFrame(pd.to_numeric(columnDf, errors = 'coerce'))
+    for column in originDf:
+      df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+      df = df.dropna()
 
-      lower, upper = imputation.LowerUpper(columnDf)
-      data1 = df[columnDf > upper]
-      data2 = df[columnDf < lower]
+      lower, upper = imputation.LowerUpper(df[column])
+      data1 = df[df[column] > upper]
+      data2 = df[df[column] < lower]
       tmpList.append(data1.shape[0] + data2.shape[0])
     outlier = sum(tmpList)
 
     tmpList = []
-    for column in df:
-      columnDf = df[column].dropna()
-      columnDf = pd.DataFrame(pd.to_numeric(columnDf, errors = 'coerce'))
-      tmpList.append(columnDf.isnull().sum().values[0].tolist())
+    for column in originDf:
+      df = originDf[column].dropna()
+      df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+      tmpList.append(df.isnull().sum().values[0].tolist())
     incons = sum(tmpList)
 
     barChartList.append({'group': 'data', 'missing': missing, 'outlier': outlier, 'incons': incons})
 
     # densityChart
-    df = df.apply(pd.to_numeric, errors = 'coerce')
+    df = originDf['cnt'].apply(pd.to_numeric, errors = 'coerce')
     df = df.dropna().reset_index(drop = True)
-    dataMatrix = df.values
-
-    tsneDf = TSNE(n_components = 1, random_state = 0).fit_transform(dataMatrix)
-    tsneDf = pd.DataFrame(tsneDf, columns = ['value'])
-
-    mu = tsneDf.mean()
-    std = tsneDf.std()
-    rv = stats.norm(loc = mu, scale = std)
-    densityDf = imputation.densityDf(originNormalDf, tsneDf)
+    df = pd.DataFrame(df)
+    densityDf = imputation.densityDf(normDf, uniformDf, df)
 
     densityChartList.append(densityDf.to_dict('records'))
 
@@ -809,32 +752,33 @@ def modelDetailTable():
 def actionDetailBarchart():
   originDf = pd.read_csv('static/' + fileName + '.csv')
   originDf = originDf.reindex(sorted(originDf.columns), axis = 1)
+  columnList = list(originDf.columns)
 
   # missing, outlier, incons check
   missing = sum(originDf.isnull().sum().values.tolist())
 
   tmpList = []
   for column in originDf:
-      df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
-      df = df.dropna()
+    df = pd.DataFrame(pd.to_numeric(originDf[column], errors = 'coerce'))
+    df = df.dropna()
 
-      lower, upper = imputation.LowerUpper(df[column])
-      data1 = df[df[column] > upper]
-      data2 = df[df[column] < lower]
-      tmpList.append(data1.shape[0] + data2.shape[0])
-      outlier = sum(tmpList)
+    lower, upper = imputation.LowerUpper(df[column])
+    data1 = df[df[column] > upper]
+    data2 = df[df[column] < lower]
+    tmpList.append(data1.shape[0] + data2.shape[0])
+  outlier = sum(tmpList)
 
   tmpList = []
   for column in originDf:
-      df = originDf[column].dropna()    
-      df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
-      tmpList.append(df.isnull().sum().values[0].tolist())
-      incons = sum(tmpList)
+    df = originDf[column].dropna()    
+    df = pd.DataFrame(pd.to_numeric(df, errors = 'coerce'))
+    tmpList.append(df.isnull().sum().values[0].tolist())
+  incons = sum(tmpList)
 
   response = {}
-  response['missing'] = {'data': missing, 'originData': len(originDf) - missing}
-  response['outlier'] = {'data': outlier, 'originData': len(originDf) - outlier}
-  response['incons'] = {'data': incons, 'originData': len(originDf) - incons}
+  response['missing'] = {'data': missing, 'originData': len(originDf) * len(columnList) - missing}
+  response['outlier'] = {'data': outlier, 'originData': len(originDf) * len(columnList) - outlier}
+  response['incons'] = {'data': incons, 'originData': len(originDf) * len(columnList) - incons}
 
   return jsonify(response)
 

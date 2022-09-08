@@ -14,25 +14,29 @@ def LowerUpper(df):
 
     return lower, upper
 
-def densityDf(df1, df2):
+def densityDf(df1, df2, df3):
     tmpIndex = []
     tmpValue  = []
     data = {}
 
     for i in range(len(df1)):
-        tmpIndex.append('normal')
+        tmpIndex.append('norm')
         tmpValue.append(df1.iloc[i][0])
 
     for i in range(len(df2)):
-        tmpIndex.append('data')
+        tmpIndex.append('uniform')
         tmpValue.append(df2.iloc[i][0])
+
+    for i in range(len(df3)):
+        tmpIndex.append('data')
+        tmpValue.append(df3.iloc[i][0])
     
     data['index'] = tmpIndex
     data['value'] = tmpValue
 
     outputDf = pd.DataFrame(data)
     return outputDf
-
+    
 def ecdfDf(df, index):
     tmpIndex, tmpX, tmpY = [], [], []
     data = {}

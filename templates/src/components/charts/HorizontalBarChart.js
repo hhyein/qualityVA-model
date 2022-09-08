@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 
-export default function HorizontalBarChart({ data, colorCode, type, onClick }) {
+export default function HorizontalBarChart({ data, colorCode, selected, onClick }) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
@@ -33,7 +33,7 @@ export default function HorizontalBarChart({ data, colorCode, type, onClick }) {
     var color = d3
       .scaleOrdinal()
       .domain(subgroups)
-      .range([colorCode, "#cccccc"])
+      .range([colorCode, selected ? 'white' : '#cccccc'])
 
     data.forEach(function (d) {
       var tot = 0

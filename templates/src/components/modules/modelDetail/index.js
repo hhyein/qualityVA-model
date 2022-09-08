@@ -7,9 +7,9 @@ import ModelDetailTable from './ModelDetailTable'
 import { useFileData } from '../../../contexts/FileDataContext'
 
 const dataColorInfo = {
-  lr: 'crimson',
-  svm: 'mediumpurple',
-  gbr: 'yellowgreen',
+  LR: 'crimson',
+  SVM: 'mediumpurple',
+  GBR: 'yellowgreen',
 }
 
 export default function ModelDetail() {

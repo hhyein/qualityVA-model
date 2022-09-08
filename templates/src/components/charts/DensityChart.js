@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 
 function DensityChart(props) {
-  const {data} = props
+  const {data, densityChartNum} = props
   const svgRef = useRef()
   const d3 = window.d3v4
+
+  var maxY = 0.08
 
   useEffect(() => {
     if (!data) {
@@ -34,7 +36,7 @@ function DensityChart(props) {
       .remove()
 
     var y = d3.scaleLinear()
-      .domain([0, 0.07])
+      .domain([0, maxY])
       .range([height, 0])
     svg.append("g")
       .call(d3.axisLeft(y).ticks(0))
@@ -43,17 +45,21 @@ function DensityChart(props) {
 
     var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))
     var density1 =  kde( data
-      .filter( function(d){ return d.index === "normal"; })
+      .filter( function(d){ return d.index === "norm"; })
       .map(function(d){  return d.value; })
     )
     var density2 =  kde( data
+      .filter( function(d){ return d.index === "uniform"; })
+      .map(function(d){  return d.value; })
+    )
+    var density3 =  kde( data
       .filter( function(d){return d.index === "data"; })
       .map(function(d){  return d.value; })
     )
 
     svg.append("path")
       .attr("class", "mypath")
-      .datum(density1)
+      .datum(density2)
       .attr("fill", "none")
       .attr("stroke", "#cccccc")
       .attr("stroke-width", 1.5)
@@ -66,7 +72,7 @@ function DensityChart(props) {
 
     svg.append("path")
       .attr("class", "mypath")
-      .datum(density2)
+      .datum(density3)
       .attr("fill", "none")
       .attr("stroke", "#555")
       .attr("stroke-width", 1.5)
@@ -76,6 +82,9 @@ function DensityChart(props) {
       .x(function(d) { return x(d[0]); })
       .y(function(d) { return y(d[1]); })
     );
+
+    svg.append("text").attr("x", width/2 + 30).attr("y", 5).text(densityChartNum[0]).style("font-size", "8px").attr("alignment-baseline", "middle")
+    svg.append("text").attr("x", width/2 + 30).attr("y", 15).text(densityChartNum[1]).style("font-size", "8px").attr("alignment-baseline", "middle")
 
     function kernelDensityEstimator(kernel, X) {
       return function(V) {
@@ -89,7 +98,7 @@ function DensityChart(props) {
         return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
       };
     }
-  }, [data])
+  }, [data, densityChartNum])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
 }

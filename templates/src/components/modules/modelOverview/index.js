@@ -21,9 +21,9 @@ export default function ModelOverview() {
     }
     return chartTable.combinationList.map((combination, i) => ({
       key: combination,
-      model: chartTable.modelNames[i],
-      combination: chartTable.combinationIconList[i],
-      combinationDetail: chartTable.combinationDetailIconList[i],
+      Model: chartTable.modelNames[i],
+      Combination: chartTable.combinationIconList[i],
+      CombinationDetail: chartTable.combinationDetailIconList[i],
       ...chartTable.inputEvalList.reduce(
         (acc, cur) => ({
           ...acc,
@@ -41,8 +41,8 @@ export default function ModelOverview() {
     }
     const sortedChartTableData = data.sort((a, b) =>
       isAscending
-        ? a[column].data - b[column].data
-        : b[column].data - a[column].data
+        ? b[column].data - a[column].data
+        : a[column].data - b[column].data
     )
 
     if (
@@ -52,8 +52,8 @@ export default function ModelOverview() {
       const firstRow = sortedChartTableData[0]
       setSelectedModelOverviewTableRow({
         key: firstRow.key,
-        combination: firstRow.combination,
-        combinationDetail: firstRow.combinationDetail,
+        Combination: firstRow.Combination,
+        CombinationDetail: firstRow.CombinationDetail,
       })
     }
     return sortedChartTableData
@@ -79,20 +79,20 @@ export default function ModelOverview() {
           onTableRowClick={({ key, rowIdx }) =>
             setSelectedModelOverviewTableRow({
               key,
-              combination: sortedData[rowIdx].combination,
-              combinationDetail: sortedData[rowIdx].combinationDetail,
+              Combination: sortedData[rowIdx].Combination,
+              CombinationDetail: sortedData[rowIdx].CombinationDetail,
             })
           }
-          data={sortedData.map(d => ({
+          data={sortedData.map((d, i) => ({
             key: d.key,
-            ...['model'].reduce(
+            ...['Model'].reduce(
               (acc, cur) => ({
                 ...acc,
                 [cur]: d[cur],
               }),
               {}
             ),
-            ...['combination', 'combinationDetail'].reduce(
+            ...['Combination', 'CombinationDetail'].reduce(
               (acc, cur) => ({
                 ...acc,
                 [cur]: (
@@ -116,6 +116,7 @@ export default function ModelOverview() {
                   <HorizontalBarChart
                     data={[d[cur]]}
                     colorCode={['lightcoral', 'mediumturquoise', 'sienna'][j]}
+                    selceted={d ? d?.key === selectedModelOverviewTableRow?.key : undefined}
                   />
                 ),
               }),
