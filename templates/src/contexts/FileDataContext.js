@@ -126,7 +126,7 @@ export const FileDataProvider = ({ children }) => {
       densityChartList,
     } = await fetchData('/modelDetailTable')
 
-    const densityChartNum = [["(S) 1.288", "(K) 1.698"], ["(S) 1.376", "(K) 2.356"], ["(S) 0.665", "(K) 0.329"], ["(S) 0.665", "(K) 0.329"]]
+    const densityChartNum = [["(S) 4.114", "(K) 22.13"], ["(S) 3.931", "(K) 21.06"], ["(S) 3.418", "(K) 21.83"], ["(S) 3.430", "(K) 21.71"]]
 
     setModelDetailData({
       lineChart,
@@ -153,7 +153,7 @@ export const FileDataProvider = ({ children }) => {
   const updateActionDetail = useCallback(async () => {
     const barChart = await fetchData('/actionDetailBarchart')
     const { heatmapList, heatmapYList } = await fetchData('/heatmapChart')
-    
+
     const histogramChart = await postData(
       '/histogramChart',
       selectedActionDetailHeatmapIndex

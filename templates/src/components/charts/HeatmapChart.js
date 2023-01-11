@@ -6,12 +6,9 @@ export default function HeatmapChart({
   dataColumnList,
   colorCode = 'steelblue',
   onHeatmapCellClick,
-  }) {
+}) {
   const svgRef = useRef()
   const d3 = window.d3v4
-
-  // to fix
-  var colorWeight = 5
 
   useEffect(() => {
     if (!data) {
@@ -78,7 +75,7 @@ export default function HeatmapChart({
         if (d.value == 0) {
           return color1(35)
         }
-        return color2(d.value * colorWeight)
+        return color2(d.value * 15)
       })
       .style('stroke-width', 4)
       .style('stroke', 'none')

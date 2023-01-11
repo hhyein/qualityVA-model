@@ -13,6 +13,8 @@ function ScatterChart(props) {
     Object.assign(df, data.pcaDict)
   }
 
+  console.log(df)
+
   const [clicked, setClicked] = useState(false)
   const [X, setX] = useState([])
   const [Y, setY] = useState([])
@@ -53,6 +55,10 @@ function ScatterChart(props) {
       .selectAll('text')
       .remove()
 
+    var color = d3.scaleOrdinal()
+      .domain([0, 1, 3])
+      .range(["#1AA46D", "#1A5289", "#F53B3B"])
+
     svg
       .append('g')
       .selectAll('dot')
@@ -66,7 +72,7 @@ function ScatterChart(props) {
         return y(d.value2)
       })
       .attr('r', 3)
-      .style('fill', '#555')
+      .style("fill", function (d) { return color(d.sex) } )
 
     d3
       .selectAll('svg')
@@ -86,13 +92,17 @@ function ScatterChart(props) {
 
   return (
     <>
-      <svg ref={svgRef} style={{ width: '100%', height: '90%' }}></svg>
+      <svg ref={svgRef} style={{ width: '100%', height: '85%' }}></svg>
       {clicked && (
         <div
           className="contextMenu"
-          style={{ position: 'absolute', left: X, top: Y, width: '130px' }}
+          style={{ position: 'absolute', zIndex: 1, left: X, top: Y, width: '130px' }}
         >
-          <div className="contextMenu--option">action</div>
+          <div className="contextMenu--option">visual interactive labeling</div>
+          <div className="contextMenu--separator" />
+          <div className="contextMenu--option">imputation</div>
+          <div className="contextMenu--separator" />
+          <div className="contextMenu--option">transform</div>
           <div className="contextMenu--separator" />
           <div className="contextMenu--option">exit</div>
         </div>

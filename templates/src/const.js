@@ -12,21 +12,21 @@ export const mainLayout1Style = {
 export const mainLayout2Style = {
   gridGap: '10px',
   gridTemplateColumns: '250px 600px 300px',
-  gridTemplateRows: '80px 150px 150px 50px 100px 120px',
+  gridTemplateRows: '80px 150px 150px 50px 50px 180px',
   gridTemplateAreas: `
     'data-upload model-overview action-detail'
     'setting model-overview action-detail'
     'setting model-detail action-detail'
     'setting model-detail action-detail'
-    'visualization model-detail action-detail'
-    'visualization model-detail action-detail'
+    'setting model-detail action-detail'
+    'setting model-detail action-detail'
   `,
 }
 
 export const boxTitles = {
   'data-upload': 'Data upload',
-  setting: 'Setting panel',
-  visualization: 'NLP2Vis',
+  'setting': 'Setting panel',
+  'visualization': 'NLP2Vis',
   'model-overview': 'Model overview',
   'model-detail': 'Data quality analysis',
   'action-detail': 'Custom built action',

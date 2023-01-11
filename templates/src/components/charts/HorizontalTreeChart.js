@@ -1,13 +1,40 @@
 import React, { useEffect, useRef } from 'react'
 
 function HorizontalTreeChart(props) {
-  const { data, dataLenght } = props
+  const { test, dataLenght } = props
   const svgRef = useRef()
   const d3 = window.d3v3
+
   const leftMove = 30
-  
-  // to fix
-  const nodeGap = 270
+  const nodeGap = 135
+
+  const data = {
+    "index": "0",
+    "state": "none",
+    "name": "start",
+    "children": [
+        {
+            "index": "1",
+            "state": "current",
+            "name": "em",
+            "children": [
+                {
+                    "index": "2",
+                    "state": "none",
+                    "name": "em",
+                    "children": [
+                        {
+                            "index": "3",
+                            "state": "none",
+                            "name": "men",
+                            "children": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
 
   useEffect(() => {
     d3.select(svgRef.current).selectAll('*').remove()

@@ -14,7 +14,6 @@ const Home = () => {
       <div className="main" style={mainLayout2Style}>
         <FileUpload />
         <Setting />
-        <Visualization />
         <ModelOverview />
         <ModelDetail />
         <ActionDetail />

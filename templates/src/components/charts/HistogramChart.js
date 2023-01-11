@@ -6,10 +6,8 @@ export default function HistogramChart(props) {
   const d3 = window.d3v4
 
   var df = {}
+  var dfLenght = 170
   Object.assign(df, data.histogramChartList)
-
-  // to fix
-  var dfLenght = 506
 
   useEffect(() => {
     var svg = d3.select(svgRef.current)
@@ -18,7 +16,7 @@ export default function HistogramChart(props) {
     var data = []
     var ordinals = []
 
-    for (var i = 0; i < 21; i++) {
+    for (var i = 0; i < 20; i++) {
       data.push({
         value: df[i],
         index: i,
@@ -141,6 +139,8 @@ export default function HistogramChart(props) {
         }
       })
     }
+
+    svg.append("text").attr("x", 10).attr("y", 10).text('Column: diameter').style("font-size", "13px").attr("alignment-baseline", "middle")
   }, [data, d3, df])
 
   return <svg ref={svgRef} style={{ width: '100%', height: '98%' }}></svg>

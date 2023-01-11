@@ -5,7 +5,7 @@ function DensityChart(props) {
   const svgRef = useRef()
   const d3 = window.d3v4
 
-  var maxY = 0.08
+  const leftMove = 30
 
   useEffect(() => {
     if (!data) {
@@ -23,25 +23,24 @@ function DensityChart(props) {
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
-      .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var x = d3.scaleLinear()
       .domain([d3.min(data, d => d.value) - 10, d3.max(data, d => d.value) + 10])
       .range([0, width])
     svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x).ticks(0))
+      .attr('transform', 'translate(' + leftMove + ',' + 45 + ')')
+      .call(d3.axisBottom(x).tickSize(0))
       .selectAll("text")
       .remove()
 
     var y = d3.scaleLinear()
-      .domain([0, maxY])
-      .range([height, 0])
+      .domain([0, 0.1])
+      .range([height, 8])
     svg.append("g")
-      .call(d3.axisLeft(y).ticks(0))
-      .selectAll("text")
-      .remove()
+      .attr('transform', 'translate(' + leftMove + ', 5)')
+      .call(d3.axisLeft(y).ticks(3))
+      .style("font-size", "8px");
 
     var kde = kernelDensityEstimator(kernelEpanechnikov(7), x.ticks(40))
     var density1 =  kde( data
@@ -66,8 +65,8 @@ function DensityChart(props) {
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
       .curve(d3.curveBasis)
-      .x(function(d) { return x(d[0]); })
-      .y(function(d) { return y(d[1]); })
+      .x(function(d) { return x(d[0]) + leftMove; })
+      .y(function(d) { return y(d[1]) + 5; })
     )
 
     svg.append("path")
@@ -79,12 +78,13 @@ function DensityChart(props) {
       .attr("stroke-linejoin", "round")
       .attr("d",  d3.line()
       .curve(d3.curveBasis)
-      .x(function(d) { return x(d[0]); })
-      .y(function(d) { return y(d[1]); })
+      .x(function(d) { return x(d[0]) + leftMove; })
+      .y(function(d) { return y(d[1]) + 5; })
     );
 
     svg.append("text").attr("x", width/2 + 30).attr("y", 5).text(densityChartNum[0]).style("font-size", "8px").attr("alignment-baseline", "middle")
     svg.append("text").attr("x", width/2 + 30).attr("y", 15).text(densityChartNum[1]).style("font-size", "8px").attr("alignment-baseline", "middle")
+    svg.append("text").attr("x", 28).attr("y", 5).text('P').style("font-size", "8px").attr("alignment-baseline", "middle")
 
     function kernelDensityEstimator(kernel, X) {
       return function(V) {
@@ -100,6 +100,6 @@ function DensityChart(props) {
     }
   }, [data, densityChartNum])
 
-  return <svg ref={svgRef} style={{ width: '100%', height: '100%' }}></svg>
+  return <svg ref={svgRef} style={{ width: '100%', height: '100%', marginTop: 10, marginLeft: -10 }}></svg>
 }
 export default DensityChart

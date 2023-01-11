@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Select from 'react-select'
 import Title from '../../Title'
 import { Box } from '../../Box'
@@ -9,15 +9,21 @@ export default function Setting() {
     isEmptyData,
     purposeList,
     settingData: { columnList, modelList, evalList, dimensionList },
-    settingValues,
+    settingValues: initialSettingValues,
     setSettingValues,
   } = useFileData()
-
+  
+  const [settingValues, setValues] = useState(initialSettingValues)
+  
   const handleChange = (key, value) => {
-    setSettingValues(prev => ({
+    setValues(prev => ({
       ...prev,
       [key]: value,
     }))
+  }
+  
+  const handleSubmit = () => {
+    setSettingValues(settingValues)
   }
 
   return (
@@ -27,6 +33,7 @@ export default function Setting() {
         display: 'grid',
         overflow: 'visible',
         gridGap: '5px',
+        gridAutoRows: 'min-content',
       }}
     >
       {!isEmptyData({
@@ -64,6 +71,7 @@ export default function Setting() {
             placeholder={<div>Select metric</div>}
             onChange={v => handleChange('eval', v)}
           />
+          <button style={{ width: '80px', marginLeft: 'auto' }} onClick={handleSubmit}>Submit</button>
         </>
       )}
     </Box>

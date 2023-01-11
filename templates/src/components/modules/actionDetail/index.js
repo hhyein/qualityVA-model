@@ -10,9 +10,9 @@ import IndexingButtonBox from '../../IndexingButtonBox'
 import { postData, useFileData } from '../../../contexts/FileDataContext'
 
 const dataColorInfo = {
-  missing: 'steelblue',
-  outlier: 'darkorange',
-  incons: 'darkgreen',
+  Missing: 'steelblue',
+  Outlier: 'darkorange',
+  Incons: 'darkgreen',
 }
 
 export default function ActionDetail() {

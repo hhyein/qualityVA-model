@@ -3,6 +3,12 @@ import Select from 'react-select'
 import Title from '../../Title'
 
 export default function Action({ onSelectChange }) {
+  // const action = [
+  //   { label: '0(Blue)', value: 0 },
+  //   { label: '1(Red)', value: 1 },
+  //   { label: '2(Green)', value: 2 },
+  // ]
+
   const action = [
     { label: 'None', value: 0 },
     { label: 'Remove', value: 1 },

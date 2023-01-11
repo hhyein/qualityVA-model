@@ -4,10 +4,8 @@ export default function LineChart(props) {
   const { data, dataLenght } = props
   const svgRef = useRef()
   const d3 = window.d3v4
+
   const leftMove = 30
-  
-  // to fix
-  const maxY = 80
 
   useEffect(() => {
     if (!data) {
@@ -26,7 +24,7 @@ export default function LineChart(props) {
       .append('g')
       .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
-    var allGroup = ['lr', 'svm', 'gbr']
+    var allGroup = ['dt', 'nb', 'knn', 'svm']
 
     var dataReady = allGroup.map(function (grpName) {
       return {
@@ -40,9 +38,9 @@ export default function LineChart(props) {
     var myColor = d3
       .scaleOrdinal()
       .domain(allGroup)
-      .range(['crimson', 'mediumpurple', 'yellowgreen'])
+      .range(['mediumpurple', 'yellowgreen', 'cadetblue', 'hotpink'])
 
-    var x = d3.scaleLinear().domain([0, dataLenght]).range([0, width])
+    var x = d3.scaleLinear().domain([0, 4]).range([0, width])
     svg
       .append('g')
       .attr('transform', 'translate(' + leftMove + ',' + height + ')')
@@ -52,7 +50,7 @@ export default function LineChart(props) {
 
     var y = d3
       .scaleLinear()
-      .domain([0, maxY])
+      .domain([0, 1])
       .range([height - 10, 5])
     svg
       .append('g')
